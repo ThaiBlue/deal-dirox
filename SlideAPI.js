@@ -13,7 +13,7 @@ module.exports = class SlideAPI {
 	async getSlideRevisionID() {
 		var config = {
 		  method: 'get',
-		  url: 'https://slides.googleapis.com/v1/presentations/' + this.sheetID,
+		  url: 'https://slides.googleapis.com/v1/presentations/' + this.slideID,
 		  headers: { 
 			'Authorization': 'Bearer ' + this.token
 		  }
@@ -26,7 +26,8 @@ module.exports = class SlideAPI {
 			//return fetched data
 			return response.data.revisionId;
 		} catch (err) {
-			console.log(err);
+			//send request again if fail
+			this.getSlideRevisionID();
 		}		
 	}
 	
@@ -138,9 +139,10 @@ module.exports = class SlideAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			console.log('Success!!!');
+			console.log('Slide updated');
 		} catch (err) {
-			console.log(err);
+			//send request again if fail
+			this.updatePresentaion(description, deal_summary, lead_overview_1, lead_overview_2, customer_name);
 		}
 	}
 }

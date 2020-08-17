@@ -42,7 +42,8 @@ module.exports = class HubspotAPI {
 			//return fetched data
 			return response.data.results;
 		} catch (err) {
-			console.log(err)
+			//send request again if fail
+			this.fetchMakeOfferDeals(properties);
 		}
 	}
 
@@ -65,7 +66,8 @@ module.exports = class HubspotAPI {
 			var res = await this.axios(config);
 			return res.data;
 		} catch (err) {
-			console.log(err);
+			//send request again if fail
+			this.getOwnerInfo(ownerID);
 		}
 	}
 	
@@ -84,7 +86,8 @@ module.exports = class HubspotAPI {
 			//return fetched data
 			return response.data.results[0].id;
 		} catch (err) {
-			console.log(err);
+			//send request again if fail
+			this.getAssociateCompanyIDOfDeal(dealID);
 		}
 	}
 	
@@ -104,7 +107,8 @@ module.exports = class HubspotAPI {
 			//return fetched data
 			return response.data;
 		} catch (err) {
-			console.log(err);
+			//send request again if fail
+			this.getCompanyInfo(dealID);
 		}
 	}
 }
