@@ -1,4 +1,4 @@
-class SheetAPI {
+module.exports = class SheetAPI {
 	constructor (token, sheetID) {
 		this.token = token;
 		this.sheetID = sheetID;
