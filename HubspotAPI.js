@@ -41,6 +41,7 @@ module.exports = class HubspotAPI {
 			var response = await this.axios(config);
 			//return fetched data
 			return response.data.results;
+			
 		} catch (err) {
 			//send request again if fail
 			this.fetchMakeOfferDeals(properties);
@@ -64,10 +65,16 @@ module.exports = class HubspotAPI {
 		try {
 			//fetching data
 			var res = await this.axios(config);
+			//return response data
 			return res.data;
+			
 		} catch (err) {
-			//send request again if fail
-			this.getOwnerInfo(ownerID);
+			if (err.code = 408) {
+				//send request again if request time out
+				this.getOwnerInfo(ownerID);
+			}
+			//return error code
+			return err.code;
 		}
 	}
 	
@@ -79,12 +86,14 @@ module.exports = class HubspotAPI {
 			'Authorization': 'Bearer ' + this.token
 		  }
 		};
-
+		
+		// connection handler
 		try {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
 			return response.data.results[0].id;
+			
 		} catch (err) {
 			//send request again if fail
 			this.getAssociateCompanyIDOfDeal(dealID);
@@ -92,6 +101,10 @@ module.exports = class HubspotAPI {
 	}
 	
 	async getCompanyInfo(dealID) {
+		/*
+		Fetch infomation of the Company(Customer) that associates with the Deal has the given dealID
+		* dealID {Number} identity of the Deal needs to get its' relative Company info(Customer name)
+		*/
 		var companyID = await this.getAssociateCompanyIDOfDeal(dealID);
 		var config = {
 		  method: 'get',
@@ -101,14 +114,20 @@ module.exports = class HubspotAPI {
 		  }
 		};
 
+		// connection handler		
 		try {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
 			return response.data;
+			
 		} catch (err) {
-			//send request again if fail
-			this.getCompanyInfo(dealID);
+			if (err.code = 408) {
+				//send request again if request time out
+				this.getCompanyInfo(dealID);
+			}
+			//return error code
+			return err.code;
 		}
 	}
 }

@@ -2,10 +2,10 @@ module.exports = class SheetAPI {
 	constructor (token, sheetID) {
 		this.token = token;
 		this.sheetID = sheetID;
+		this.axios = require('axios');
 	}
 	
-	async updateSheet (deal) {
-		var axios = require('axios');
+	async updateSheet(deal) {
 		var data = JSON.stringify(
 			{
 				"valueInputOption": "USER_ENTERED",
@@ -26,13 +26,19 @@ module.exports = class SheetAPI {
 		  data : data
 		};
 		
-		// sending the request 
-		axios(config)
-		.then(function (response) {
-			console.log(JSON.stringify(response.data));
-		  })
-		.catch(function (error) {
-		console.log(error);
-		});	
+		try {
+			// send request
+			var response = await this.axios(config);
+			//return fetched data
+			return response.data;
+			
+		} catch (err) {
+			if (err.code = 408) {
+				//send request again if request time out
+				this.updateSheet(deal);
+			}
+			//return error code
+			return err.code;
+		}
 	}
 }
