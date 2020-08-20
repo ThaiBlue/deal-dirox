@@ -11,19 +11,19 @@ module.exports = class HubspotAPI {
 
 	async fetchMakeOfferDeals(properties) {
 		/*
-		Get all Deals that have "Make Offer" deal stage from Hubspot with a specific set of information of the deal
+		Get all Deals that have 'Make Offer' deal stage from Hubspot with a specific set of information of the deal
 		* properties {Array} - a list of properties as the name of the information that need to get
 		*/
 		var data = JSON.stringify({
-			"filterGroups": [{
-				"filters": [{
-					"propertyName": "dealstage",
-					"operator": "EQ",
-					"value": "2186805" // Make Offer ID
+			filterGroups: [{
+				filters: [{
+					propertyName: 'dealstage',
+					operator: 'EQ',
+					value: '2186805' // Make Offer ID
 				}]
 			}],
-			"properties": properties,
-			"limit": 20
+			properties: properties,
+			limit: 20
 		});
 
 		var config = {
