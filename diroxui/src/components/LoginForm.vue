@@ -1,0 +1,99 @@
+<template>
+  <div class="body">
+    <h1 class="login-to-deal-dirox">LOGIN TO DEAL@DIROX</h1>
+        <div class="email-login">
+            <label for="email">Email or Username</label>
+            <input type="email" class="email-box" placeholder="Type your Email or Username here">
+        </div>
+        <div class="password-login">
+            <label for="password">Password</label>
+            <input type="password" class="password-box" placeholder="Type your password here">
+        </div>
+    <button type="submit" class="button">LOGIN</button>
+  </div>
+</template>
+
+<script>
+export default {
+    name: 'LoginForm'
+}
+</script>
+
+<style scoped>
+    .login-to-deal-dirox {
+        color: #FFFFFF;
+        font-family: 'UTMAvoBold';
+        font-size: 36px;
+        line-height: 52.75px;
+        text-align: center;
+    }
+
+    .email-login{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 475px;
+        height: 85px;
+    }
+
+    label{
+        color: #FFFFFF;
+        font-family: UTMAvoBold;
+        font-size: 16px;
+        line-height: 23px;
+        text-align: left;
+    }
+
+    .email-box {
+        background-color: #FFFFFF;
+        border: 1px solid #979797;
+        border-radius: 10px;
+        box-shadow: 3px 4px 8px 0 rgba(0, 0, 0, 0.5), inset 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+        width: 475px;
+        height: 50px;
+        padding-left: 10px;
+    }
+
+    .password-login {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 475px;
+        height: 85px;
+    }
+
+    .password-box {
+        background-color: #FFFFFF;
+        border: 1px solid #979797;
+        border-radius: 10px;
+        box-shadow: 3px 4px 8px 0 rgba(0, 0, 0, 0.5), inset 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+        width: 475px;
+        height: 50px;
+        padding-left: 10px;
+    }
+
+    .button {
+        color: #FFFFFF;
+        font-family: UTMAvoBold;
+        font-size: 18px;
+        line-height: 26.38px;
+        text-align: center;
+        background-color: #FFCE7A;
+        border: 1px solid #FEDEA5;
+        border-radius: 11px;
+        box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.5);
+        width: 191px;
+        height: 53px;
+    }
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* border: 1px solid black; */
+        height: 546px;
+        justify-content: space-between;
+
+    }
+
+</style>
