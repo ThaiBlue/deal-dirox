@@ -30,12 +30,12 @@ module.exports = class SlideAPI {
 			return response.data.revisionId;
 
 		} catch (err) {
-			if (err.code = 408) {
+			if (err.response.status == 408) {
 				//send request again if request time out
 				this.getPresentaionRevisionID();
 			}
 			//return error code
-			return err.code;
+			return err.response.status;
 		}
 	}
 
@@ -148,12 +148,12 @@ module.exports = class SlideAPI {
 			return response.data;
 
 		} catch (err) {
-			if (err.code = 408) {
+			if (err.response.status == 408) {
 				//send request again if request time out
 				this.updatePresentaion(description, deal_summary, lead_overview_1, lead_overview_2, customer_name);
 			}
 			//return error code
-			return err.code;
+			return err.response.status;
 		}
 	}
 }

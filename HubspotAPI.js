@@ -41,10 +41,14 @@ module.exports = class HubspotAPI {
 			var response = await this.axios(config);
 			//return fetched data
 			return response.data.results;
-			
+
 		} catch (err) {
-			//send request again if fail
-			this.fetchMakeOfferDeals(properties);
+			if (err.response.status == 408) {
+				//send request again if request time out
+				this.fetchMakeOfferDeals(properties);
+			}
+			//return error code
+			return err.response.status;
 		}
 	}
 
@@ -67,39 +71,43 @@ module.exports = class HubspotAPI {
 			var res = await this.axios(config);
 			//return response data
 			return res.data;
-			
+
 		} catch (err) {
-			if (err.code = 408) {
+			if (err.response.status == 408) {
 				//send request again if request time out
 				this.getOwnerInfo(ownerID);
 			}
 			//return error code
-			return err.code;
+			return err.response.status;
 		}
 	}
-	
+
 	async getAssociateCompanyIDOfDeal(dealID) {
 		var config = {
-		  method: 'get',
-		  url: 'https://api.hubapi.com/crm/v3/objects/deals/' + dealID + '/associations/companies',
-		  headers: { 
-			'Authorization': 'Bearer ' + this.token
-		  }
+			method: 'get',
+			url: 'https://api.hubapi.com/crm/v3/objects/deals/' + dealID + '/associations/companies',
+			headers: {
+				'Authorization': 'Bearer ' + this.token
+			}
 		};
-		
+
 		// connection handler
 		try {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
 			return response.data.results[0].id;
-			
+
 		} catch (err) {
-			//send request again if fail
-			this.getAssociateCompanyIDOfDeal(dealID);
+			if (err.response.status == 408) {
+				//send request again if request time out
+				this.getAssociateCompanyIDOfDeal(dealID);
+			}
+			//return error code
+			return err.response.status;
 		}
 	}
-	
+
 	async getCompanyInfo(dealID) {
 		/*
 		Fetch infomation of the Company(Customer) that associates with the Deal has the given dealID
@@ -107,11 +115,11 @@ module.exports = class HubspotAPI {
 		*/
 		var companyID = await this.getAssociateCompanyIDOfDeal(dealID);
 		var config = {
-		  method: 'get',
-		  url: 'https://api.hubapi.com/crm/v3/objects/companies/' + companyID,
-		  headers: { 
-			'Authorization': 'Bearer ' + this.token
-		  }
+			method: 'get',
+			url: 'https://api.hubapi.com/crm/v3/objects/companies/' + companyID,
+			headers: {
+				'Authorization': 'Bearer ' + this.token
+			}
 		};
 
 		// connection handler		
@@ -120,14 +128,14 @@ module.exports = class HubspotAPI {
 			var response = await this.axios(config);
 			//return fetched data
 			return response.data;
-			
+
 		} catch (err) {
-			if (err.code = 408) {
+			if (err.response.status == 408) {
 				//send request again if request time out
 				this.getCompanyInfo(dealID);
 			}
 			//return error code
-			return err.code;
+			return err.response.status;
 		}
 	}
 }

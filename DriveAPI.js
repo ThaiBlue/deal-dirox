@@ -32,12 +32,12 @@ module.exports = class DriveAPI {
 			return response.data;
 
 		} catch (err) {
-			if (err.code = 408) {
+			if (err.response.status == 408) {
 				//send request again if request time out
 				this.getListOfFolder();
 			}
 			//return error code
-			return err.code;
+			return err.response.status;
 		}
 	}
 
@@ -69,12 +69,12 @@ module.exports = class DriveAPI {
 			return response.data;
 
 		} catch (err) {
-			if (err.code = 408) {
+			if (err.response.status == 408) {
 				//send request again if request time out
 				this.createFolder();
 			}
 			//return error code
-			return err.code;
+			return err.response.status;
 		}
 	}
 
@@ -108,12 +108,12 @@ module.exports = class DriveAPI {
 	// 		return response.data;
 
 	// 	} catch (err) {
-	// 		if (err.code = 408) {
+	// 		if (err.response.status == 408) {
 	// 			//send request again if request time out
 	// 			this.createFolder();
 	// 		}
 	// 		//return error code
-	// 		return err.code;
+	// 		return err.response.status;
 	// 	}
 	// }
 }
