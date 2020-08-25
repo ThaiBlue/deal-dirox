@@ -18,8 +18,9 @@ from django.urls import path
 from .dealatdirox import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('accounts/admin', admin.site.urls),
     path('<str:service>/auth', views.authorize),
     path('<str:service>/auth/callback', views.callback),
-    path('hubspot/deals/makeoffer/all', views.hubspot_get_makeoffer_deals)
+    path('hubspot/deals/makeoffer/all', views.hubspot_get_makeoffer_deals),
+    path('accounts/user/login', views.login)
 ]

@@ -1,24 +1,45 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from authlib.integrations.django_client import OAuth
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
 from json import dumps
 import requests
 import logging
+from .auth import authenticate
 
 logging.basicConfig(filename='system.log', level=logging.DEBUG)
 
 # Initiate Oauth2 session
 oauth = OAuth() 
-# Register google service
+
+# Register service
 oauth.register('google')
 oauth.register('hubspot')
 
+# User login
+def login(request):
+	# Method verify
+	if request.method == 'POST':
+		# Extract authenticate infomation
+		user_id = request.POST.get('user_id')
+		password = request.POST.get('password')
+		
+		user = authenticate(user_id=user_id, password=password)
+		
+		if user is not None:
+			login(request, user)
+		
+		return HttpResponse()
+	
+	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
+	
 # Oauth2 session
 def authorize(request, service):
 	# Validate request
 	if service not in ['google', 'hubspot']:
-		return HttpResponse(content="<h1>Not Found<h1/>" , status=404, reason="Not Found")
-	
+		return HttpResponse(content="<h1>Page Not Found<h1/>" , status=404, reason="Page Not Found")
+		
 	# Method verify
 	if request.method == 'GET':
 		# Instantiate google service  
@@ -33,8 +54,8 @@ def authorize(request, service):
 def callback(request, service):
 	# Validate request
 	if service not in ['google', 'hubspot']:
-		return HttpResponse(status=404, reason="Not Found")
-
+		return HttpResponse(content="<h1>Page Not Found<h1/>" , status=404, reason="Page Not Found")
+		
 	# Method verify
 	if request.method == 'GET':
 		# Instantiate google service  
@@ -42,7 +63,7 @@ def callback(request, service):
 		# Get credential
 		token = service.authorize_access_token(request)
 		
-		return HttpResponse(str(token))
+		return HttpResponse(content=token, content_type='application/json')
 		
 	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
 
