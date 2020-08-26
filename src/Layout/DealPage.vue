@@ -5,7 +5,7 @@
                 <div class="filterimagetable">
                     <div class="filterimage">
                         <FilterVue />
-                        <img src="../assets/logo-dirox.png" alt="logo-dirox" width="119" height="112">
+                        <img src="../assets/img/logo-dirox.png" alt="logo-dirox" width="119" height="112">
                     </div>
                     <Table />
                 </div>

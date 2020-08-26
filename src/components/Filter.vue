@@ -2,12 +2,12 @@
     <div class="component">
         <div class="search-box">
             <input type="text" class="search" placeholder="Search...">
-            <button type="submit"><img src="../assets/icon-search.png" alt="search-icon" width="42" height="42"></button>
+            <button type="submit"><img src="../assets/img/icon-search.png" alt="search-icon" width="42" height="42"></button>
         </div>
         <el-dropdown :hide-on-click="false">
             <div class="filter">
                 <label>Filter</label>
-                <img src="../assets/icon-filter.png" alt="filter-icon" width="33">
+                <img src="../assets/img/icon-filter.png" alt="filter-icon" width="33">
             </div>
             <el-dropdown-menu>
                 <div class="item">

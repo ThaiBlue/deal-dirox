@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .dealatdirox import views
+from .api import apis
 
 urlpatterns = [
     path('accounts/admin', admin.site.urls),
-    path('<str:service>/auth', views.authorize),
-    path('<str:service>/auth/callback', views.callback),
-    path('hubspot/deals/makeoffer/all', views.hubspot_get_makeoffer_deals),
-    path('accounts/user/login', views.login)
+    path('<str:service>/auth', apis.authorize),
+    path('<str:service>/auth/callback', apis.callback),
+    path('hubspot/deals/makeoffer/all', apis.hubspot_get_makeoffer_deals),
+    path('accounts/user/login', apis.login)
 ]

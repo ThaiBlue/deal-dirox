@@ -1,5 +1,5 @@
 __pycache__
-system.log
+api.log
 .DS_Store
 node_modules
 /dist

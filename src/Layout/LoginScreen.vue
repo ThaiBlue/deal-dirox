@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="header">
-            <img class="logo-dirox-new-white" src="../assets/logo-dirox.png">
+            <img class="logo-dirox-new-white" src="../assets/img/logo-dirox.png">
         </div>
         <LoginForm />
     </div>

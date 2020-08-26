@@ -2,26 +2,26 @@
     <div class="menubar">
         <div class="menu">
             <div class="header">
-                <img src="../assets/menu-icon.png" width="52">
+                <img src="../assets/img/menu-icon.png" width="52">
                 <div class="options">
                     <div class="home">
-                        <img src="../assets/home-icon.png" width="52">
+                        <img src="../assets/img/home-icon.png" width="52">
                         <label>Home</label>
                     </div>
 
                     <div class="sent">
-                        <img src="../assets/sent-icon.png" width="46">
+                        <img src="../assets/img/sent-icon.png" width="46">
                         <label>Send Mail</label>    
                     </div>
 
                     <div class="user">
-                        <img src="../assets/user-icon.png" width="52">
+                        <img src="../assets/img/user-icon.png" width="52">
                         <label>Profile</label>
                     </div>
                 </div>
             </div>
             <div class="setting">
-                <img src="../assets/setting-icon.png" width="56">
+                <img src="../assets/img/setting-icon.png" width="56">
                 <label class="setting-label">Settings</label>
             </div>
         </div>

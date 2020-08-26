@@ -8,7 +8,7 @@ import requests
 import logging
 from .auth import authenticate
 
-logging.basicConfig(filename='system.log', level=logging.DEBUG)
+logging.basicConfig(filename='server/debug/api.log', level=logging.DEBUG)
 
 # Initiate Oauth2 session
 oauth = OAuth() 
@@ -83,7 +83,6 @@ def hubspot_get_makeoffer_deals(request):
 			'lead_overview_2',
 			'start_date',
 			'closedate'
-
 		]
 		
 		payload = {

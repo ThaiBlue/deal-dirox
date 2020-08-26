@@ -24,16 +24,18 @@
         },
         mounted() {
             const axios = require('axios');
+            const moment = require('moment');
             //Fetch data from server 
+            // moment(item.properties.start_date).format('DD/MM/YYYY')
             axios.get('http://127.0.0.1:8000/hubspot/deals/makeoffer/all').then(response => {
                 response.data.results.forEach(item => {
                     this.tableData.push(
                         {
                             id:item.id,
-                            projectname:item.properties.dealname,
-                            status:'Make Offer',
-                            startdate:item.properties.start_date,
-                            enddate:item.properties.closedate
+                            projectname: item.properties.dealname,
+                            status: 'Make Offer',
+                            startdate: moment(item.properties.start_date).format('DD/MM/YYYY'),
+                            enddate: moment(item.properties.closedate).format('DD/MM/YYYY')
                         }
                     )
                 });

@@ -1,15 +1,16 @@
-# DEAL AT DIROX SERVER
+# DEAL@DIROX 
+## SERVER
 * get google token
 * get hubspot token (in development)
 * fetch data from hubspot (in development)
 
-## Requirement
+### Requirement
 * python 3.8
 * django 
 * authlib
 * requests
 
-## Usage
+### Usage
 * Clone project from git.dirox.net:
 ```
 git clone https://git.dirox.net/phuocnl/deal-dirox.git
@@ -33,9 +34,9 @@ $ python3 manage.py runserver
 * Enter http://127.0.0.1:8000/google/auth to get google access token
 * Enter http://127.0.0.1:8000/hubspot/deals/makeoffer/all to fetch all make offer deals from hubspot (make sure you had updated a new token at line 43 in file views.py in ./deal-dirox/server/django_server/dealatdirox/)
 
-# diroxui
+## UI
 
-## Project setup
+### Install dependencies
 ```
 npm install
 ```
