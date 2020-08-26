@@ -71,7 +71,7 @@ def callback(request, service):
 def hubspot_get_makeoffer_deals(request):
 	# Method verify
 	if request.method == 'GET':
-		HUBSPOT_TOKEN = 'CJHM8ITCLhICAQEY1rSfAyC74cEFKOXsDTIZABsQ8wj_FSxpZPmKBaOzpnsdzjTdkC5p-joaAAoCQQAADIACAAgAAAABAAAAAAAAABjAABNCGQAbEPMIWClP8FmEt8805UvFmKLXX4NkwYM'
+		HUBSPOT_TOKEN = 'CNHExc_CLhICAQEY1rSfAyC74cEFKOXsDTIZABpN8QywsCvCaO55oQFuZ4rj9ckMBUJrIjoaAAoCQQAADIACAAgAAAABAAAAAAAAABjAABNCGQAaTfEMhquV9Dp3MwJw8D0O9rMbKwTWgYU'
 		
 		url = 'https://api.hubapi.com/crm/v3/objects/deals/search'
 		
@@ -80,7 +80,10 @@ def hubspot_get_makeoffer_deals(request):
 			'description',
 			'deal_summary',
 			'lead_overview_1',
-			'lead_overview_2'
+			'lead_overview_2',
+			'start_date',
+			'closedate'
+
 		]
 		
 		payload = {
