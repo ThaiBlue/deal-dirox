@@ -23,7 +23,7 @@ def _login(request):
 	# Method verify
 	if request.method == 'POST':
 		if request.user.is_authenticated:
-			return HttpResponse(content=dumps({'is_authenticated':True}), content_type='application/json')
+			return HttpResponse()
 			
 		# Extract authenticate infomation
 		user_id = request.POST.get('user_id')
@@ -33,32 +33,34 @@ def _login(request):
 		
 		if user is not None:
 			login(request, user)
-			return HttpResponse(content=dumps({'is_authenticated':True}), content_type='application/json')
+			return HttpResponse()
 		
-		return HttpResponse(content=dumps({'is_authenticated':False}), content_type='application/json')
+		return HttpResponse(status=401)
 	
 	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
 
 # User logout	
 def _logout(request):
+	# Verify authenticate statuss
+	if not request.user.is_authenticated:
+		return HttpResponse(status=401)
 		
 	# Method verify
 	if request.method == 'GET':
-		# Verify authenticate statuss
-		if not request.user.is_authenticated:
-			return HttpResponse(dumps({'is_authenticated':False}),  content_type='application/json')
 		
 		# Update login status
 		logout(request)
 		
-		return HttpResponse(dumps({'is_authenticated':False}),  content_type='application/json')
-		
+		return HttpResponse()		
 	
 	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
 
 	
 # Oauth2 session
 def authorize(request, service):
+	if not request.user.is_authenticated:
+		return HttpResponse(status=401)		
+
 	# Validate request
 	if service not in ['google', 'hubspot']:
 		return HttpResponse(content="<h1>Page Not Found<h1/>" , status=404, reason="Page Not Found")
@@ -92,6 +94,9 @@ def callback(request, service):
 
 # Hubspot fetch data session
 def hubspot_get_makeoffer_deals(request):
+	if not request.user.is_authenticated:
+		return HttpResponse(status=401)		
+			
 	# Method verify
 	if request.method == 'GET':
 		HUBSPOT_TOKEN = ''
