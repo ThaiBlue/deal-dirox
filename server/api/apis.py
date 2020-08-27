@@ -8,7 +8,7 @@ import requests
 import logging
 from .auth import authenticate
 
-logging.basicConfig(filename='server/debug/api.log', level=logging.DEBUG)
+# logging.basicConfig(filename='server/debug/api.log', level=logging.DEBUG)
 
 # Initiate Oauth2 session
 oauth = OAuth() 
@@ -72,8 +72,9 @@ def hubspot_get_makeoffer_deals(request):
 	# Method verify
 	if request.method == 'GET':
 		HUBSPOT_TOKEN = 'CNHExc_CLhICAQEY1rSfAyC74cEFKOXsDTIZABpN8QywsCvCaO55oQFuZ4rj9ckMBUJrIjoaAAoCQQAADIACAAgAAAABAAAAAAAAABjAABNCGQAaTfEMhquV9Dp3MwJw8D0O9rMbKwTWgYU'
+		API_KEY = '325cadcb-2526-4d69-befc-e0faa744726a'
 		
-		url = 'https://api.hubapi.com/crm/v3/objects/deals/search'
+		url = 'https://api.hubapi.com/crm/v3/objects/deals/search'+ '/hapikey=' + API_KEY
 		
 		properties = [
 			'dealname',
@@ -99,7 +100,7 @@ def hubspot_get_makeoffer_deals(request):
 				
 		headers = {
 		  'Content-Type': 'application/json',
-		  'Authorization': 'Bearer ' + HUBSPOT_TOKEN
+		#   'Authorization': 'Bearer ' + HUBSPOT_TOKEN
 		}
 		
 		# fetch data
