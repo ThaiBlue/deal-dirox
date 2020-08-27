@@ -38,8 +38,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Setting Oauth2 clients
 AUTHLIB_OAUTH_CLIENTS = {
     'google': {
-	    'client_id': '719320147131-pke60fglsm657ghd5ak304o375qh1iol.apps.googleusercontent.com',
-	    'client_secret': 'i-6rIsOZiZXEsM4_O1v9OzhC',
+	    'client_id': '719320147131-jdoej9826ltsqfd6so1kscncq908f1vp.apps.googleusercontent.com',
+	    'client_secret': 'tsLp82_tB-l9RzYnMe2pl67E',
         'authorize_url': 'https://accounts.google.com/o/oauth2/auth',
         'access_token_url': 'https://oauth2.googleapis.com/token',
         'client_kwargs': {

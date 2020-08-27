@@ -43,11 +43,11 @@ def authorize(request, service):
 	# Method verify
 	if request.method == 'GET':
 		# Instantiate google service  
-		service = oauth.create_client(service)
+		service_ = oauth.create_client(service)
 		# create redirect uri
 		redirect_uri = request.build_absolute_uri('auth/callback')
 		# Lead user to Authentication page
-		return service.authorize_redirect(request, redirect_uri)
+		return service_.authorize_redirect(request, redirect_uri)
 		
 	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
 
@@ -59,11 +59,11 @@ def callback(request, service):
 	# Method verify
 	if request.method == 'GET':
 		# Instantiate google service  
-		service = oauth.create_client(service)
+		service_ = oauth.create_client(service)
 		# Get credential
-		token = service.authorize_access_token(request)
+		token = service_.authorize_access_token(request)
 		
-		return HttpResponse(content=token, content_type='application/json')
+		return HttpResponse(content=dumps(token),  content_type='application/json')
 		
 	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
 
@@ -71,10 +71,11 @@ def callback(request, service):
 def hubspot_get_makeoffer_deals(request):
 	# Method verify
 	if request.method == 'GET':
-		HUBSPOT_TOKEN = 'CNHExc_CLhICAQEY1rSfAyC74cEFKOXsDTIZABpN8QywsCvCaO55oQFuZ4rj9ckMBUJrIjoaAAoCQQAADIACAAgAAAABAAAAAAAAABjAABNCGQAaTfEMhquV9Dp3MwJw8D0O9rMbKwTWgYU'
+		HUBSPOT_TOKEN = ''
+		
 		API_KEY = '325cadcb-2526-4d69-befc-e0faa744726a'
 		
-		url = 'https://api.hubapi.com/crm/v3/objects/deals/search'+ '/hapikey=' + API_KEY
+		url = 'https://api.hubapi.com/crm/v3/objects/deals/search'+ '?hapikey=' + API_KEY
 		
 		properties = [
 			'dealname',
