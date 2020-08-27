@@ -18,9 +18,13 @@ oauth.register('google')
 oauth.register('hubspot')
 
 # User login
-def login(request):
+def _login(request):
+		
 	# Method verify
 	if request.method == 'POST':
+		if request.user.is_authenticated:
+			return HttpResponse(content=dumps({'is_authenticated':True}), content_type='application/json')
+			
 		# Extract authenticate infomation
 		user_id = request.POST.get('user_id')
 		password = request.POST.get('password')
@@ -29,10 +33,29 @@ def login(request):
 		
 		if user is not None:
 			login(request, user)
+			return HttpResponse(content=dumps({'is_authenticated':True}), content_type='application/json')
 		
-		return HttpResponse()
+		return HttpResponse(content=dumps({'is_authenticated':False}), content_type='application/json')
 	
 	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
+
+# User logout	
+def _logout(request):
+		
+	# Method verify
+	if request.method == 'GET':
+		# Verify authenticate statuss
+		if not request.user.is_authenticated:
+			return HttpResponse(dumps({'is_authenticated':False}),  content_type='application/json')
+		
+		# Update login status
+		logout(request)
+		
+		return HttpResponse(dumps({'is_authenticated':False}),  content_type='application/json')
+		
+	
+	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
+
 	
 # Oauth2 session
 def authorize(request, service):
@@ -63,7 +86,7 @@ def callback(request, service):
 		# Get credential
 		token = service_.authorize_access_token(request)
 		
-		return HttpResponse(content=dumps(token),  content_type='application/json')
+		return HttpResponse(content=dumps(token), content_type='application/json')
 		
 	return HttpResponse(content='<h1>Method Not Allowed<h1/>', status=405, reason='Method Not Allowed')
 

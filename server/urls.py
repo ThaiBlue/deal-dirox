@@ -22,5 +22,7 @@ urlpatterns = [
     path('<str:service>/auth', apis.authorize),
     path('<str:service>/auth/callback', apis.callback),
     path('hubspot/deals/makeoffer/all', apis.hubspot_get_makeoffer_deals),
-    path('accounts/user/login', apis.login)
+    path('accounts/user/login', apis._login),
+    path('accounts/user/logout', apis._logout)
+
 ]
