@@ -25,15 +25,10 @@ SECRET_KEY = '@zl(2zb4ke9#@_38$%gf^wgb%z!6ok*2wb$7x$x5_qm0)pa9*c'
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = ['10.84.4.162', '127.0.0.1']
+ALLOWED_HOSTS = ['deal.dirox.dev']
 
 # Security setting
 SECURE_REFERRER_POLICY = 'origin'
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = (
-#     'http//:localhost:8000',
-#     'http://10.84.1.35:8080'
-# )
 
 # Setting Oauth2 clients
 AUTHLIB_OAUTH_CLIENTS = {
@@ -78,7 +73,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

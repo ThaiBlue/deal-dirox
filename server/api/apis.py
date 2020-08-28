@@ -17,6 +17,12 @@ oauth = OAuth()
 oauth.register('google')
 oauth.register('hubspot')
 
+#view entry
+def main_page(request):
+	
+	#Redirect to UI server
+	redirect('https://deal.dirox.dev/main', permanent=True)
+	
 # User login
 def _login(request):
 		
