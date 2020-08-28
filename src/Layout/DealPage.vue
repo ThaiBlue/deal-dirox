@@ -28,33 +28,19 @@ export default {
         Table,
         FilterVue,
         Option
-    },
-    data (){
-        return {
-            color: 'linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%)'
-        }
     }
+
 }
 
 </script>
 
-<style>
-    body {
-        background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
-    }
-</style>
+
 <style scoped>
     
     
     .container{
-        /* height: 1024px; */
         background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
-        /* align-items: center; */
         margin: 0 auto;
-        /* max-width: 1024px; */
-        /* margin-left: auto;
-        margin-right: auto; */
-        /* max-width: 1880px; */
         width: 1440px;
     }
 
@@ -69,10 +55,9 @@ export default {
         height: 112px;  
         display: flex;
         justify-content: space-between;
-        align-items: flex-end;
+        align-items: center;
     }
     .filterimagetable{ /* Class with (Filter and Image) and Table  */
-        /* border: 1px solid black; */
         display: flex;
         width: 1168px;
         height: 892px;

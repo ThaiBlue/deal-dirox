@@ -1,12 +1,18 @@
-import Vue from 'vue'
-import App from './App.vue'
-import ElementUI from 'element-ui';
-import locale from 'element-ui/lib/locale/lang/en';
-import 'element-ui/lib/theme-chalk/index.css';
+import Vue from 'vue';
+import App from './App.vue';
+import router from "./router"
+import uielement from "./uielement"
+import store from "./stores/stores"
+// import axios from 'axios'
+import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false
-Vue.use(ElementUI,{locale})
+Vue.use(Vuelidate)
+// axios.defaults.baseURL = 'http://localhost:8080'
 
 new Vue({
-  render: h => h(App),
+    router,
+    uielement,
+    store,
+    render: h => h(App),
 }).$mount('#app')

@@ -1,21 +1,48 @@
 <template>
   <div class="body">
     <h1 class="login-to-deal-dirox">LOGIN TO DEAL@DIROX</h1>
+    <form action="#" class="form-login" @submit.prevent="login">
         <div class="email-login">
             <label for="email">Email or Username</label>
-            <input type="email" class="email-box" placeholder="Type your Email or Username here">
+            <input type="email" class="email-box" placeholder="Type your Email or Username here" v-model="username">
         </div>
         <div class="password-login">
             <label for="password">Password</label>
-            <input type="password" class="password-box" placeholder="Type your password here">
+            <input type="password" class="password-box" placeholder="Type your password here" v-model.trim="password">
         </div>
-    <button type="submit" class="button">LOGIN</button>
+        <!-- <el-alert
+            title="Email or Password is incorrect"
+            type="error"
+            center
+            show-icon
+            @close="error">
+        </el-alert> -->
+    </form>
+    <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link>
   </div>
 </template>
 
 <script>
+
 export default {
-    name: 'LoginForm'
+    name: 'LoginForm',
+    
+    data: () => (
+        {
+            username: '',
+            password: '',
+            error: false
+        }
+    ) ,
+
+    methods: {
+        login() {
+            this.$store.dispatch('retriveToken', {
+                username: this.username,
+                password: this.password
+            })
+        }
+    }
 }
 </script>
 
@@ -84,6 +111,17 @@ export default {
         box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.5);
         width: 191px;
         height: 53px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .form-login {
+        height: 192px;
+        /* width: 475px; */
+        /* border: 1px solid white; */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .body {
@@ -91,9 +129,8 @@ export default {
         flex-direction: column;
         align-items: center;
         /* border: 1px solid black; */
-        height: 546px;
+        height: 425px;
         justify-content: space-between;
-
     }
 
 </style>

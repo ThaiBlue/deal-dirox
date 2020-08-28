@@ -1,6 +1,7 @@
 <template>
     <el-table class="table"
-        :data = "tableData">
+        :data = "tableData"
+        height ="724">
         <el-table-column
             prop="no"
             label="No."
@@ -270,7 +271,6 @@ export default {
         background-color:#FFFFFF - 72%;
         border-radius: 25px;
         width: 1168px;
-        max-height: 724px;
         overflow: scroll;
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
