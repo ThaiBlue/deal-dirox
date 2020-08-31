@@ -100,8 +100,8 @@ def callback(request, service):
 
 # Hubspot fetch data session
 def hubspot_get_makeoffer_deals(request):
-	if not request.user.is_authenticated:
-		return HttpResponse(status=401)		
+#	if not request.user.is_authenticated:
+#		return HttpResponse(status=401)		
 			
 	# Method verify
 	if request.method == 'GET':

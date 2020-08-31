@@ -27,7 +27,7 @@
             const moment = require('moment');
             //Fetch data from server 
             // moment(item.properties.start_date).format('DD/MM/YYYY')
-            axios.get('http://127.0.0.1:8000/hubspot/deals/makeoffer/all').then(response => {
+            axios.get('https://api.deal.dirox.dev/hubspot/deals/makeoffer/all').then(response => {
                 response.data.results.forEach(item => {
                     this.tableData.push(
                         {

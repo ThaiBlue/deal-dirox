@@ -25,10 +25,13 @@ SECRET_KEY = '@zl(2zb4ke9#@_38$%gf^wgb%z!6ok*2wb$7x$x5_qm0)pa9*c'
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = ['deal.dirox.dev']
+ALLOWED_HOSTS = ['deal.dirox.dev', 'api.deal.dirox.dev']
 
 # Security setting
 SECURE_REFERRER_POLICY = 'origin'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = ['https://deal.dirox.dev']
 
 # Setting Oauth2 clients
 AUTHLIB_OAUTH_CLIENTS = {
