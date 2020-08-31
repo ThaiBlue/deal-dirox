@@ -40,11 +40,12 @@ AUTHLIB_OAUTH_CLIENTS = {
 	    'client_secret': 'i-6rIsOZiZXEsM4_O1v9OzhC',
         'authorize_url': 'https://accounts.google.com/o/oauth2/auth',
         'access_token_url': 'https://oauth2.googleapis.com/token',
+        'authorize_params': {'access_type':'offline'},
         'client_kwargs': {
             'scope': 'https://www.googleapis.com/auth/drive \
                       https://www.googleapis.com/auth/drive.file \
                       https://www.googleapis.com/auth/spreadsheets \
-                      https://www.googleapis.com/auth/presentations'
+                      https://www.googleapis.com/auth/presentations',
         }
     },
     'hubspot': {

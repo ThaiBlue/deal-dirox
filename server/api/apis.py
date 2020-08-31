@@ -8,7 +8,7 @@ import requests
 import logging
 from .auth import authenticate
 
-# logging.basicConfig(filename='server/debug/api.log', level=logging.DEBUG)
+logging.basicConfig(filename='server/debug/api.log', level=logging.DEBUG)
 
 # Initiate Oauth2 session
 oauth = OAuth() 
