@@ -16,12 +16,6 @@ oauth = OAuth()
 # Register service
 oauth.register('google')
 oauth.register('hubspot')
-
-#view entry
-def main_page(request):
-	
-	#Redirect to UI server
-	redirect('https://deal.dirox.dev/main', permanent=True)
 	
 # User login
 def _login(request):
@@ -64,8 +58,8 @@ def _logout(request):
 	
 # Oauth2 session
 def authorize(request, service):
-	if not request.user.is_authenticated:
-		return HttpResponse(status=401)		
+	# if not request.user.is_authenticated:
+	# 	return HttpResponse(status=401)		
 
 	# Validate request
 	if service not in ['google', 'hubspot']:

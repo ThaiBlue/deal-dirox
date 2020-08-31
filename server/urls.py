@@ -18,7 +18,6 @@ from django.urls import path
 from .api import apis
 
 urlpatterns = [
-    path('', apis.main_page),
     path('accounts/admin', admin.site.urls),
     path('<str:service>/auth', apis.authorize),
     path('<str:service>/auth/callback', apis.callback),
