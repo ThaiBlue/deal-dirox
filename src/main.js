@@ -8,7 +8,6 @@ import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false
 Vue.use(Vuelidate)
-// axios.defaults.baseURL = 'http://localhost:8080'
 
 new Vue({
     router,

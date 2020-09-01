@@ -6,7 +6,6 @@ import User from './modules/user'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-    name: 'stores',
     modules: {
         // ui: UIModule,
         user: User

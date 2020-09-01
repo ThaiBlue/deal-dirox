@@ -10,6 +10,7 @@
             <label for="password">Password</label>
             <input type="password" class="password-box" placeholder="Type your password here" v-model.trim="password">
         </div>
+        <!-- ^([a-z]+)[.]([a-z]+)@(dirox[.]net|synexser[.]com) -->
         <!-- <el-alert
             title="Email or Password is incorrect"
             type="error"
@@ -18,15 +19,16 @@
             @close="error">
         </el-alert> -->
     </form>
-    <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link>
+    <!-- <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link> -->
+    <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
   </div>
 </template>
 
 <script>
-
 export default {
     name: 'LoginForm',
-    
+
+
     data: () => (
         {
             username: '',
@@ -36,13 +38,28 @@ export default {
     ) ,
 
     methods: {
-        login() {
-            this.$store.dispatch('retriveToken', {
+        // login() {
+        //     this.$store.dispatch('retriveToken', {
+        //         username: this.username,
+        //         password: this.password
+        //     })
+        // }
+        login () {
+            // console.log(this.$store)
+            this.$store.dispatch("retriveToken",{
                 username: this.username,
                 password: this.password
             })
+                .then(response => {
+                    this.$router.push({name: 'deal'})
+                })
+            // .then(success => {
+            //     this.$router.push("/deal")
+            //     console.log('the fuck is this ?', success)
+            // })
         }
     }
+
 }
 </script>
 
