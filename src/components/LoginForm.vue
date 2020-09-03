@@ -16,11 +16,20 @@
             type="error"
             center
             show-icon
-            @close="error">
+            @close="error"
+            :model=error
+            >
+        </el-alert> -->
+
+        <!-- <el-alert
+            title="success alert"
+            type="success"
+            show-icon>
         </el-alert> -->
     </form>
     <!-- <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link> -->
     <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
+
   </div>
 </template>
 
@@ -38,12 +47,6 @@ export default {
     ) ,
 
     methods: {
-        // login() {
-        //     this.$store.dispatch('retriveToken', {
-        //         username: this.username,
-        //         password: this.password
-        //     })
-        // }
         login () {
             // console.log(this.$store)
             this.$store.dispatch("retriveToken",{
@@ -51,13 +54,19 @@ export default {
                 password: this.password
             })
                 .then(response => {
-                    this.$router.push({name: 'deal'})
+                    console.log('Here ?')
+                    // this.$router.push({name: 'deal'})
                 })
-            // .then(success => {
-            //     this.$router.push("/deal")
-            //     console.log('the fuck is this ?', success)
-            // })
-        }
+
+                .catch(error => {
+                    this.error = true
+                    // console.log(error)
+                    console.log('error here')
+                    // reject(error)
+                })
+        },
+
+        
     }
 
 }

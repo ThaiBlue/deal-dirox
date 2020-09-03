@@ -5,13 +5,17 @@ axios.defaults.baseURL = 'https://api.deal.dirox.dev'
 
 export default{
     state: {
-        token:localStorage.getItem('access_token') || null,
+        // token:localStorage.getItem('access_token') || null,
     },
-    getters: {},
+    getters: {
+        // loggedIn(state) {
+        //     return state.token !== null
+        // }
+    },
     mutations: {
-        retriveToken(state, token) {
-            state.token = token
-        }
+        // retriveToken(state, token) {
+        //     state.token = token
+        // }
     },
     actions: {
         // user_id: test
@@ -23,9 +27,10 @@ export default{
                 form.append('password', credentials.password);
                 axios.post('/accounts/user/login', form)
                     .then(response => {
-                        const token = response.data.access_token
-                        localStorage.setItem('access_token', token)
-                        context.commit('retriveToken', token)
+                        // const token = response.data.access_token
+                        // localStorage.setItem('access_token', token)
+                        // context.commit('retriveToken', token)
+                        console.log(response)
                         console.log('Here ?')
                         resolve(response)
                     })

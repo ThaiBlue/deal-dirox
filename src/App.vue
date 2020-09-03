@@ -2,7 +2,8 @@
   <div class="container">
       <router-link to="/"></router-link>
       <router-link to="/deal"></router-link>
-    <router-view />
+      <!-- <router-link to="/logout"></router-link> -->
+    <router-view></router-view>
   </div> 
 </template>
 
@@ -12,6 +13,11 @@ export default {
     components: {
     
     },
+    computed: {
+        // loggedIn() {
+        //     return this.$store.getters.loggedIn
+        // }
+    }
 }
 
 
