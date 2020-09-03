@@ -15,14 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .api import apis
+from .REST_API.APIs import *
 
 urlpatterns = [
     path('accounts/admin', admin.site.urls),
-    path('<str:service>/auth', apis.authorize),
-    path('<str:service>/auth/callback', apis.callback),
-    path('hubspot/deals/makeoffer/all', apis.hubspot_get_makeoffer_deals),
-    path('accounts/user/login', apis._login),
-    path('accounts/user/logout', apis._logout)
-
+    path('accounts/<str:service>/auth', OAuth2.authorize),
+    path('accounts/<str:service>/auth/callback', OAuth2.callback),
+    path('accounts/user/login', User._login),
+    path('accounts/user/logout', User._logout),
+    path('accounts/user/profile', User.profile),
+    path('google/services/token', GoogleService.retrieve_access_token),
+    path('hubspot/deals/makeoffer/all', HubspotService.get_makeoffer_deals),
+    path('', test)
 ]

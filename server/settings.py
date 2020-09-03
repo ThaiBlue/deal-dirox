@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -23,9 +22,9 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = '@zl(2zb4ke9#@_38$%gf^wgb%z!6ok*2wb$7x$x5_qm0)pa9*c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
+DEBUG = True
 
-ALLOWED_HOSTS = ['deal.dirox.dev', 'api.deal.dirox.dev']
+ALLOWED_HOSTS = ['deal.dirox.dev', 'api.deal.dirox.dev', '127.0.0.1']
 
 # Security setting
 SECURE_REFERRER_POLICY = 'origin'
@@ -38,7 +37,7 @@ AUTHLIB_OAUTH_CLIENTS = {
     'google': {
 	    'client_id': '719320147131-pke60fglsm657ghd5ak304o375qh1iol.apps.googleusercontent.com',
 	    'client_secret': 'i-6rIsOZiZXEsM4_O1v9OzhC',
-        'authorize_url': 'https://accounts.google.com/o/oauth2/auth',
+        'authorize_url': 'https://accounts.google.com/o/oauth2/v2/auth',
         'access_token_url': 'https://oauth2.googleapis.com/token',
         'authorize_params': {'access_type':'offline'},
         'client_kwargs': {
@@ -69,7 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'server.api'
+    'server.REST_API'
 ]
 
 MIDDLEWARE = [
@@ -77,7 +76,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

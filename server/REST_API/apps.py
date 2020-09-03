@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class AuthServerConfig(AppConfig):
-    name = 'api'
+    name = 'REST_API'
