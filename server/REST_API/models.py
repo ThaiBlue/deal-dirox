@@ -40,8 +40,8 @@ class Credential(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     access_token = models.TextField()
     refresh_token = models.TextField()
-    expiration_in = models.PositiveIntegerField()
-    expiration_at = models.DateTimeField()
+    expires_in = models.PositiveIntegerField()
+    expires_at = models.DateTimeField()
     creation_time = models.DateTimeField(auto_now=True)
     update_time = models.DateTimeField(auto_now=True)
     
@@ -65,14 +65,14 @@ class Credential(models.Model):
         
         if credential is None:
         	cls.objects.create(user=user, refresh_token=token['refresh_token'], 
-                access_token=token['access_token'], expiration_in=int(token['expiration_in']), 
-                expiration_at=datetime.utcnow()+timedelta(seconds=int(token['expiration_in']-FETCHING_TIME)))
+                access_token=token['access_token'], expires_in=int(token['expires_in']), 
+                expires_at=datetime.utcnow()+timedelta(seconds=int(token['expires_in']-FETCHING_TIME)))
                 
         else: # update if credential exists
             credential.access_token = token['access_token']
             credential.refresh_token = token['refresh_token']
-            credential.expiration_in = int(token['expiration_in'])
-            credential.expiration_at = datetime.utcnow()+timedelta(seconds=int(token['expiration_in']-FETCHING_TIME))
+            credential.expires_in = int(token['expires_in'])
+            credential.expires_at = datetime.utcnow()+timedelta(seconds=int(token['expires_in']-FETCHING_TIME))
             credential.update_time = datetime.utcnow()
             credential.save()
           
@@ -81,8 +81,8 @@ class Credential(models.Model):
         return {
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,
-            'expiration_in': self.expiration_in,
-            'expiration_at': self.expiration_at.utcoffset()
+            'expires_in': self.expires_in,
+            'expires_at': self.expires_at.utcoffset()
         }
         
 # Google credential
