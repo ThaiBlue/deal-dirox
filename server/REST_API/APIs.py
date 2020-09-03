@@ -131,7 +131,7 @@ class GoogleService:
 			token = GoogleToken.fetch_credential(user=request.user) # get creadential from database
 					
 			if token is not None:
-				if token.expires_at <= datetime.utcoffset(): #if token expired
+				if token.expires_at <= datetime.now(): #if token expired
 					token = GoogleAPI.fetch_access_token(refresh_token=token.refresh_token, service=oauth.create_client('google'))
 					GoogleToken.register_credential(token=token, user=request.user)
 				else:
@@ -156,12 +156,12 @@ class HubspotService:
 			token = HubspotToken.fetch_credential(user=request.user)
 					
 			if token is not None:
-				if token.expires_at <= datetime.utcoffset(): #if token expired
+				if token.expires_at <= datetime.now(): #if token expired
 					response = HubspotAPI.fetch_access_token(request=request, refresh_token=token.refresh_token, service=oauth.create_client('hubspot'))
 					if status_code != 200:
 						return response
 					token = HubspotToken.fetch_credential(user=request.user)
-					if token.expires_at <= datetime.utcoffset():
+					if token.expires_at <= datetime.now():
 						return HTTP_408
 											
 				deals = HubspotAPI.fetch_make_offer_deals(access_token=token.to_json()['access_token'])

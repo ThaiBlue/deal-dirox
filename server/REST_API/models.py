@@ -67,14 +67,14 @@ class Credential(models.Model):
         if credential is None:
         	cls.objects.create(user=user, refresh_token=token['refresh_token'], 
                 access_token=token['access_token'], expires_in=int(token['expires_in']), 
-                expires_at=datetime.utcnow()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
+                expires_at=datetime.now()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
                 
         else: # update if credential exists
             credential.access_token = token['access_token']
             credential.refresh_token = token['refresh_token']
             credential.expires_in = int(token['expires_in'])
-            credential.expires_at = datetime.utcnow()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME)
-            credential.update_time = datetime.utcnow()
+            credential.expires_at = datetime.now()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME)
+            credential.update_time = datetime.now()
             credential.save()
           
     def to_json(self):
@@ -83,7 +83,7 @@ class Credential(models.Model):
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,
             'expires_in': self.expires_in,
-            'expires_at': self.expires_at.utcoffset()
+            'expires_at': self.expires_at.isoformat()
         }
         
 # Google credential
