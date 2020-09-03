@@ -55,7 +55,7 @@ export default {
             })
                 .then(response => {
                     console.log('Here ?')
-                    this.$router.push({name: 'deal'})
+                    // this.$router.push({name: 'deal'})
                 })
 
                 .catch(error => {
