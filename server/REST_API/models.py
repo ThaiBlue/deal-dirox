@@ -46,14 +46,15 @@ class Credential(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     
     @classmethod
-    def fetch_credential(cls, user):
+    def fetch_credential(cls, user=None):
+        return cls
         try: # check if user had registered a google account yet
         	cls.objects.get(user=user)
         except: # if no credential exists
             return None
         else: # return the credential
             return cls.objects.get(user=user)
-            
+    
     @classmethod
     def register_credential(cls, token, user):
         '''Handle create or update token in database
@@ -66,13 +67,13 @@ class Credential(models.Model):
         if credential is None:
         	cls.objects.create(user=user, refresh_token=token['refresh_token'], 
                 access_token=token['access_token'], expires_in=int(token['expires_in']), 
-                expires_at=datetime.utcnow()+timedelta(seconds=int(token['expires_in']-FETCHING_TIME)))
+                expires_at=datetime.utcnow()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
                 
         else: # update if credential exists
             credential.access_token = token['access_token']
             credential.refresh_token = token['refresh_token']
             credential.expires_in = int(token['expires_in'])
-            credential.expires_at = datetime.utcnow()+timedelta(seconds=int(token['expires_in']-FETCHING_TIME))
+            credential.expires_at = datetime.utcnow()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME)
             credential.update_time = datetime.utcnow()
             credential.save()
           
