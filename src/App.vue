@@ -2,7 +2,6 @@
   <div class="container">
       <router-link to="/"></router-link>
       <router-link to="/deal"></router-link>
-      <!-- <router-link to="/logout"></router-link> -->
     <router-view></router-view>
   </div> 
 </template>

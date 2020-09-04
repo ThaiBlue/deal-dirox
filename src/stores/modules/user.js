@@ -3,7 +3,7 @@ import FormData from 'form-data'
 // import { resolve, reject } from 'core-js/fn/promise'
 axios.defaults.baseURL = 'https://api.deal.dirox.dev'
 
-export default{
+const store = [{
     state: {
         // token:localStorage.getItem('access_token') || null,
     },
@@ -43,7 +43,9 @@ export default{
             })
         }
     }
-}
+}]
+
+export default store
 
 
 
