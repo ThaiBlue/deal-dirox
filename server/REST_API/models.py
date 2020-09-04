@@ -1,7 +1,8 @@
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
-from django.db import models
 from datetime import datetime, timedelta
+from tzlocal import get_localzone
+from django.db import models
 
 from .constants import FETCHING_TIME
 
@@ -47,7 +48,15 @@ class Credential(models.Model):
     
     @classmethod
     def fetch_credential(cls, user=None):
-        return cls
+        '''Fetch credential of the user from database
+        
+            Arguments:
+                - user {User} - django models Object
+           
+            Return:
+                - None if no credential found
+                - GoogleToken object if found
+        '''
         try: # check if user had registered a google account yet
         	cls.objects.get(user=user)
         except: # if no credential exists
@@ -58,27 +67,41 @@ class Credential(models.Model):
     @classmethod
     def register_credential(cls, token, user):
         '''Handle create or update token in database
-           - token {dict} -- a Credential instance
-           - user {User} -- a User instance
+        
+            Arguments:
+                - token {dict} -- a Credential instance
+                - user {User} -- a User instance
         '''
+        # validate input 
+        if not isinstance(token, dict):
+            raise TypeError('token MUST be a dictionary')
+        if not isinstance(user, User):
+            raise TypeError('user MUST be User instance')
+        
         # check for credential in database
         credential = cls.fetch_credential(user=user) 
         
         if credential is None:
         	cls.objects.create(user=user, refresh_token=token['refresh_token'], 
                 access_token=token['access_token'], expires_in=int(token['expires_in']), 
-                expires_at=datetime.now()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
+                expires_at=datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
                 
         else: # update if credential exists
             credential.access_token = token['access_token']
-            credential.refresh_token = token['refresh_token']
+            try:
+                token['refresh_token']
+            except:
+                pass
+            else:
+                credential.refresh_token = token['refresh_token']
             credential.expires_in = int(token['expires_in'])
-            credential.expires_at = datetime.now()+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME)
-            credential.update_time = datetime.now()
+            credential.expires_at = datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME)
+            credential.update_time = datetime.now(get_localzone())
             credential.save()
           
     def to_json(self):
-        '''Return token info in JSON format'''
+        '''Return token info in JSON format
+        '''
         return {
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,

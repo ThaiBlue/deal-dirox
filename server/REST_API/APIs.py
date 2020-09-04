@@ -4,13 +4,14 @@ from django.contrib.auth import login, logout
 from django.http import HttpResponse
 
 from authlib.integrations.django_client import OAuth
-from json import dumps
+from tzlocal import get_localzone
 from datetime import datetime
+from json import dumps, loads
 import logging
 
 from .models import GoogleToken, HubspotToken, Account
-from .constants import HTTP_200, HTTP_401, HTTP_404, HTTP_405
-from .requests import GoogleAPI, HubSpotAPI
+from .constants import HTTP_200, HTTP_401, HTTP_404, HTTP_405, HTTP_408
+from .requests import GoogleAPI, HubspotAPI
 
 logging.basicConfig(filename='API_server.log', level=logging.DEBUG)
 
@@ -26,10 +27,7 @@ class User:
 	def _login(cls, request):
 		'''Handle backend user login process'''
 		
-		if request.method == 'POST':
-			if request.user.is_authenticated: 
-				return HTTP_200
-			
+		if request.method == 'POST':			
 			# Extract authenticate infomation
 			user_id = request.POST.get('user_id')
 			password = request.POST.get('password')
@@ -55,13 +53,6 @@ class User:
 			logout(request) # End session
 			return HTTP_200		
 		
-		return HTTP_405
-		
-	@classmethod
-	def profile(cls, request):
-		'''Provide user's account infomation'''
-		pass
-	
 		return HTTP_405
 		
 class OAuth2:
@@ -131,13 +122,16 @@ class GoogleService:
 			token = GoogleToken.fetch_credential(user=request.user) # get creadential from database
 					
 			if token is not None:
-				if token.expires_at <= datetime.now(): #if token expired
+				if token.expires_at <= datetime.now(get_localzone()): #if token expired
 					token = GoogleAPI.fetch_access_token(refresh_token=token.refresh_token, service=oauth.create_client('google'))
+					if token is None: # raise temporary network error if fail
+						HTTP_408
 					GoogleToken.register_credential(token=token, user=request.user)
 				else:
-					token = token.to_json()
+					token = token.to_json() # GoogleToken to dictionary
+					token.pop('refresh_token') # remove refresh_token attribute
 					
-				return HttpResponse(content=dumps(token.pop('refresh_token')), content_type='application/json')
+				return HttpResponse(content=dumps(token), content_type='application/json')
 		
 			return HTTP_404
 			
@@ -156,15 +150,16 @@ class HubspotService:
 			token = HubspotToken.fetch_credential(user=request.user)
 					
 			if token is not None:
-				if token.expires_at <= datetime.now(): #if token expired
-					response = HubspotAPI.fetch_access_token(request=request, refresh_token=token.refresh_token, service=oauth.create_client('hubspot'))
-					if status_code != 200:
-						return response
-					token = HubspotToken.fetch_credential(user=request.user)
-					if token.expires_at <= datetime.now():
+				if token.expires_at <= datetime.now(get_localzone()): #if token expired
+					response = HubspotAPI.fetch_access_token(_request=request, refresh_token=token.refresh_token, service=oauth.create_client('hubspot'))
+					if response.status_code != 200:
 						return HTTP_408
+					token = loads(response.content.decode('UTF-8'))
+					HubspotToken.register_credential(user=request.user, token=token)
+				else:
+					token = token.to_json()
 											
-				deals = HubspotAPI.fetch_make_offer_deals(access_token=token.to_json()['access_token'])
+				deals = HubspotAPI.fetch_make_offer_deals(access_token=token['access_token'])
 				
 				return HttpResponse(content=dumps(deals), content_type='application/json')
 				

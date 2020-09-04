@@ -1,5 +1,5 @@
 from requests import request
-from json import loads
+from json import loads, dumps
 
 from .constants import MAKE_OFFER
 
@@ -10,6 +10,8 @@ class GoogleAPI:
 			Handle create or update token in database
 			- token {str} -- a Credential instance
 			- service {DjangoRemoteApp} -- a DjangoRemoteApp instance generate from Authlib
+			
+			
 		'''
 		url = 'https://oauth2.googleapis.com/token'
 		
@@ -25,11 +27,16 @@ class GoogleAPI:
 		}
 		
 		# fetch data
-		return loads(request('POST', url=url, headers=headers, data=payload).content.decode('UTF-8'))
+		response = request('POST', url=url, headers=headers, data=payload)
+		
+		if response.status_code == 200:
+			return loads(response.content.decode('UTF-8'))
+		else:
+			return None
 
-class HubSpotAPI:
+class HubspotAPI:
 	@classmethod
-	def fetch_access_token(cls, request, refresh_token, service):
+	def fetch_access_token(cls, _request, refresh_token, service):
 		'''
 			Handle create or update token in database
 			- token {str} -- a Credential instance
@@ -40,7 +47,7 @@ class HubSpotAPI:
 		payload = {
 				'client_id': service.client_id,
 				'client_secret': service.client_secret,
-				'redirect_uri': request.scheme + '://' + request.get_host() + '/accounts/hubspot/auth/callback',
+				'redirect_uri': _request.scheme + '://' + _request.get_host() + '/accounts/hubspot/auth/callback',
 				'refresh_token': refresh_token,
 				'grant_type': 'refresh_token'
 		}

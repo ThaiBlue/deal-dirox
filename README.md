@@ -1,14 +1,14 @@
 # DEAL@DIROX 
 ## SERVER
+* Admin page
+* Login
+* Logout
+* Register google and hubspot token
 * get google token
-* get hubspot token (in development)
-* fetch data from hubspot (in development)
-
+* fetch data from hubspot
 ### Requirement
 * python 3.8
 * django 
-* authlib
-* requests
 
 ### Usage
 * Clone project from git.dirox.net:
@@ -25,15 +25,55 @@ $ git checkout Server
 $ pipenv install
 $ pipenv shell --three
 ```
-* Run server:
+* Setting up server:
 ```
 $ cd server
+$ python3 manage.py makemigrations
+$ python3 manage.py migrate
+```
+* Create superuser
+```
+$ python3 manage.py createsuperuser
+```
+* Run server:
+```
 $ python3 manage.py runserver
 ```
-* Open browser
-* Enter http://127.0.0.1:8000/google/auth to get google access token
-* Enter http://127.0.0.1:8000/hubspot/deals/makeoffer/all to fetch all make offer deals from hubspot (make sure you had updated a new token at line 43 in file views.py in ./deal-dirox/server/django_server/dealatdirox/)
+* Open web browser and go to admin page to manage server: 
+http://127.0.0.1:8000/accounts/user/admin
+* Send http request to server to call service
 
+### API document
+#### 1. Login
+```
+POST /accounts/user/login HTTP/1.1
+Content-Type: multipart/form-data
+
+user_id: username or email
+password: password
+```
+#### 2. Logout (login require)
+```
+GET /accounts/user/logout HTTP/1.1
+Cookie: sessionid=LOGIN_SESSION_ID
+```
+#### 3. Register google and hubspot token (login require)
+```
+GET /accounts/google/auth HTTP/1.1
+Cookie: sessionid=LOGIN_SESSION_ID
+GET /accounts/hubspot/auth HTTP/1.1
+Cookie: sessionid=LOGIN_SESSION_ID
+```
+#### 4. Get google token (login require)
+```
+GET /google/services/token HTTP/1.1
+Cookie: sessionid=LOGIN_SESSION_ID
+```
+#### 5. Fetch make offer deals (login require)
+```
+GET /hubspot/deals/makeoffer/all HTTP/1.1
+Cookie: sessionid=LOGIN_SESSION_ID
+```
 ## UI
 
 ### Install dependencies
