@@ -51,7 +51,7 @@ class User:
 	def _logout(cls, request):
 		'''Handle backend user logout process'''
 		if not request.user.is_authenticated: # Verify authenticate status
-			return HTTP_401
+			return HTTP_400_LOGIN_REQUIRE
 			
 		if request.method == 'GET':
 			logout(request) # End session
@@ -69,7 +69,7 @@ class OAuth2:
 	def authorize(cls, request, service):
 		'''Handle 3rd service OAuth2.0 authentication'''
 		if not request.user.is_authenticated: # Authenication check
-			return HTTP_401		
+			return HTTP_400_LOGIN_REQUIRE		
 
 		# Validate request
 		if service not in ['google', 'hubspot']:
@@ -94,7 +94,7 @@ class OAuth2:
 		if request.method == 'GET':
 			# Authenication check
 			if not request.user.is_authenticated:
-				return HTTP_401		
+				return HTTP_400_LOGIN_REQUIRE		
 				
 			# Instantiate google service  
 			service_ = oauth.create_client(service)
@@ -121,7 +121,7 @@ class GoogleService:
 		'''Return google access token from database'''
 		if request.method == 'GET':
 			if not request.user.is_authenticated: # Authenication check
-				return HTTP_401
+				return HTTP_400_LOGIN_REQUIRE
 			
 			token = GoogleToken.fetch_credential(user=request.user) # get creadential from database
 					
@@ -151,7 +151,7 @@ class HubspotService:
 				
 		if request.method == 'GET':			
 			if not request.user.is_authenticated: # Authentication check
-				return HTTP_401
+				return HTTP_400_LOGIN_REQUIRE
 			
 			# get creadential from database
 			token = HubspotToken.fetch_credential(user=request.user)
