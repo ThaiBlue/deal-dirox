@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import GoogleToken, HubspotToken
+from .models import GoogleToken, HubspotToken, Account
 
 # Register your models here.
 admin.site.register(GoogleToken)

@@ -10,8 +10,6 @@ class GoogleAPI:
 			Handle create or update token in database
 			- token {str} -- a Credential instance
 			- service {DjangoRemoteApp} -- a DjangoRemoteApp instance generate from Authlib
-			
-			
 		'''
 		url = 'https://oauth2.googleapis.com/token'
 		
@@ -27,12 +25,7 @@ class GoogleAPI:
 		}
 		
 		# fetch data
-		response = request('POST', url=url, headers=headers, data=payload)
-		
-		if response.status_code == 200:
-			return loads(response.content.decode('UTF-8'))
-		else:
-			return None
+		return request('POST', url=url, headers=headers, data=payload)
 
 class HubspotAPI:
 	@classmethod

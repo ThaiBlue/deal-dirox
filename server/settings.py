@@ -29,8 +29,8 @@ ALLOWED_HOSTS = ['deal.dirox.dev', 'api.deal.dirox.dev', '127.0.0.1']
 # Security setting
 SECURE_REFERRER_POLICY = 'origin'
 SECURE_CONTENT_TYPE_NOSNIFF = True
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ['https://deal.dirox.dev']
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = ['https://deal.dirox.dev']
 
 # Setting Oauth2 clients
 AUTHLIB_OAUTH_CLIENTS = {

@@ -6,7 +6,7 @@ from django.db import models
 
 from .constants import FETCHING_TIME
 
-class Account(User):
+class Account:
     @classmethod
     def authenticate(cls, user_id, password):
     	"""
@@ -35,6 +35,33 @@ class Account(User):
     		return user
     	
     	return None
+    
+    @classmethod
+    def generate_profile(cls, user):
+        '''Return user's profile in JSON format'''
+        profile = {
+        	'status': 'online',
+        	'username': user.username,
+        	'service': {
+        		'google': {
+        			'is_available': True
+        		},
+        		'hubspot': {
+        			'is_available': True
+        		}
+        			
+        	}
+        }
+
+        token = GoogleToken.fetch_credential(user=user)
+        if token is None:
+        	profile['service']['google']['is_available'] = False
+        	
+        token = HubspotToken.fetch_credential(user=user)
+        if token is None:
+        	profile['service']['huspot']['is_available'] = False
+        
+        return profile
 
 # OAuth2 Credential model
 class Credential(models.Model):
@@ -87,13 +114,9 @@ class Credential(models.Model):
                 expires_at=datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
                 
         else: # update if credential exists
-            credential.access_token = token['access_token']
-            try:
-                token['refresh_token']
-            except:
-                pass
-            else:
+            if 'refresh_token' in list(token.keys()):
                 credential.refresh_token = token['refresh_token']
+            credential.access_token = token['access_token']
             credential.expires_in = int(token['expires_in'])
             credential.expires_at = datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME)
             credential.update_time = datetime.now(get_localzone())
