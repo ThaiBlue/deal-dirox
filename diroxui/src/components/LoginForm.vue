@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <h1 class="login-to-deal-dirox">LOGIN TO DEAL@DIROX</h1>
+    <h1 class="login-to-deal-dirox">LOGIN</h1>
     <form action="#" class="form-login" @submit.prevent="login">
         <div class="email-login">
             <label for="email">Email or Username</label>
@@ -61,7 +61,7 @@ export default {
 
                 .catch(error => {
                     this.error = true
-                    // console.log(error)
+                    console.log(error)
                     console.log('error here')
                     // reject(error)
                 })
@@ -158,6 +158,7 @@ export default {
         /* border: 1px solid black; */
         height: 425px;
         justify-content: space-between;
+        /* border: 1px solid black */
     }
 
 </style>

@@ -5,7 +5,7 @@
                 <div class="filterimagetable">
                     <div class="filterimage">
                         <FilterVue />
-                        <img src="../assets/logo-dirox.png" alt="logo-dirox" width="119" height="112">
+                        <img src="../assets/logo-with-shadow.png" alt="logo-dirox" width="85" height="161">
                     </div>
                     <Table />
                 </div>
@@ -44,9 +44,11 @@ export default {
         width: 1440px;
     }
 
+
     img {
         float: right;
         margin-right: 32px;
+        margin-top: 50px;
     }
 
 
@@ -57,6 +59,8 @@ export default {
         justify-content: space-between;
         align-items: center;
     }
+
+
     .filterimagetable{ /* Class with (Filter and Image) and Table  */
         display: flex;
         width: 1168px;
@@ -65,6 +69,7 @@ export default {
         justify-content: space-between;
     }
 
+
     .filtertableimageoption{ /* Class with (Filter and Image Table) and Option  */
         height: 962px;
         width: 1168px;
@@ -72,6 +77,7 @@ export default {
         flex-direction: column;
         justify-content: space-between;
     }
+
 
     .bar{
         width: 1428px;
