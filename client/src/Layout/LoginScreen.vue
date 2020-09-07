@@ -1,9 +1,7 @@
 <template>
     <div class="container">
-        <div class="form-logo">
-            <img class="logo-dirox-new-white" src="../assets/img/logo-dirox.png" >
-            <LoginForm />
-        </div>
+        <!-- <img class="logo-dirox-new-white" src="../assets/img/logo-dirox.png" > -->
+        <LoginForm />
     </div>
 </template>
 
@@ -32,16 +30,6 @@ export default {
 
     }
 
-    .form-logo{
-        display: flex;
-        width: 1100px;
-        justify-content: space-between;
-        /* justify-content: cen; */
-        /* border: 1px solid white;
-        width: 960px;
-        display: flex;
-        justify-content: space-between; */
-    }
 
 
 </style>
