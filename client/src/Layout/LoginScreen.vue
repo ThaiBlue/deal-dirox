@@ -19,14 +19,12 @@ export default {
     .container{
         height: 1024px;
         background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
-        /* width: 1439px; */
 
     }
 
     .logo-dirox-new-white {
         width: 203px;
         height: 152px;
-        /* border: 1px solid black */
 
     }
 
