@@ -19,27 +19,8 @@
         name: 'Table',
         data() {
             return {
-                tableData: []
+                tableData: this.$store.deals
             }
-        },
-        mounted() {
-            const axios = require('axios');
-            const moment = require('moment');
-            //Fetch data from server 
-            // moment(item.properties.start_date).format('DD/MM/YYYY')
-            axios.get('https://api.deal.dirox.dev/hubspot/deals/makeoffer/all').then(response => {
-                response.data.results.forEach(item => {
-                    this.tableData.push(
-                        {
-                            id:item.id,
-                            projectname: item.properties.dealname,
-                            status: 'Make Offer',
-                            startdate: moment(item.properties.start_date).format('DD/MM/YYYY'),
-                            enddate: moment(item.properties.closedate).format('DD/MM/YYYY')
-                        }
-                    )
-                });
-            })
         },
     }
 </script>

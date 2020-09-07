@@ -30,8 +30,10 @@ const store = [{
                         // const token = response.data.access_token
                         // localStorage.setItem('access_token', token)
                         // context.commit('retriveToken', token)
+                       
                         console.log(response)
                         console.log('Here ?')
+                        
                         resolve(response)
                     })
 
@@ -46,21 +48,6 @@ const store = [{
 }]
 
 export default store
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // eslint-disable-next-line no-unused-vars
 // LOGIN: ({commit}, payload) => {

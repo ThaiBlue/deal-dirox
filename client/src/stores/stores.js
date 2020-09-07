@@ -6,11 +6,13 @@ import FormData from 'form-data'
 
 Vue.use(Vuex)
 axios.defaults.baseURL = 'https://api.deal.dirox.dev'
-
+axios.defaults.withCredentials = true
 
 export const store = new Vuex.Store({
     state: {
         // token:localStorage.getItem('access_token') || null,
+        profile: {},
+        deals: []
     },
     getters: {
         // loggedIn(state) {
@@ -25,7 +27,7 @@ export const store = new Vuex.Store({
     actions: {
         // user_id: test
         // password: w7crD9pqCM8
-        retriveToken(context, credentials) {
+        authenticate(context, credentials) {
             return new Promise((resolve, reject) => {
                 const form = new FormData();
                 form.append('user_id', credentials.username);
@@ -35,8 +37,10 @@ export const store = new Vuex.Store({
                         // const token = response.data.access_token
                         // localStorage.setItem('access_token', token)
                         // context.commit('retriveToken', token)
-                        console.log(response)
-                        console.log('Here ?')
+
+                        //parse user info from response
+                        this.state.profile = response.data
+                        console.log(response.config)
                         resolve(response)
                     })
 
@@ -46,7 +50,27 @@ export const store = new Vuex.Store({
                         reject(error)
                     })
             })
+        },
+        
+        fetchDeals(context) {
+            return new Promise((resolve, reject) => {
+                const moment = require('moment');
+                //Fetch data from server 
+                // moment(item.properties.start_date).format('DD/MM/YYYY')
+                axios.get('/hubspot/deals/makeoffer/all', { withCredentials: true }).then(response => {
+                    response.data.results.forEach(item => {
+                        this.state.deals.push({
+                            id: item.id,
+                            projectname: item.properties.dealname,
+                            status: 'Make Offer',
+                            startdate: moment(item.properties.start_date).format('DD/MM/YYYY'),
+                            enddate: moment(item.properties.closedate).format('DD/MM/YYYY')
+                        })
+                    });
+                })
+            })
         }
+
     }
 })
 
