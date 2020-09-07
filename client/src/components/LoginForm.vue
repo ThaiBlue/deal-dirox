@@ -51,13 +51,20 @@ export default {
     methods: {
         login () {
             // console.log(this.$store)
-            this.$store.dispatch("retriveToken",{
+            this.$store.dispatch("authenticate",{
                 username: this.username,
                 password: this.password
             })
                 .then(response => {
-                    console.log('Here ?')
                     // this.$router.push({name: 'deal'})
+                    
+                    //fetch deals after log in success
+                    this.$store.dispatch('fetchDeals').then(
+                        response => {
+                            console.log('success!')
+                        }
+                    )
+                    
                     this.$router.push('/deal')
                 })
 
@@ -65,7 +72,6 @@ export default {
                     this.error = true
                     console.log(error)
                     console.log('error here')
-                    // reject(error)
                 })
         },
 
