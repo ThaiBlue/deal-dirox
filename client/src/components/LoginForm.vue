@@ -1,35 +1,37 @@
 <template>
-  <div class="body">
-    <h1 class="login-to-deal-dirox">LOGIN</h1>
-    <form action="#" class="form-login" @submit.prevent="login">
-        <div class="email-login">
-            <label for="email">Email or Username</label>
-            <input type="email" class="email-box" placeholder="Type your Email or Username here" v-model="username">
-        </div>
-        <div class="password-login">
-            <label for="password">Password</label>
-            <input type="password" class="password-box" placeholder="Type your password here" v-model.trim="password">
-        </div>
-        <!-- ^([a-z]+)[.]([a-z]+)@(dirox[.]net|synexser[.]com) -->
-        <!-- <el-alert
-            title="Email or Password is incorrect"
-            type="error"
-            center
-            show-icon
-            @close="error"
-            :model=error
-            >
-        </el-alert> -->
+  <div class="logo-body-login">
+    <img class="main-logo" src="../assets/img/logo-main.png" alt="logo-main" width="202">
+    <div class="body-login">
+        <h1 class="login-to-deal-dirox">LOGIN</h1>
+        <form action="#" class="form-login" @submit.prevent="login">
+            <div class="email-login">
+                <label for="email">Email or Username</label>
+                <input type="email" class="email-box" placeholder="Type your Email or Username here" v-model="username">
+            </div>
+            <div class="password-login">
+                <label for="password">Password</label>
+                <input type="password" class="password-box" placeholder="Type your password here" v-model.trim="password">
+            </div>
+            <!-- ^([a-z]+)[.]([a-z]+)@(dirox[.]net|synexser[.]com) -->
+            <!-- <el-alert
+                title="Email or Password is incorrect"
+                type="error"
+                center
+                show-icon
+                @close="error"
+                :model=error
+                >
+            </el-alert> -->
 
-        <!-- <el-alert
-            title="success alert"
-            type="success"
-            show-icon>
-        </el-alert> -->
-    </form>
-    <!-- <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link> -->
-    <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
-
+            <!-- <el-alert
+                title="success alert"
+                type="success"
+                show-icon>
+            </el-alert> -->
+        </form>
+        <!-- <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link> -->
+        <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
+    </div>
   </div>
 </template>
 
@@ -144,21 +146,31 @@ export default {
 
     .form-login {
         height: 192px;
-        /* width: 475px; */
-        /* border: 1px solid white; */
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
 
-    .body {
+    .body-login {
+        /* border: 1px solid black; */
         display: flex;
         flex-direction: column;
         align-items: center;
-        /* border: 1px solid black; */
-        height: 425px;
+        height: 400px;
+        /* width: 500px; */
+        align-items: center;
         justify-content: space-between;
-        /* border: 1px solid black */
     }
+
+    .logo-body-login {
+        /* border: 1px solid white; */
+        height: 710px;
+        /* width: 500px; */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
 
 </style>

@@ -1,10 +1,9 @@
 <template>
     <div class="container">
-        <div class="logo">
+        <div class="form-logo">
             <img class="logo-dirox-new-white" src="../assets/img/logo-dirox.png" >
-            <img class="main-logo" src="../assets/img/logo-main.png" alt="logo-main" width="202">
+            <LoginForm />
         </div>
-        <LoginForm />
     </div>
 </template>
 
@@ -22,23 +21,27 @@ export default {
     .container{
         height: 1024px;
         background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
+        /* width: 1439px; */
 
     }
-    .logo {
-        /* border: 1px solid white; */
-        margin-top: 56px;
-        width: 680px;
-        display: flex;
-        justify-content: space-between;
-    }
+
     .logo-dirox-new-white {
         width: 203px;
         height: 152px;
-        /* margin-left: 25px;
-        margin-top: 29px */
+        /* border: 1px solid black */
+
     }
 
-    .main-logo{
-        /* margin-top: 56px; */
+    .form-logo{
+        display: flex;
+        width: 1100px;
+        justify-content: space-between;
+        /* justify-content: cen; */
+        /* border: 1px solid white;
+        width: 960px;
+        display: flex;
+        justify-content: space-between; */
     }
+
+
 </style>
