@@ -59,7 +59,7 @@ class Account:
         	
         token = HubspotToken.fetch_credential(user=user)
         if token is None:
-        	profile['service']['huspot']['is_available'] = False
+        	profile['service']['hubspot']['is_available'] = False
         
         return profile
 
@@ -108,7 +108,7 @@ class Credential(models.Model):
         # check for credential in database
         credential = cls.fetch_credential(user=user) 
         
-        if credential is None:
+        if credential is None and 'refresh_token' in list(token.keys()):
         	cls.objects.create(user=user, refresh_token=token['refresh_token'], 
                 access_token=token['access_token'], expires_in=int(token['expires_in']), 
                 expires_at=datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))

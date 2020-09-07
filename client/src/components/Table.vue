@@ -61,7 +61,6 @@
         background-color: #FFFFFF - 72%;
         border-radius: 25px;
         width: 1168px;
-        max-height: 724px;
         overflow: scroll;
         -ms-overflow-style: none;
         /* IE and Edge */

@@ -10,7 +10,8 @@ from json import dumps, loads
 import logging
 
 from .models import GoogleToken, HubspotToken, Account
-from .constants import HTTP_200, HTTP_400_AUTHENTICATION_FAIL, HTTP_404, HTTP_405, HTTP_408, HTTP_400_NO_SERVICE_AVAILABLE
+from .constants import *
+
 from .requests import GoogleAPI, HubspotAPI
 
 logging.basicConfig(filename='API_server.log', level=logging.DEBUG)
@@ -111,6 +112,9 @@ class OAuth2:
 				# Save token into database
 				HubspotToken.register_credential(user=request.user, token=token)
 				
+			if 'refresh_token' in list(token.keys()):
+				token.pop('refresh_token') # remove refresh_token attribute
+				
 			return HttpResponse(content=dumps(token), content_type='application/json')
 			
 		return HTTP_405
@@ -177,4 +181,7 @@ class HubspotService:
 		return HTTP_405
 		
 def test(request):
-	return HttpResponse(content='<h1>Hello world!!<h1/>')
+	if not request.user.is_authenticated: # Authentication check
+		return HTTP_400_LOGIN_REQUIRE
+		
+	return HttpResponse(content=dumps(Account.generate_profile(request.user)))
