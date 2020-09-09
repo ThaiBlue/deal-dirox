@@ -23,7 +23,7 @@ urlpatterns = [
     path('accounts/<str:service>/auth/callback', OAuth2.callback),
     path('accounts/user/login', User._login),
     path('accounts/user/logout', User._logout),
-    path('services/google/token', GoogleService.retrieve_access_token),
+    path('services/google/auth/token', GoogleService.retrieve_access_token),
     path('services/google/drive/file/create/initlead', GoogleService.create_init_lead),
     path('services/hubspot/crm/deals/makeoffer/all', HubspotService.get_makeoffer_deals),
     path('', test)
