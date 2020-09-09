@@ -109,7 +109,7 @@ class OAuth2:
 	@staticmethod
 	def build_redirect_url(cls, request, service):
 		'''Method use to generate redirect URL of this server'''
-		return 'http://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
+		return 'https://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
 	
 	@classmethod
 	def authorize(cls, request, service):
@@ -125,7 +125,7 @@ class OAuth2:
 			# Instantiate google service  
 			service_ = oauth.create_client(service)
 			# create redirect uri
-			redirect_uri = cls.build_redirect_url(request, service)
+			redirect_uri = cls.build_redirect_url(request=request, service=service)
 			# Lead user to Authentication page
 			return service_.authorize_redirect(request, redirect_uri)
 			
