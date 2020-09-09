@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .REST_API.APIs import *
+from .deals.handlers import *
 
 urlpatterns = [
     path('accounts/admin', admin.site.urls),
@@ -23,7 +23,8 @@ urlpatterns = [
     path('accounts/<str:service>/auth/callback', OAuth2.callback),
     path('accounts/user/login', User._login),
     path('accounts/user/logout', User._logout),
-    path('google/services/token', GoogleService.retrieve_access_token),
-    path('hubspot/deals/makeoffer/all', HubspotService.get_makeoffer_deals),
+    path('services/google/auth/token', GoogleService.retrieve_access_token),
+    path('services/google/drive/file/create/initlead', GoogleService.create_init_lead),
+    path('services/hubspot/crm/deals/makeoffer/all', HubspotService.get_makeoffer_deals),
     path('', test)
 ]

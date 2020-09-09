@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import FormData from 'form-data'
+import moment from 'moment'
 
 
 Vue.use(Vuex)
@@ -39,25 +40,23 @@ export const store = new Vuex.Store({
                         // context.commit('retriveToken', token)
 
                         //parse user info from response
-                        this.state.profile = response.data
-                        console.log(response.config)
-                        resolve(response)
+                        this.state.profile = response.data;
+                        resolve(response);
                     })
 
                     .catch(error => {
-                        console.log(error)
-                        console.log('error here')
-                        reject(error)
+                        console.log(error);
+                        console.log('error here');
+                        reject(error);
                     })
             })
         },
         
         fetchDeals(context) {
             return new Promise((resolve, reject) => {
-                const moment = require('moment');
                 //Fetch data from server 
                 // moment(item.properties.start_date).format('DD/MM/YYYY')
-                axios.get('/hubspot/deals/makeoffer/all', { withCredentials: true }).then(response => {
+                axios.get('/services/hubspot/crm/deals/makeoffer/all', { withCredentials: true }).then(response => {
                     response.data.results.forEach(item => {
                         this.state.deals.push({
                             id: item.id,

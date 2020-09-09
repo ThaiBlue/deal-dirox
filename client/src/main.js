@@ -21,7 +21,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth) {
-        const authUser = JSON.parse(window.localStorage.getItem('authUser'))
+        // const authUser = JSON.parse(window.localStorage.getItem('authUser'))
         next({name: 'home'})
         // if (authUser && authUser.access_token) {
         //     next()

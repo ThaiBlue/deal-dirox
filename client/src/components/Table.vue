@@ -1,5 +1,5 @@
 <template>
-    <el-table class="table" :data="tableData">
+    <el-table class="table" :data="tableData" highlight-current-row @current-change="handleCurrentChange">
         <el-table-column prop="no" label="No." type="index" width="180">
         </el-table-column>
         <el-table-column prop="id" label="ID" width="120">
@@ -19,9 +19,14 @@
         name: 'Table',
         data() {
             return {
-                tableData: this.$store.deals
+                tableData: this.$store.state.deals
             }
         },
+        method: {
+            handleCurrentChange(val) {
+                this.currentRow = val;
+      }
+        }
     }
 </script>
 <style>
