@@ -51,7 +51,7 @@ export default {
     methods: {
         login () {
             // console.log(this.$store)
-            this.$store.dispatch("authenticate",{
+            this.$store.dispatch('authenticate', {
                 username: this.username,
                 password: this.password
             })
@@ -59,11 +59,15 @@ export default {
                     // this.$router.push({name: 'deal'})
                     
                     //fetch deals after log in success
-                    this.$store.dispatch('fetchDeals').then(
-                        response => {
-                            console.log('success!')
+                    this.$store.dispatch('fetchDeals')
+                    .then(response => {
+                            console.log(response)
+                            console.log('success fetch data')
                         }
-                    )
+                    ).catch(error => {
+                            console.log(error)
+                            console.log('fail to fetch data')
+                    })
                     
                     this.$router.push('/deal')
                 })
@@ -71,11 +75,9 @@ export default {
                 .catch(error => {
                     this.error = true
                     console.log(error)
-                    console.log('error here')
+                    console.log('authenticate error')
                 })
         },
-
-        
     }
 
 }

@@ -39,15 +39,14 @@ export const store = new Vuex.Store({
                         // context.commit('retriveToken', token)
 
                         //parse user info from response
-                        this.state.profile = response.data
-                        console.log(response.config)
-                        resolve(response)
+                        this.state.profile = response.data;
+                        resolve(response);
                     })
 
                     .catch(error => {
-                        console.log(error)
-                        console.log('error here')
-                        reject(error)
+                        console.log(error);
+                        console.log('error here');
+                        reject(error);
                     })
             })
         },

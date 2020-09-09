@@ -24,13 +24,16 @@ SECRET_KEY = '@zl(2zb4ke9#@_38$%gf^wgb%z!6ok*2wb$7x$x5_qm0)pa9*c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['deal.dirox.dev', 'api.deal.dirox.dev', '127.0.0.1', '10.84.1.35', '0.0.0.0', 'localhost']
+ALLOWED_HOSTS = ['deal.dirox.dev', 'api.deal.dirox.dev', '127.0.0.1', 'localhost']
 
 # Security setting
 SECURE_REFERRER_POLICY = 'origin'
 SECURE_CONTENT_TYPE_NOSNIFF = True
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ['https://deal.dirox.dev', 'http://127.0.0.1', 'http://10.84.1.35', 'http://0.0.0.0', 'http://localhost']
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = ['https://deal.dirox.dev', 'https://api.deal.dirox.dev','http://127.0.0.1:8000', 'http://localhost:8080']
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Setting Oauth2 clients
 AUTHLIB_OAUTH_CLIENTS = {
@@ -68,13 +71,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'server.REST_API'
+    'server.deals'
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

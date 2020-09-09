@@ -1,5 +1,5 @@
 <template>
-    <div class="container" :style="{backgroundColor: color}" id="wrapper">
+    <div class="container" id="wrapper">
         <div class="bar">
             <div class="filtertableimageoption">
                 <div class="filterimagetable">
