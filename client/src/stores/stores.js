@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import FormData from 'form-data'
+import moment from 'moment'
 
 
 Vue.use(Vuex)
@@ -53,7 +54,6 @@ export const store = new Vuex.Store({
         
         fetchDeals(context) {
             return new Promise((resolve, reject) => {
-                const moment = require('moment');
                 //Fetch data from server 
                 // moment(item.properties.start_date).format('DD/MM/YYYY')
                 axios.get('/hubspot/deals/makeoffer/all', { withCredentials: true }).then(response => {
