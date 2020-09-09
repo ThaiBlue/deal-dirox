@@ -107,7 +107,7 @@ class User:
 class OAuth2:
 	'''Oauth2 API request handler'''
 	@staticmethod
-	def build_redirect_url(cls, request, service):
+	def build_redirect_url(request, service):
 		'''Method use to generate redirect URL of this server'''
 		return 'https://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
 	
