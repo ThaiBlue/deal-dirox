@@ -1,10 +1,21 @@
 <template>
     <div class="option">
         <div class="create">
-            <button type="submit" v-bind:class="clicked ? 'click' : 'noclick'" v-on:click ="clicked = !clicked">Create InitLead</button>
-            <button type="submit" v-bind:class="click ? 'click' : 'noclick'" v-on:click ="click = !click">Create Proposal</button>
-            <button type="submit" v-bind:class="changed ? 'click' : 'noclick'" v-on:click ="changed = !changed">Create Contract</button>
+            
+            <el-select v-model="value" placeholder="Choose Action" >
+                <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                >
+                </el-option>
+            </el-select>
+            <div class="button-apply">
+                <modal-login><button @click="showModal = true" class="apply">Apply</button></modal-login>
+            </div>
         </div>
+
 
         <div class="page">
             <el-pagination
@@ -17,13 +28,46 @@
     </div>
 </template>
 <script>
+import Popup from "./Popup"
+import test from "./test"
+
 export default {
     name: 'Option',
-    data: function (){
+    components:{
+    },
+    data() {
         return {
-            clicked: false,
-            click: false,
-            changed: false
+
+            options: [
+                {  
+                    value: 'Create Transfer to Production',
+                    label: 'Create Transfer to Production'
+                }, 
+                {
+                    value: 'Create Contract',
+                    label: 'Create Contract'
+                }, 
+                {
+                    value: 'Create Proposal',
+                    label: 'Create Proposal'
+                }, 
+                {
+                    value: 'Create Transfer to BA',
+                    label: 'Create Transfer to BA'
+                }, 
+                {
+                    value: 'Create Folder',
+                    label: 'Create Folder'
+                }
+            ],
+            value: '',
+
+            showModal: true
+        }
+    },
+    methods: {
+        modalAction() {
+            
         }
     }
 }
@@ -35,11 +79,13 @@ export default {
         width: 21px;
         height: 45px;
         color: #FFFFFF;
-        /* font-size: 42px; */
     }
+
+
     .option .el-pagination .btn-prev i{
         font-size: 42px;
     }
+
 
     .option .el-pagination .el-pager li {
         margin-top: 5px;
@@ -47,8 +93,8 @@ export default {
         width: 40px;
         height: 45px;
         font-size: 25px;
-        /* color: #FFFFFF */
     }
+
 
     .option .el-pagination .btn-next{
         background-color: transparent;
@@ -57,75 +103,107 @@ export default {
         color: #FFFFFF;
     }
 
+
     .option .el-pagination .btn-next i{
         font-size: 42px;
     }
 
+
     
 </style>
 
+
 <style scoped>
+
+    
+
+
     .white {
        background-color: white;
        width: 200px;
-       height: 200px;  
-
+       height: 200px;
     }
+
+
     .blue {
         width: 200px;
         height: 200px;
         background-color: blue;
-
-    }
-    
-    /* .create button{
-        background-color: #A9A9A9;
-        border: 2px solid #FFFFFF;
-        border-radius: 13px;
-        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.5);
-        width: 239px;
-        height: 50px;
-        outline: none;
-        cursor: pointer;
-    } */
-
-    .noclick{
-        background-color: #A9A9A9;
-        border: 2px solid #FFFFFF;
-        border-radius: 13px;
-        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.5);
-        width: 239px;
-        height: 50px;
-        outline: none;
-        cursor: pointer;
     }
 
-    .click {
-        background-color: #FFCE7A;
-        border: 2px solid #FFFFFF;
-        border-radius: 13px;
-        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.5);
-        width: 239px;
-        height: 50px;
-        outline: none;
-        cursor: pointer;
-    }
-
-    .create{
-        display: flex;
-        /* border: 1px solid black; */
-        width: 760px;
-        justify-content: space-between;
-    }
 
     .page{
-        /* border: 1px solid black; */
         width: 300px;
     }
+
 
     .option{
         display: flex;
         justify-content: space-between;
     }
 
+
+    .create{
+        width:602px;
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .el-select {
+        width: 424px;
+        height: 52px;
+    }
+
+    .apply {
+        width: 148.5px;
+        height: 40px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+        border: solid 1px #979797;
+        background-color: #cacaca;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .model-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 98;
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity 2s;
+    }
+
+
+    .fade-enter,
+    .fade-leave-to {
+        opacity: 0;
+    }
+
+
+    /* .pop-up{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 98;
+    }
+
+
+    .fade-enter-active, .fade-live-active{
+        transition: opacity 2s;
+    }
+
+
+    .fade-enter, .fade-leave-to{
+        opacity: 0;
+    } */
 </style>
