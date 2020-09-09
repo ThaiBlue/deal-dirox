@@ -56,7 +56,7 @@ export const store = new Vuex.Store({
             return new Promise((resolve, reject) => {
                 //Fetch data from server 
                 // moment(item.properties.start_date).format('DD/MM/YYYY')
-                axios.get('/hubspot/deals/makeoffer/all', { withCredentials: true }).then(response => {
+                axios.get('services/crm/hubspot/deals/makeoffer/all', { withCredentials: true }).then(response => {
                     response.data.results.forEach(item => {
                         this.state.deals.push({
                             id: item.id,
