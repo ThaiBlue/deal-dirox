@@ -26,8 +26,6 @@ export const store = new Vuex.Store({
         // }
     },
     actions: {
-        // user_id: test
-        // password: w7crD9pqCM8
         authenticate(context, credentials) {
             return new Promise((resolve, reject) => {
                 const form = new FormData();

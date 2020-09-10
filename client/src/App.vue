@@ -3,7 +3,6 @@
       <router-link to="/"></router-link>
       <router-link to="/deal"></router-link>
       <router-link to="/test"></router-link>
-      <!-- <router-link to="/popup"></router-link> -->
     <router-view></router-view>
   </div> 
 </template>

@@ -32,8 +32,7 @@
 </template>
 <script>
 import Popup from "./Popup"
-// import Modallogin from "./Modallogin"
-// import test from "./test"
+
 
 export default {
     name: 'Option',
@@ -42,7 +41,6 @@ export default {
     },
     data() {
         return {
-
             options: [
                 {  
                     value: 'Create Transfer to Production',
@@ -63,8 +61,9 @@ export default {
                 {
                     value: 'Create Folder',
                     label: 'Create Folder'
-                }
+                },
             ],
+
             value: '',
 
             showModal: true
@@ -73,6 +72,7 @@ export default {
     methods: {
         show() {
             this.$modal.show('modal-login')
+            console.log(this.options[0].value)
         },
 
         hide() {
@@ -195,24 +195,4 @@ export default {
     .fade-leave-to {
         opacity: 0;
     }
-
-
-    /* .pop-up{
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 98;
-    }
-
-
-    .fade-enter-active, .fade-live-active{
-        transition: opacity 2s;
-    }
-
-
-    .fade-enter, .fade-leave-to{
-        opacity: 0;
-    } */
 </style>
