@@ -19,11 +19,11 @@ from .deals.handlers import *
 
 urlpatterns = [
     path('accounts/admin', admin.site.urls),
-    path('accounts/<str:service>/auth', OAuth2.authorize),
-    path('accounts/<str:service>/auth/callback', OAuth2.callback),
     path('accounts/user/login', User._login),
     path('accounts/user/logout', User._logout),
-    path('services/google/auth/token', GoogleService.retrieve_access_token),
+    path('accounts/<str:service>/auth', OAuth2.authorize),
+    path('accounts/<str:service>/auth/callback', OAuth2.callback),
+    path('services/<str:service>/auth/token', OAuth2.retrieve_access_token),
     path('services/google/drive/file/create/initlead', GoogleService.create_init_lead),
     path('services/hubspot/crm/deals/makeoffer/all', HubspotService.get_makeoffer_deals),
     path('', test)

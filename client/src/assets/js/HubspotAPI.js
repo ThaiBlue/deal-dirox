@@ -40,7 +40,7 @@ module.exports = class HubspotAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data.results;
+			return Promise.resolve(response);
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -48,7 +48,7 @@ module.exports = class HubspotAPI {
 				this.fetchMakeOfferDeals(properties);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -70,7 +70,7 @@ module.exports = class HubspotAPI {
 			//fetching data
 			var res = await this.axios(config);
 			//return response data
-			return res.data;
+			return Promise.resolve(res.data);
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -78,7 +78,7 @@ module.exports = class HubspotAPI {
 				this.getOwnerInfo(ownerID);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -96,7 +96,7 @@ module.exports = class HubspotAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data.results[0].id;
+			return Promise.resolve(response.data.results[0].id);
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -104,7 +104,7 @@ module.exports = class HubspotAPI {
 				this.getAssociateCompanyIDOfDeal(dealID);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -127,7 +127,7 @@ module.exports = class HubspotAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data;
+			return Promise.resolve(response.data);
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -135,7 +135,7 @@ module.exports = class HubspotAPI {
 				this.getCompanyInfo(dealID);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 }

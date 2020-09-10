@@ -57,7 +57,6 @@ export default {
             })
                 .then(response => {
                     // this.$router.push({name: 'deal'})
-                    
                     //fetch deals after log in success
                     this.$store.dispatch('fetchDeals')
                     .then(response => {
