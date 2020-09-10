@@ -39,16 +39,19 @@ export default {
     
     
     .container{
-        background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
+        //background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
         margin: 0 auto;
         width: 1440px;
     }
 
 
     img {
-        float: right;
-        margin-right: 32px;
-        margin-top: 50px;
+        //float: right;
+        //margin-right: 32px;
+        //margin-top: 50px;
+        position: absolute;
+        right: 30px;
+        top: 30px
     }
 
 

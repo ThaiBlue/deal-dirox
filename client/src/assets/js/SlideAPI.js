@@ -35,7 +35,7 @@ module.exports = class SlideAPI {
 				this.getPresentaionRevisionID();
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -145,7 +145,7 @@ module.exports = class SlideAPI {
 			// send request
 			var response = await this.axios(config);
 			//return response
-			return response.data;
+			return Promise.resolve(response);
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -153,7 +153,7 @@ module.exports = class SlideAPI {
 				this.updatePresentaion(description, deal_summary, lead_overview_1, lead_overview_2, customer_name);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 }

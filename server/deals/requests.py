@@ -1,4 +1,4 @@
-from requests import post, put
+from requests import post, put, get
 from json import loads, dumps
 
 from .constants import MAKE_OFFER
@@ -101,3 +101,29 @@ class HubspotAPI:
 		
 		# fetch data
 		return post(url=url, headers=headers, data=dumps(payload)).json()
+	
+	@staticmethod
+	def fetch_company_id_from_deal_ID(access_token, dealID):
+		'''fetch from hubspot'''
+		url = 'https://api.hubapi.com/crm/v3/objects/deals/' + dealID + '/associations/companies'
+		
+		headers = {
+			'Authorization': 'Bearer ' + access_token
+		}
+		
+		return get(url=url, headers=headers).json()
+		
+	@classmethod
+	def fetch_company_info(cls, access_token, dealID):
+		'''Fetch from hubspot'''
+		
+		companyInfo = cls.fetch_company_id_from_deal_ID(access_token, dealID)
+		
+		url = 'https://api.hubapi.com/crm/v3/objects/companies/' + companyInfo['results'][0]['id']
+		
+		headers = {
+			'Authorization': 'Bearer ' + access_token
+		}
+		
+		return get(url=url, headers=headers).json()
+		

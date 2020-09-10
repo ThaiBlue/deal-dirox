@@ -163,17 +163,19 @@ class OAuth2:
 			return HttpResponse(content=dumps(token), content_type='application/json')
 			
 		return HTTP_405
-
-class GoogleService:
-	'''Google service API request handler'''
+		
 	@classmethod
-	def retrieve_access_token(cls, request):
+	def retrieve_access_token(cls, request, service):
 		'''Return google access token from database'''
+				# Validate request
+		if service not in ['google', 'hubspot']:
+			return HTTP_404
+
 		if request.method == 'GET':
 			if not request.user.is_authenticated: # Authenication check
 				return HTTP_400_LOGIN_REQUIRE
 			
-			token = User.fetch_access_token(request=request, service='google')
+			token = User.fetch_access_token(request=request, service=service)
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -181,10 +183,16 @@ class GoogleService:
 			if token == {}:
 				return HTTP_408
 				
+			if 'refresh_token' in list(token.keys()):
+				token.pop('refresh_token') # remove refresh_token attribute
+
 			return HttpResponse(content=dumps(token), content_type='application/json')
 					
 		return HTTP_405
-		
+
+
+class GoogleService:
+	'''Google service API request handler'''		
 	@classmethod
 	def create_init_lead(cls, request):
 		'''Create a new InitLead document on Drive'''
@@ -234,7 +242,28 @@ class HubspotService:
 			return HttpResponse(content=dumps(deals), content_type='application/json')
 
 		return HTTP_405
-		
+	
+	@classmethod
+	def get_company_info(cls, request, dealID):
+		'''Retrieve company ID from Hubspot'''
+		if request.method == 'GET':			
+			if not request.user.is_authenticated: # Authentication check
+				return HTTP_400_LOGIN_REQUIRE
+				
+			token = User.fetch_access_token(request=request, service='hubspot')
+			
+			if token is None:
+				return HTTP_400_NO_SERVICE_AVAILABLE
+				
+			if token == {}:
+				return HTTP_408
+				
+			companyInfo = HubspotAPI.fetch_company_info(access_token=token['access_token'], dealID=dealID)
+				
+			return HttpResponse(content=dumps(companyInfo), content_type='application/json')	
+			
+		return HTTP_405
+
 def test(request):
 	# Authentication check
 	if not request.user.is_authenticated:

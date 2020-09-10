@@ -1,19 +1,21 @@
 <template>
-  <div class="logo-body-login">
-    <img class="main-logo" src="../assets/img/logo-main.png" alt="logo-main" width="202">
-    <div class="body-login">
-        <h1 class="login-to-deal-dirox">LOGIN</h1>
-        <form action="#" class="form-login" @submit.prevent="login">
-            <div class="email-login">
-                <label for="email">Email or Username</label>
-                <input type="email" class="email-box" placeholder="Type your Email or Username here" v-model="username">
-            </div>
-            <div class="password-login">
-                <label for="password">Password</label>
-                <input type="password" class="password-box" placeholder="Type your password here" v-model.trim="password">
-            </div>
-            <!-- ^([a-z]+)[.]([a-z]+)@(dirox[.]net|synexser[.]com) -->
-            <!-- <el-alert
+    <div class="logo-body-login">
+        <img class="main-logo" src="../assets/img/logo-main.png" alt="logo-main" width="202">
+        <div class="body-login">
+            <h1 class="login-to-deal-dirox">LOGIN</h1>
+            <form action="#" class="form-login" @submit.prevent="login">
+                <div class="email-login">
+                    <label for="email">Email or Username</label>
+                    <input type="email" class="email-box" placeholder="Type your Email or Username here"
+                        v-model="username">
+                </div>
+                <div class="password-login">
+                    <label for="password">Password</label>
+                    <input type="password" class="password-box" placeholder="Type your password here"
+                        v-model.trim="password">
+                </div>
+                <!-- ^([a-z]+)[.]([a-z]+)@(dirox[.]net|synexser[.]com) -->
+                <!-- <el-alert
                 title="Email or Password is incorrect"
                 type="error"
                 center
@@ -22,67 +24,62 @@
                 :model=error
                 >
             </el-alert> -->
-
-            <!-- <el-alert
+                <!-- <el-alert
                 title="success alert"
                 type="success"
                 show-icon>
             </el-alert> -->
-        </form>
-        <!-- <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link> -->
-        <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
+            </form>
+            <!-- <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link> -->
+            <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
+        </div>
     </div>
-  </div>
 </template>
-
 <script>
-export default {
-    name: 'LoginForm',
-
-
-    data: () => (
-        {
+    export default {
+        name: 'LoginForm',
+        data: () => ({
             username: '',
             password: '',
             error: false
-        }
-    ) ,
-
-    methods: {
-        login () {
-            // console.log(this.$store)
-            this.$store.dispatch('authenticate', {
-                username: this.username,
-                password: this.password
-            })
-                .then(response => {
+        }),
+        methods: {
+            login() {
+                // console.log(this.$store)
+                this.$store.dispatch('authenticate', {
+                    username: this.username,
+                    password: this.password
+                }).then(response => {
                     // this.$router.push({name: 'deal'})
-                    
                     //fetch deals after log in success
-                    this.$store.dispatch('fetchDeals')
-                    .then(response => {
+                    this.$store.dispatch('fetchDeals').then(response => {
                             console.log(response)
                             console.log('success fetch data')
-                        }
-                    ).catch(error => {
-                            console.log(error)
-                            console.log('fail to fetch data')
+                            this.$store.state.currentDeal = this.$store.state.deals[0];
+                            this.$store.dispatch('createInitLead')
+                            .then(response => {
+                                console.log('its created')
+                                this.$store.state.currentSlide = response.data;
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                return Promise.reject(error);
+                            })
+                    }).catch(error => {
+                        console.log(error)
+                        console.log('fail to fetch data')
                     })
+                    this.$router.push('/deal');
                     
-                    this.$router.push('/deal')
-                })
-
-                .catch(error => {
+                }).catch(error => {
                     this.error = true
                     console.log(error)
                     console.log('authenticate error')
                 })
-        },
+            },
+        }
     }
-
-}
 </script>
-
 <style scoped>
     .login-to-deal-dirox {
         color: #FFFFFF;
@@ -92,7 +89,7 @@ export default {
         text-align: center;
     }
 
-    .email-login{
+    .email-login {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
@@ -100,7 +97,7 @@ export default {
         height: 85px;
     }
 
-    label{
+    label {
         color: #FFFFFF;
         font-family: UTMAvoBold;
         font-size: 16px;
@@ -178,6 +175,4 @@ export default {
         justify-content: space-between;
         align-items: center;
     }
-
-
 </style>

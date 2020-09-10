@@ -40,15 +40,15 @@ module.exports = class HubspotAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data.results;
+			return Promise.resolve(response);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.fetchMakeOfferDeals(properties);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -70,15 +70,15 @@ module.exports = class HubspotAPI {
 			//fetching data
 			var res = await this.axios(config);
 			//return response data
-			return res.data;
+			return Promise.resolve(res.data);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.getOwnerInfo(ownerID);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -96,15 +96,15 @@ module.exports = class HubspotAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data.results[0].id;
+			return Promise.resolve(response.data.results[0].id);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.getAssociateCompanyIDOfDeal(dealID);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -114,6 +114,8 @@ module.exports = class HubspotAPI {
 		* dealID {Number} identity of the Deal needs to get its' relative Company info(Customer name)
 		*/
 		var companyID = await this.getAssociateCompanyIDOfDeal(dealID);
+		console.log(companyID)
+		
 		var config = {
 			method: 'get',
 			url: 'https://api.hubapi.com/crm/v3/objects/companies/' + companyID,
@@ -127,15 +129,15 @@ module.exports = class HubspotAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data;
+			return Promise.resolve(response.data);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.getCompanyInfo(dealID);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 }

@@ -29,7 +29,7 @@ module.exports = class DriveAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data;
+			return Promise.resolve(response);
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -37,7 +37,7 @@ module.exports = class DriveAPI {
 				this.getListOfFolder();
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
@@ -66,15 +66,15 @@ module.exports = class DriveAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return response.data;
+			return Promise.resolve(response);
 
 		} catch (err) {
 			if (err.response.status == 408) {
 				//send request again if request time out
-				this.createFolder();
+				this.createFolder(name, parentID);
 			}
 			//return error code
-			return err.response.status;
+			return Promise.reject(err);
 		}
 	}
 
