@@ -43,7 +43,7 @@ module.exports = class HubspotAPI {
 			return Promise.resolve(response);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.fetchMakeOfferDeals(properties);
 			}
@@ -73,7 +73,7 @@ module.exports = class HubspotAPI {
 			return Promise.resolve(res.data);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.getOwnerInfo(ownerID);
 			}
@@ -99,7 +99,7 @@ module.exports = class HubspotAPI {
 			return Promise.resolve(response.data.results[0].id);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.getAssociateCompanyIDOfDeal(dealID);
 			}
@@ -114,6 +114,8 @@ module.exports = class HubspotAPI {
 		* dealID {Number} identity of the Deal needs to get its' relative Company info(Customer name)
 		*/
 		var companyID = await this.getAssociateCompanyIDOfDeal(dealID);
+		console.log(companyID)
+		
 		var config = {
 			method: 'get',
 			url: 'https://api.hubapi.com/crm/v3/objects/companies/' + companyID,
@@ -130,7 +132,7 @@ module.exports = class HubspotAPI {
 			return Promise.resolve(response.data);
 
 		} catch (err) {
-			if (err.response.status == 408) {
+			if (err.status == 408) {
 				//send request again if request time out
 				this.getCompanyInfo(dealID);
 			}

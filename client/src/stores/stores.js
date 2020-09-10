@@ -17,6 +17,7 @@ export const store = new Vuex.Store({
         profile: {},
         deals: [],
         googleToken: {},
+        huspotToken: {},
         folder: [],
         currentSlide: {},
         currentDeal: {},
@@ -75,12 +76,20 @@ export const store = new Vuex.Store({
         },
         fetchAccessToken(context, service) {
             /*
+                static function 
                 service must be 'google' or 'hubspot'
             */
             return new Promise((resolve, reject) => {
                 axios.get('/services/' + service + '/auth/token')
                     .then(response => {
-                        this.state.googleToken = response.data;
+                        if(service=='google') {
+                            console.log('google token')
+                            this.state.googleToken = response.data;
+                        }
+                        if(service=='hubspot') {
+                            console.log('hubspot token')
+                            this.state.hubspotToken = response.data;
+                        }
                         resolve(response);
                     })
                     .catch(error => {
@@ -91,9 +100,9 @@ export const store = new Vuex.Store({
         },
         fetchFolder(context) {
             return new Promise((resolve, reject) => {
-                this.$store.dispatch('fetchAccessToken', 'google')
+                context.dispatch('fetchAccessToken', 'google')
                     .then(response => {
-                        const drive = new DriveAPI(this.$store.state.googleToken.access_token)
+                        const drive = new DriveAPI(this.state.googleToken.access_token)
                         drive.getListOfFolder().then(response => {
                             response.data.files.forEach(item => {
                                 if (item.ownedByMe) {
@@ -120,9 +129,9 @@ export const store = new Vuex.Store({
                 }
             */
             return new Promise((resolve, reject) => {
-                this.$store.dispatch('fetchAccessToken')
+                context.dispatch('fetchAccessToken', 'google')
                     .then(response => {
-                        const drive = new DriveAPI(this.$store.state.googleToken.access_token)
+                        const drive = new DriveAPI(this.state.googleToken.access_token)
                         drive.createFolder().then(response => {
                             this.state.folder.push(response.data);
                             resolve(response);
@@ -138,53 +147,49 @@ export const store = new Vuex.Store({
             })
 
         },
+        prepareForInitLead(context) {
+            return new Promise((resolve, reject) => {
+                console.log('create initlead init');
+                axios.get('services/hubspot/crm/deals/<str:dealID>/associations/company/info')
+                    .then(response => {
+                        console.log(response)
+                        this.state.currentCompany = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        return Promise.reject(error);
+                    })
+            axios.get('/services/google/drive/file/create/initlead')
+                    .then(response => {
+                        console.log('upload initlead:')
+                        console.log(response.data)
+                        this.state.currentSlide = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        return Promise.reject(error);
+                    })
+            })
+        },
         createInitLead(context) {
             return new Promise((resolve, reject) => {
-                exec()
-                function init() {
-                    this.$store.dispatch('fetchAccessToken', 'hubspot')
-                        .then(response => {
-                            this.state.huspotToken = response.data;
-                            const hubspot = new HubspotAPI(response.data.access_token);
-                            hubspot.getCompanyInfo(this.$store.state.currentDeal.id)
-                                .then(response => {
-                                    this.state.currentCompany = response;
-                                })
-                                .catch(error => {
-                                    console.log(error);
-                                    reject(error);
-                                })
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            reject(error);
-                        })
-                    axios.get('/services/google/drive/file/create/initlead')
-                        .then(response => {
-                            this.state.currentSlide = response.data;
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            reject(error);
-                        })
-                }
-                async function exec() {
-                    await init()
-                    const slide = SlideAPI(this.$store.state.huspotToken.access_token, this.$store.state.currentSlide.id)
+                console.log('create initlead');
+                context.dispatch('prepareForInitLead').then(response => {
+                    const slide = SlideAPI(this.state.huspotToken.access_token, this.state.currentSlide.id)
                     slide.updatePresentaion(
-                        this.$store.state.currentDeal.properties.description,
-                        this.$store.state.currentDeal.properties.deal_summary,
-                        this.$store.state.currentDeal.properties.lead_overview_1,
-                        this.$store.state.currentDeal.properties.lead_overview_2,
-                        this.$store.state.currentCompany.properties.name
-                    ).then(response => {
-                        console.log(response.data);
-                        resolve(response.data);
-                    }).catch(error => {
-                        console.log(error)
-                        reject(error)
-                    })
-                }
+                        this.state.currentDeal.properties.description,
+                        this.state.currentDeal.properties.deal_summary,
+                        this.state.currentDeal.properties.lead_overview_1,
+                        this.state.currentDeal.properties.lead_overview_2,
+                        this.state.currentCompany.properties.name
+                        ).then(response => {
+                            console.log(response.data);
+                            return Promise.resolve(response.data);
+                        }).catch(error => {
+                            console.log(error)
+                            return Promise.reject(error);
+                        })
+                })
             })
         }
     }
