@@ -1,30 +1,30 @@
 <template>
     <div class="menubar">
-        <div class="menu">
-            <div class="header">
-                <img src="../assets/img/menu-icon.png" width="52">
-                <div class="options">
-                    <div class="home">
-                        <img src="../assets/img/home-icon.png" width="52">
-                        <label>Home</label>
-                    </div>
+<!--        <div class="menu">-->
+<!--            <div class="header">-->
+<!--                <img src="../assets/img/menu-icon.png" width="52">-->
+<!--                <div class="options">-->
+<!--                    <div class="home">-->
+<!--                        <img src="../assets/img/home-icon.png" width="52">-->
+<!--                        <label>Home</label>-->
+<!--                    </div>-->
 
-                    <div class="sent">
-                        <img src="../assets/img/sent-icon.png" width="46">
-                        <label>Send Mail</label>    
-                    </div>
+<!--                    <div class="sent">-->
+<!--                        <img src="../assets/img/sent-icon.png" width="46">-->
+<!--                        <label>Send Mail</label>    -->
+<!--                    </div>-->
 
-                    <div class="user">
-                        <img src="../assets/img/user-icon.png" width="52">
-                        <label>Profile</label>
-                    </div>
-                </div>
-            </div>
-            <div class="setting">
-                <img src="../assets/img/setting-icon.png" width="56">
-                <label class="setting-label">Settings</label>
-            </div>
-        </div>
+<!--                    <div class="user">-->
+<!--                        <img src="../assets/img/user-icon.png" width="52">-->
+<!--                        <label>Profile</label>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+      <div class="setting">
+        <img src="../assets/img/setting-icon.png" width="56">
+<!--        <label class="setting-label">Settings</label>-->
+      </div>
     </div>
 </template>
 
@@ -36,14 +36,15 @@ export default {
 
 <style scoped>
     .menubar {
-        background-color: #EEEEEE;
-        border-radius: 0 25px 25px 0;
-        box-shadow: 5px 4px 13px 0 rgba(0, 0, 0, 0.64);
-        width: 239px;
-        height: 834px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
+        //background-color: #EEEEEE;
+        //border-radius: 0 25px 25px 0;
+        //box-shadow: 5px 4px 13px 0 rgba(0, 0, 0, 0.64);
+        //display: flex;
+        //flex-direction: column;
+        //justify-content: space-around;
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
         /* align-items: center; */
     }
 
@@ -57,10 +58,10 @@ export default {
     }
 
     .setting {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        margin-bottom: 23px;
+        //display: flex;
+        //justify-content: space-evenly;
+        //align-items: center;
+        //margin-bottom: 23px;
         width: 201px;
         height: 58px;
     }
