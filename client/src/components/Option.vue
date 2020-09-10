@@ -12,7 +12,10 @@
                 </el-option>
             </el-select>
             <div class="button-apply">
-                <modal-login><button @click="showModal = true" class="apply">Apply</button></modal-login>
+                <button @click.prevent="show" class="apply">Apply</button>
+                <modal name="modal-login" :height="690" :width="1028">
+                    <Popup />
+                </modal>
             </div>
         </div>
 
@@ -29,11 +32,13 @@
 </template>
 <script>
 import Popup from "./Popup"
-import test from "./test"
+// import Modallogin from "./Modallogin"
+// import test from "./test"
 
 export default {
     name: 'Option',
-    components:{
+    components: {
+        Popup
     },
     data() {
         return {
@@ -66,8 +71,12 @@ export default {
         }
     },
     methods: {
-        modalAction() {
-            
+        show() {
+            this.$modal.show('modal-login')
+        },
+
+        hide() {
+            this.$modal.hide('modal-login')
         }
     }
 }
