@@ -170,9 +170,8 @@ export default {
     }
 
     .logo-body-login {
-        /* border: 1px solid white; */
+        margin-top: 56px;
         height: 710px;
-        /* width: 500px; */
         display: flex;
         flex-direction: column;
         justify-content: space-between;

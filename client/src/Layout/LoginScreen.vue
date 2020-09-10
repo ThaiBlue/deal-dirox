@@ -15,19 +15,15 @@ export default {
 }
 </script>
 
+
 <style scoped>
     .container{
         height: 1024px;
-        background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
-
     }
+
 
     .logo-dirox-new-white {
         width: 203px;
         height: 152px;
-
     }
-
-
-
 </style>

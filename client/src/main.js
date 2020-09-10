@@ -5,11 +5,13 @@ import routes from "./routes"
 import uielement from "./uielement"
 import {store} from "./stores/stores"
 import Vuelidate from 'vuelidate'
+import VModal from 'vue-js-modal'
 
 
 Vue.config.productionTip = false
 Vue.use(Vuelidate)
 Vue.use(VueRouter)
+Vue.use(VModal)
 
 
 const router = new VueRouter({
@@ -18,7 +20,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    // console.log(to)
     if (to.meta.requiresAuth) {
         // const authUser = JSON.parse(window.localStorage.getItem('authUser'))
         next({name: 'home'})
