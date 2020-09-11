@@ -14,12 +14,14 @@ module.exports = class SlideAPI {
 		/*
 		Retrieve the RevisionID of the Presentation
 		*/
+		console.log(this.slideID)
 		var config = {
 			method: 'get',
 			url: 'https://slides.googleapis.com/v1/presentations/' + this.slideID,
 			headers: {
 				'Authorization': 'Bearer ' + this.token
-			}
+			},
+			withCredentials: false
 		};
 
 		// connection handler
@@ -35,7 +37,7 @@ module.exports = class SlideAPI {
 				this.getPresentaionRevisionID();
 			}
 			//return error code
-			return Promise.reject(err);
+			return err.response;
 		}
 	}
 
@@ -137,15 +139,15 @@ module.exports = class SlideAPI {
 			headers: {
 				'Authorization': 'Bearer ' + this.token,
 			},
-			data: data
+			data: data,
+			withCredentials: false
 		};
-
 		// connection handler
 		try {
 			// send request
 			var response = await this.axios(config);
 			//return response
-			return Promise.resolve(response);
+			return response;
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -153,7 +155,7 @@ module.exports = class SlideAPI {
 				this.updatePresentaion(description, deal_summary, lead_overview_1, lead_overview_2, customer_name);
 			}
 			//return error code
-			return Promise.reject(err);
+			return err.response;
 		}
 	}
 }
