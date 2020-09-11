@@ -1,7 +1,7 @@
 import LoginScreen from "./Layout/LoginScreen"
 import DealPage from "./Layout/DealPage"
-import popup from "./components/Popup"
-// import test from "./components/test"
+// import popup from "./components/Popup"
+import test from "./components/test"
 
 
 const routes = [
@@ -20,16 +20,16 @@ const routes = [
         // }
     },
 
-    {
-        path: '/test',
-        name: 'pop-up',
-        component: popup
-    },
-
     // {
-    //     path: '/popup',
-    //     component: test
-    // }
+    //     path: '/test',
+    //     name: 'pop-up',
+    //     component: popup
+    // },
+
+    {
+        path: '/dmeohieusaonokhongchayduoc',
+        component: test
+    }
 ]
 
 
