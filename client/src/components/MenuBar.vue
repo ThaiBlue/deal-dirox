@@ -36,12 +36,12 @@ export default {
 
 <style scoped>
     .menubar {
-        //background-color: #EEEEEE;
+        /* //background-color: #EEEEEE;
         //border-radius: 0 25px 25px 0;
         //box-shadow: 5px 4px 13px 0 rgba(0, 0, 0, 0.64);
         //display: flex;
         //flex-direction: column;
-        //justify-content: space-around;
+        //justify-content: space-around; */
         position: absolute;
         left: 20px;
         bottom: 20px;
@@ -58,12 +58,13 @@ export default {
     }
 
     .setting {
-        //display: flex;
+        /* //display: flex;
         //justify-content: space-evenly;
         //align-items: center;
-        //margin-bottom: 23px;
+        //margin-bottom: 23px; */
         width: 201px;
         height: 58px;
+        cursor: pointer;
     }
 
     label {

@@ -216,5 +216,6 @@ export default {
         background-color: #979797; 
         cursor: pointer;
         outline: none;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
     }
 </style>
