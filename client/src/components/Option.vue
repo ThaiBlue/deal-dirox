@@ -35,9 +35,7 @@
 </template>
 <script>
     
-import Popup from "./Popup"
 import Popup from "./PopupSelectFolder"
-
 
 export default {
     name: 'Option',

@@ -194,7 +194,7 @@ class OAuth2:
 class GoogleService:
 	'''Google service API request handler'''		
 	@classmethod
-	def create_init_lead(cls, request, parentID):
+	def create_init_lead(cls, request):
 		'''Create a new InitLead document on Drive'''
 		
 		if request.method == 'POST':
@@ -213,7 +213,7 @@ class GoogleService:
 			name = request.POST.get('name')
 			if name is None:
 				name = f'ENG_INIT_Lead_2020_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'
-														
+				
 			#Upload template
 			response = GoogleAPI.upload_init_lead_template(access_token=token['access_token'], 
 								name=name, parentID=request.POST.get('parentID'))
