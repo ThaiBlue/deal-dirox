@@ -1,6 +1,6 @@
 import LoginScreen from "./Layout/LoginScreen"
 import DealPage from "./Layout/DealPage"
-// import popup from "./components/Popup"
+// import popup from "./components/PopupSelectFolder"
 import test from "./components/test"
 
 
@@ -21,7 +21,7 @@ const routes = [
     },
 
     // {
-    //     path: '/test',
+    //     path: '/popup',
     //     name: 'pop-up',
     //     component: popup
     // },

@@ -31,7 +31,7 @@
     </div>
 </template>
 <script>
-import Popup from "./Popup"
+import Popup from "./PopupCreateFolder"
 
 
 export default {
