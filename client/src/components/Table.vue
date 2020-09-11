@@ -24,7 +24,7 @@
         },
         method: {
             handleCurrentChange(val) {
-                this.currentRow = val;
+                this.$store.dispatch('assignCurrentDeal', val);
       }
         }
     }

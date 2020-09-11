@@ -21,6 +21,7 @@ export const store = new Vuex.Store({
         currentSlideID: '',
         currentDeal: 0,
         currentCompanyName: '',
+        currentFolderId: 0,
     },
     getters: {
         // loggedIn(state) {
@@ -101,11 +102,32 @@ export const store = new Vuex.Store({
             await context.dispatch('fetchAccessToken');
             const drive = new DriveAPI(this.state.googleToken.access_token);
             var response = await drive.getListOfFolder();
+            const owned = [];
             await response.data.files.forEach(item => {
-                    if (item.ownedByMe) {
-                        this.state.folder.push(item);
-                    }
-                })
+                if (item.ownedByMe) {
+                    owned.push({
+                        id: item.id,
+                        label: item.name,
+                        parents: item.parents[0],
+                        children: []
+                    })
+                }
+            })
+            const idMapping = owned.reduce((acc, el, i) => {
+                acc[el.id] = i;
+                return acc;
+            }, {});
+            await owned.forEach(item => {
+                // Handle the root element
+                if (idMapping[item.parents] === undefined) {
+                    this.state.folder.push(item);
+                    return;
+                }
+                // Use our mapping to locate the parent element in our data array
+                const parentEl = owned[idMapping[item.parents]];
+                // Add our current el to its parent's `children` array
+                parentEl.children.push(item)
+            })
         },
         async createFolder(context, folderInfo) {
             /*
@@ -141,7 +163,7 @@ export const store = new Vuex.Store({
         },
         assignCurrentDeal(context, currentDeal) {
             /* 
-                assign current select deal 
+                assign current selected deal 
             */
             this.state.currentDeal = currentDeal;
         },
@@ -153,16 +175,23 @@ export const store = new Vuex.Store({
             await context.dispatch('fetchAccessToken');
             const slide = new SlideAPI(this.state.googleToken.access_token, this.state.currentSlideID);
             var res = await slide.updatePresentaion(
-                        this.state.deals[this.state.currentDeal].description,
-                        this.state.deals[this.state.currentDeal].deal_summary,
-                        this.state.deals[this.state.currentDeal].lead_overview_1,
-                        this.state.deals[this.state.currentDeal].lead_overview_2,
-                        this.state.currentCompanyName)
-            
+                this.state.deals[this.state.currentDeal].description,
+                this.state.deals[this.state.currentDeal].deal_summary,
+                this.state.deals[this.state.currentDeal].lead_overview_1,
+                this.state.deals[this.state.currentDeal].lead_overview_2,
+                this.state.currentCompanyName)
+
         },
         assignSlideID(context, ID) {
-            /* asign SideID actions */
+            /* asign current selected SideID actions */
             this.state.currentSlideID = ID;
+        },
+        assignCurrentFolderID(context, ID) {
+            /* assign current selected ID actions */
+            this.state.currentFolderId = ID;
+        },
+        resetFolder(context) {
+            this.state.folder = [];
         }
     }
 })

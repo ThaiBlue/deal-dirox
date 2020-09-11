@@ -1,7 +1,7 @@
 <template>
     <div class="create-folder">
         <div class="header">
-            <label class="title">CREATE FOLDER</label>
+            <label class="title">SELECT FOLDER</label>
         </div>
         <div class="body-popup">
             <div class="left">
@@ -13,11 +13,11 @@
                 <div class="folder-name">
                     <div class="search-folder">
                         <label class="search">Folder name:</label>
-                        <input type="text" placeholder="Folder name" class="input-folder" v-model="foldername">
+                        <input type="text" placeholder="Folder name" class="input-folder">
                     </div>
 
                     <div class="button-folder">
-                        <button class="create" type="submit" v-on:click="onclickCreate">Create</button>
+                        <!-- <button class="create" type="submit" v-on:click="">Create</button> -->
                         <button class="cancel" type="submit">Cancel</button>
                     </div>
                 </div>
@@ -31,21 +31,16 @@ export default {
     // name: 'Popup',
     data() {
         return {
-            data: [{id: null, label: 'Drive', children:this.$store.state.folder}],
+            data: [{label: 'Drive', children:this.$store.state.folder}],
             defaultProps: {
                 children: 'children',
                 label: 'label'
-            },
-            foldername: '',
+            }
         };
     },
     methods: {
         handleNodeClick(data) {
-            console.log(data)
             this.$store.dispatch('assignCurrentFolderID', data.id);
-        },
-        onclickCreate(){
-            this.$store.dispatch('createFolder', {name: this.foldername, parentID: [this.$store.state.currentFolderId]});
         }
     }
 }
