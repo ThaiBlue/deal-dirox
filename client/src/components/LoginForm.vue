@@ -44,38 +44,20 @@
             error: false
         }),
         methods: {
-            login() {
-                // console.log(this.$store)
-                this.$store.dispatch('authenticate', {
+            async login() {
+                await this.$store.dispatch('authenticate', {
                     username: this.username,
                     password: this.password
-                }).then(response => {
-                    // this.$router.push({name: 'deal'})
-                    //fetch deals after log in success
-                    this.$store.dispatch('fetchDeals').then(response => {
-                            console.log(response)
-                            console.log('success fetch data')
-                            this.$store.state.currentDeal = this.$store.state.deals[0];
-                            this.$store.dispatch('createInitLead')
-                            .then(response => {
-                                console.log('its created')
-                                this.$store.state.currentSlide = response.data;
-                            })
-                            .catch(error => {
-                                console.log(error);
-                                return Promise.reject(error);
-                            })
-                    }).catch(error => {
-                        console.log(error)
-                        console.log('fail to fetch data')
-                    })
-                    this.$router.push('/deal');
-                    
-                }).catch(error => {
-                    this.error = true
-                    console.log(error)
-                    console.log('authenticate error')
                 })
+                await this.$store.dispatch('fetchDeals')
+                this.$router.push('/deal');
+                
+                // await this.$store.dispatch('assignCurrentDeal', 3)
+                // this.$store.dispatch('createInitLead')
+                
+                // await this.$store.dispatch('createFolder', {name:'initlead', parentID:['1RYMN2ItKqeMUWK923vsbPCFjnTXp8oxe']})
+                // await this.$store.dispatch('fetchFolder')
+                // console.log(this.$store.state.folder)
             },
         }
     }

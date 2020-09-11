@@ -21,7 +21,8 @@ module.exports = class DriveAPI {
 			},
 			headers: {
 				'Authorization': 'Bearer ' + this.token
-			}
+			},
+			withCredentials: false
 		};
 
 		// connection handler
@@ -29,7 +30,7 @@ module.exports = class DriveAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return Promise.resolve(response);
+			return response;
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -37,11 +38,11 @@ module.exports = class DriveAPI {
 				this.getListOfFolder();
 			}
 			//return error code
-			return Promise.reject(err);
+			return err.response;
 		}
 	}
 
-	async createFolder(name, parentID = null) {
+	async createFolder(name, parentID=[]) {
 		/*
 		Create a folder in user's personal Drive
 		* name {string} - name of the new folder
@@ -57,8 +58,9 @@ module.exports = class DriveAPI {
 			data: {
 				mimeType: 'application/vnd.google-apps.folder',
 				name: name,
-				parents: [parentID]
-			}
+				parents: parentID
+			},
+			withCredentials: false
 		};
 
 		// connection handler
@@ -66,7 +68,7 @@ module.exports = class DriveAPI {
 			// send request
 			var response = await this.axios(config);
 			//return fetched data
-			return Promise.resolve(response);
+			return response;
 
 		} catch (err) {
 			if (err.response.status == 408) {
@@ -74,7 +76,7 @@ module.exports = class DriveAPI {
 				this.createFolder(name, parentID);
 			}
 			//return error code
-			return Promise.reject(err);
+			return err.response;
 		}
 	}
 
