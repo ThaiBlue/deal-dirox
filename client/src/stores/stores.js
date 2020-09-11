@@ -138,6 +138,11 @@ export const store = new Vuex.Store({
             */
             await context.dispatch('fetchAccessToken', 'google');
             const drive = new DriveAPI(this.state.googleToken.access_token);
+            if(folderInfo.parentID === null) {
+                parentID = [];
+            } else {
+                parentEl = folderInfo.parentID;
+            }
             var response = await drive.createFolder(folderInfo.name, folderInfo.parentID);
             this.state.folder.push(response.data);
         },
@@ -152,8 +157,11 @@ export const store = new Vuex.Store({
                 .catch(err => {
                     return Promise.reject(err.response);
                 })
-
-            await axios.get('/services/google/drive/file/create/initlead')
+            
+            var payload = {
+                parentID: this.$store.state.currentFolderId
+            }
+            await axios.post('/services/google/drive/file/create/initlead', payload)
                 .then(response => {
                     this.state.currentSlideID = response.data.id;
                 })

@@ -34,14 +34,15 @@
     </div>
 </template>
 <script>
+    
 import Popup from "./Popup"
-import SelectFolder from "../components/SelectFolder"
+import Popup from "./PopupSelectFolder"
+
 
 export default {
     name: 'Option',
     components: {
         Popup,
-        SelectFolder
     },
     data() {
         return {

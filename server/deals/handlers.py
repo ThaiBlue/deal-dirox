@@ -194,10 +194,10 @@ class OAuth2:
 class GoogleService:
 	'''Google service API request handler'''		
 	@classmethod
-	def create_init_lead(cls, request):
+	def create_init_lead(cls, request, parentID):
 		'''Create a new InitLead document on Drive'''
 		
-		if request.method == 'GET':
+		if request.method == 'POST':
 			if not request.user.is_authenticated: # Authenication check
 				return HTTP_400_LOGIN_REQUIRE
 			#retrieve token from database
@@ -209,11 +209,14 @@ class GoogleService:
 			
 			if token == {}:
 				return HTTP_408
-				
-			name = f'ENG_INIT_Lead_2020_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'
+			
+			name = request.POST.get('name')
+			if name is None:
+				name = f'ENG_INIT_Lead_2020_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'
 														
 			#Upload template
-			response = GoogleAPI.upload_init_lead_template(access_token=token['access_token'], name=name)
+			response = GoogleAPI.upload_init_lead_template(access_token=token['access_token'], 
+								name=name, parentID=request.POST.get('parentID'))
 			
 			return HttpResponse(content=response.text, content_type='application/json')
 				
