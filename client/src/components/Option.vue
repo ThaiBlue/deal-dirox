@@ -16,6 +16,9 @@
                 <modal name="modal-login" :height="690" :width="1028">
                     <Popup />
                 </modal>
+                <modal name="modal-select" :height="690" :width="1028">
+                    <SelectFolder />
+                </modal>
             </div>
         </div>
 
@@ -31,14 +34,14 @@
     </div>
 </template>
 <script>
+    
 import Popup from "./PopupCreateFolder"
-
 
 export default {
     name: 'Option',
     
     components: {
-        Popup
+        Popup,
     },
 
     computed: {
@@ -75,20 +78,27 @@ export default {
 
             showModal: true,
 
-            clicked: true,
-
             value: ''
         }
     },
     methods: {
-        show() {
-            this.$modal.show('modal-login')
-            // console.log(this.options[0].value)
+        // show() {
+        //     this.$modal.show('modal-login')
+        //     // console.log(this.options[0].value)
+        // },
+
+        // hide() {
+        //     this.$modal.hide('modal-login')
+        // },
+        async show() {
+            await this.$store.dispatch('resetFolder');
+            this.$store.dispatch('fetchFolder');
+            this.$modal.show('modal-login');
         },
 
         hide() {
-            this.$modal.hide('modal-login')
-        },
+            this.$modal.hide('modal-login');
+        }
     }
 }
 </script>

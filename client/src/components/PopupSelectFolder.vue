@@ -11,13 +11,8 @@
                 <div class="name-folder"></div>
                 <div class="folder"></div>
                 <div class="folder-name">
-                    <div class="search-folder">
-                        <label class="search">Folder name:</label>
-                        <input type="text" placeholder="Folder name" class="input-folder">
-                    </div>
-
                     <div class="button-folder">
-                        <button class="create" type="submit">Create</button>
+                        <button class="create" type="submit" v-on:click="onclickCreate">Create</button>
                         <button class="cancel" type="submit">Cancel</button>
                     </div>
                 </div>
@@ -25,80 +20,41 @@
         </div>
     </div>
 </template>
-
 <script>
-export default {
-    // name: 'Popup',
-    data() {
-        return {
-            data: [
-                {
-                    label: 'Level one 1',
-                    children: [{
-                        label: 'Level two 1-1',
-                        children: [{
-                            label: 'Level three 1-1-1'
-                        }]
-                    }]
+    export default {
+        // name: 'Popup',
+        data() {
+            return {
+                data: [{
+                    id: null,
+                    label: 'Drive',
+                    children: this.$store.state.folder
+                }],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
                 },
-
-                {
-                    label: 'Level one 2',
-                    children: [{
-                        label: 'Level two 2-1',
-                        children: [{
-                            label: 'Level three 2-1-1'
-                        }]
-                    }, 
-                
-                    {
-                        label: 'Level two 2-2',
-                        children: [{
-                            label: 'Level three 2-2-1'
-                        }]
-                    }]
-                }, 
-                
-                {
-                    label: 'Level one 3',
-                    children: [{
-                        label: 'Level two 3-1',
-                        children: [{
-                            label: 'Level three 3-1-1'
-                        }]
-                    }, 
-                    
-                    {
-                        label: 'Level two 3-2',
-                        children: [{
-                            label: 'Level three 3-2-1'
-                        }]
-                    }]
-                }
-            ],
-            defaultProps: {
-                children: 'children',
-                label: 'label'
+                foldername: '',
+            };
+        },
+        methods: {
+            handleNodeClick(data) {
+                this.$store.dispatch('assignCurrentFolderID', data.id);
+            },
+            onclickCreate() {
+                this.$store.dispatch('createInitLead')
             }
-        };
-    },
-    methods: {
-        handleNodeClick(data) {
-        console.log(data);
         }
     }
-}
 </script>
-
 <style scoped>
-    .create-folder{
+    .create-folder {
         width: 1028px;
         height: 690px;
         border-radius: 10px;
         border: solid 1px #979797;
         background-color: #ffffff;
     }
-
 
     .header {
         height: 49px;
@@ -107,14 +63,12 @@ export default {
         margin-top: 8px;
     }
 
-    
     .body-popup {
         height: 639px;
         display: flex;
     }
 
-    
-    .left{
+    .left {
         height: 630px;
         width: 273px;
     }
@@ -138,18 +92,15 @@ export default {
         width: 753px;
     }
 
-
-    .name-folder{
+    .name-folder {
         height: 56px;
         border: 1px solid black;
     }
-
 
     .folder {
         height: 485px;
         border: 1px solid blue;
     }
-
 
     .folder-name {
         height: 80px;
@@ -157,14 +108,12 @@ export default {
         justify-content: space-around;
     }
 
-
     .search-folder {
         width: 424px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
     }
-
 
     .search {
         font-family: UTM-Avo;
@@ -177,7 +126,6 @@ export default {
         color: #0b0b0b;
     }
 
-
     .input-folder {
         width: 424px;
         height: 37px;
@@ -187,14 +135,12 @@ export default {
         outline: none;
     }
 
-
     .button-folder {
         width: 263px;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-    
 
     .create {
         width: 124px;
@@ -207,13 +153,12 @@ export default {
         outline: none;
     }
 
-
     .cancel {
         width: 124px;
         height: 45px;
         border-radius: 10px;
         border: solid 1px #979797;
-        background-color: #979797; 
+        background-color: #979797;
         cursor: pointer;
         outline: none;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);

@@ -13,11 +13,11 @@
                 <div class="folder-name">
                     <div class="search-folder">
                         <label class="search">Folder name:</label>
-                        <input type="text" placeholder="Folder name" class="input-folder">
+                        <input type="text" placeholder="Folder name" class="input-folder" v-model="foldername">
                     </div>
 
                     <div class="button-folder">
-                        <button class="create" type="submit">Create</button>
+                        <button class="create" type="submit" v-on:click="onclickCreate">Create</button>
                         <button class="cancel" type="submit">Cancel</button>
                     </div>
                 </div>
@@ -31,60 +31,20 @@ export default {
     // name: 'Popup',
     data() {
         return {
-            data: [
-                {
-                    label: 'Level one 1',
-                    children: [{
-                        label: 'Level two 1-1',
-                        children: [{
-                            label: 'Level three 1-1-1'
-                        }]
-                    }]
-                },
-
-                {
-                    label: 'Level one 2',
-                    children: [{
-                        label: 'Level two 2-1',
-                        children: [{
-                            label: 'Level three 2-1-1'
-                        }]
-                    }, 
-                
-                    {
-                        label: 'Level two 2-2',
-                        children: [{
-                            label: 'Level three 2-2-1'
-                        }]
-                    }]
-                }, 
-                
-                {
-                    label: 'Level one 3',
-                    children: [{
-                        label: 'Level two 3-1',
-                        children: [{
-                            label: 'Level three 3-1-1'
-                        }]
-                    }, 
-                    
-                    {
-                        label: 'Level two 3-2',
-                        children: [{
-                            label: 'Level three 3-2-1'
-                        }]
-                    }]
-                }
-            ],
+            data: [{id: null, label: 'Drive', children:this.$store.state.folder}],
             defaultProps: {
                 children: 'children',
                 label: 'label'
-            }
+            },
+            foldername: '',
         };
     },
     methods: {
         handleNodeClick(data) {
-        console.log(data);
+            this.$store.dispatch('assignCurrentFolderID', data.id);
+        },
+        onclickCreate(){
+            this.$store.dispatch('createFolder', {name: this.foldername, parentID: [this.$store.state.currentFolderId]});
         }
     }
 }
