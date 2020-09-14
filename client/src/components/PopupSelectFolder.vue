@@ -23,6 +23,7 @@
 <script>
     export default {
         // name: 'Popup',
+        name: "SelectFolder",
         data() {
             return {
                 data: [{

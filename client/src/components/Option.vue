@@ -13,10 +13,10 @@
             </el-select>
             <div class="button-apply">
                 <el-button @click.prevent="show" class="apply" :disabled="hiddenButton">Apply</el-button>
-                <modal name="modal-folder-create" :height="690" :width="1028">
-                    <Popup />
+                <modal name = 'modal-folder-create' :height="690" :width="1028">
+                    <CreateFolder />
                 </modal>
-                <modal name="modal-folder-select" :height="690" :width="1028">
+                <modal name = 'modal-folder-select' :height="690" :width="1028">
                     <SelectFolder />
                 </modal>
             </div>
@@ -35,14 +35,15 @@
 </template>
 <script>
     
-import Popup from "./PopupCreateFolder"
+import CreateFolder from "./PopupCreateFolder"
 import SelectFolder from "./PopupSelectFolder"
 
 export default {
     name: 'Option',
     
     components: {
-        Popup,
+        CreateFolder,
+        SelectFolder
     },
 
     computed: {
@@ -79,7 +80,9 @@ export default {
 
             showModal: true,
 
-            value: ''
+            value: '',
+
+            name: ''
         }
     },
     methods: {
@@ -87,16 +90,16 @@ export default {
             await this.$store.dispatch('resetFolder');
             this.$store.dispatch('fetchFolder');
             if(this.value == 'Create Folder') {
-                this.$modal.show('modal-folder-select');
+                this.$modal.show('modal-folder-create');
             } 
-            if(this.value == 'Create Transfer to BA') {
+            else if(this.value == 'Create Transfer to BA') {
                 this.$modal.show('modal-folder-select');
             }
         },
 
-        hide() {
-            this.$modal.hide('modal-folder');
-        }
+        // hide() {
+        //     this.$modal.hide('modal-folder');
+        // }
     }
 }
 </script>
