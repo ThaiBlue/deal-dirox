@@ -196,10 +196,10 @@ class GoogleService:
 	@classmethod
 	def create_init_lead(cls, request):
 		'''Create a new InitLead document on Drive'''
+		if not request.user.is_authenticated: # Authenication check
+			return HTTP_400_LOGIN_REQUIRE
 		
 		if request.method == 'POST':
-			if not request.user.is_authenticated: # Authenication check
-				return HTTP_400_LOGIN_REQUIRE
 			#retrieve token from database
 			token = User.fetch_access_token(request=request, service='google')
 			
@@ -211,9 +211,10 @@ class GoogleService:
 				return HTTP_408
 			
 			name = request.POST.get('name')
+			
 			if name is None:
-				name = f'ENG_INIT_Lead_2020_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'
-				
+				name = f'ENG_INIT_Lead_2020_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'	
+							
 			#Upload template
 			response = GoogleAPI.upload_init_lead_template(access_token=token['access_token'], 
 								name=name, parentID=request.POST.get('parentID'))

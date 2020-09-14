@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import FormData from 'form-data'
+import FormData, { from } from 'form-data'
 import moment from 'moment'
 import DriveAPI from '../assets/js/DriveAPI'
 import SlideAPI from '../assets/js/SlideAPI'
@@ -157,10 +157,12 @@ export const store = new Vuex.Store({
                     return Promise.reject(err.response);
                 })
 
-            var payload = {
-                parentID: this.state.currentFolderId
-            }
-            await axios.post('/services/google/drive/file/create/initlead', payload)
+            const form = new FormData();
+            
+            // form.append('name', );
+            form.append('parentID', this.state.currentFolderId);
+            
+            await axios.post('/services/google/drive/file/create/initlead', form)
                 .then(response => {
                     this.state.currentSlideID = response.data.id;
                 })

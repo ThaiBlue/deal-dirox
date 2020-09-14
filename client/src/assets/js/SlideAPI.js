@@ -14,7 +14,6 @@ module.exports = class SlideAPI {
 		/*
 		Retrieve the RevisionID of the Presentation
 		*/
-		console.log(this.slideID)
 		var config = {
 			method: 'get',
 			url: 'https://slides.googleapis.com/v1/presentations/' + this.slideID,
