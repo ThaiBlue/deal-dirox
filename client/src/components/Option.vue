@@ -13,10 +13,10 @@
             </el-select>
             <div class="button-apply">
                 <el-button @click.prevent="show" class="apply" :disabled="hiddenButton">Apply</el-button>
-                <modal name="modal-login" :height="690" :width="1028">
+                <modal name="modal-folder-create" :height="690" :width="1028">
                     <Popup />
                 </modal>
-                <modal name="modal-select" :height="690" :width="1028">
+                <modal name="modal-folder-select" :height="690" :width="1028">
                     <SelectFolder />
                 </modal>
             </div>
@@ -36,6 +36,7 @@
 <script>
     
 import Popup from "./PopupCreateFolder"
+import SelectFolder from "./PopupSelectFolder"
 
 export default {
     name: 'Option',
@@ -46,7 +47,7 @@ export default {
 
     computed: {
         hiddenButton (){
-            return this.value !== 'Create Folder'
+            return false
         }
     },
 
@@ -82,22 +83,19 @@ export default {
         }
     },
     methods: {
-        // show() {
-        //     this.$modal.show('modal-login')
-        //     // console.log(this.options[0].value)
-        // },
-
-        // hide() {
-        //     this.$modal.hide('modal-login')
-        // },
         async show() {
             await this.$store.dispatch('resetFolder');
             this.$store.dispatch('fetchFolder');
-            this.$modal.show('modal-login');
+            if(this.value == 'Create Folder') {
+                this.$modal.show('modal-folder-select');
+            } 
+            if(this.value == 'Create Transfer to BA') {
+                this.$modal.show('modal-folder-select');
+            }
         },
 
         hide() {
-            this.$modal.hide('modal-login');
+            this.$modal.hide('modal-folder');
         }
     }
 }
