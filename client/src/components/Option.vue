@@ -12,7 +12,7 @@
                 </el-option>
             </el-select>
             <div class="button-apply">
-                <button @click.prevent="show" class="apply">Apply</button>
+                <el-button @click.prevent="show" class="apply" :disabled="hiddenButton">Apply</el-button>
                 <modal name="modal-login" :height="690" :width="1028">
                     <Popup />
                 </modal>
@@ -36,9 +36,17 @@ import Popup from "./PopupCreateFolder"
 
 export default {
     name: 'Option',
+    
     components: {
         Popup
     },
+
+    computed: {
+        hiddenButton (){
+            return this.value !== 'Create Folder'
+        }
+    },
+
     data() {
         return {
             options: [
@@ -60,24 +68,27 @@ export default {
                 }, 
                 {
                     value: 'Create Folder',
-                    label: 'Create Folder'
+                    label: 'Create Folder',
                 },
             ],
 
-            value: '',
 
-            showModal: true
+            showModal: true,
+
+            clicked: true,
+
+            value: ''
         }
     },
     methods: {
         show() {
             this.$modal.show('modal-login')
-            console.log(this.options[0].value)
+            // console.log(this.options[0].value)
         },
 
         hide() {
             this.$modal.hide('modal-login')
-        }
+        },
     }
 }
 </script>
