@@ -10,36 +10,42 @@ from .constants import FETCHING_TIME
 class Account:
     @classmethod
     def authenticate(cls, user_id, password):
-    	"""
-    	Handle authenticate process
-    	"""
-    	user = None
-    	
-    	if '@' in user_id: # if user_id is an email
-    		try: 
-    			User.objects.get(email=user_id)
-    		except:
-    			return None
-    		else:
-    			user = User.objects.get(email=user_id)
+        """
+        Handle authenticate process
+        """
+        if not isinstance(user_id, str):
+            raise TypeError("user_id must be an string")
+        if not isinstance(password, str):
+            raise TypeError("user_id must be an string")
+        
+        if '@' in user_id: # if user_id is an email
+            try: 
+                User.objects.get(email=user_id)
+            except:
+                return None
+            else:
+                user = User.objects.get(email=user_id)
 
-    	else: # if user_id is a username
-    		try:
-    			User.objects.get(username=user_id)
-    		except:
-    			return None
-    		else:
-    			user = User.objects.get(username=user_id)
+        else: # if user_id is a username
+            try:
+                User.objects.get(username=user_id)
+            except:
+                return None
+            else:
+                user = User.objects.get(username=user_id)
 
-    	# Verify password
-    	if check_password(password, user.password):
-    		return user
-    	
-    	return None
+        # Verify password
+        if check_password(password, user.password):
+            return user
+
+        return None
     
     @classmethod
     def generate_profile(cls, user):
         '''Return user's profile in JSON format'''
+        if not isinstance(user, User):
+            raise TypeError("user must be an User instance")
+                   
         profile = {
         	'status': 'online',
         	'username': user.username,
@@ -50,7 +56,6 @@ class Account:
         		'hubspot': {
         			'is_available': True
         		}
-        			
         	}
         }
 
@@ -64,6 +69,72 @@ class Account:
         
         return profile
 
+class Cache(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    deal_id = models.TextField()
+    folder_id = models.TextField(null=True)
+    status = models.TextField(null=True)
+    
+    @classmethod
+    def get_deal_cache(cls, user, deal_id):
+        '''Get deal cache
+            Arguments:
+                - user: User instance
+                - deal_id: id of deal
+        '''
+        if not isinstance(user, User):
+            raise TypeError("user must be an User instance")
+        if not isinstance(deal_id, str):
+            raise TypeError("deal_id must be a string")
+        
+        try:
+            cls.objects.get(user=user, deal_id=deal_id)
+        except:
+            return None
+        else:
+            return cls.objects.get(user=user, deal_id=deal_id)
+            
+    @classmethod
+    def clean_cache(cls, user, deal_id_list):
+        '''Clean use cache
+
+            Arguments:
+                - deal_id_list: list of available deal
+        '''
+        if not isinstance(user, User):
+            raise TypeError('user must be an User instance')
+        if not isinstance(deal_id_list, list):
+            raise TypeError('deal_id_list must be a list')
+        
+        deal_caches = cls.objects.filter(user=user)
+        
+        for cache in list(deal_caches):
+            if cache.deal_id not in deal_id_list:
+                cache.delete()
+
+    @classmethod
+    def caches_to_json(cls, user):
+        '''Return list of cache info in JSON format'''
+        if not isinstance(user, User):
+            raise TypeError('user must be an User instance')
+        
+        deal_caches = cls.objects.filter(user=user)
+        
+        caches = []
+        
+        for cache in list(deal_caches):
+            caches.append(cache.to_json())
+           
+        return caches
+           
+    def to_json(self):
+        '''Return cache info in JSON format'''
+        return {
+            'deal_id': self.deal_id,
+            'folder_id': self.folder_id,
+            'status': self.status
+        }
+         
 # OAuth2 Credential model
 class Credential(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -75,7 +146,7 @@ class Credential(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     
     @classmethod
-    def fetch_credential(cls, user=None):
+    def fetch_credential(cls, user):
         '''Fetch credential of the user from database
         
             Arguments:
@@ -85,6 +156,9 @@ class Credential(models.Model):
                 - None if no credential found
                 - GoogleToken object if found
         '''
+        if not isinstance(user, User):
+            raise TypeError("user must be an User instance")
+
         try: # check if user had registered a google account yet
         	cls.objects.get(user=user)
         except: # if no credential exists
@@ -99,6 +173,10 @@ class Credential(models.Model):
             Arguments:
                 - token {dict} -- a Credential instance
                 - user {User} -- a User instance
+            
+            Returns:
+                - True: registered success
+                - False: fail
         '''
         # validate input 
         if not isinstance(token, dict):
@@ -109,10 +187,16 @@ class Credential(models.Model):
         # check for credential in database
         credential = cls.fetch_credential(user=user) 
         
-        if credential is None and 'refresh_token' in list(token.keys()):
-        	cls.objects.create(user=user, refresh_token=token['refresh_token'], 
-                access_token=token['access_token'], expires_in=int(token['expires_in']), 
-                expires_at=datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
+        if credential is None:
+            if 'refresh_token' in list(token.keys()):
+                cls.objects.create(user=user, refresh_token=token['refresh_token'], 
+                    access_token=token['access_token'], expires_in=int(token['expires_in']), 
+                    expires_at=datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
+                    
+                return 'registered'
+                
+            else:
+                return 'fail'
                 
         else: # update if credential exists
             if 'refresh_token' in list(token.keys()):
@@ -122,10 +206,11 @@ class Credential(models.Model):
             credential.expires_at = datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME)
             credential.update_time = datetime.now(get_localzone())
             credential.save()
+            
+            return 'updated'
           
     def to_json(self):
-        '''Return token info in JSON format
-        '''
+        '''Return token info in JSON format'''
         return {
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,

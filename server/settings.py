@@ -32,7 +32,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = ['https://deal.dirox.dev', 'https://api.deal.dirox.dev','http://127.0.0.1:8000', 'http://localhost:8080']
 SESSION_COOKIE_SAMESITE = None
-SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 CORS_ALLOW_CREDENTIALS = True
 
 # Setting Oauth2 clients
@@ -44,7 +44,8 @@ AUTHLIB_OAUTH_CLIENTS = {
         'access_token_url': 'https://oauth2.googleapis.com/token',
         'authorize_params': {'access_type':'offline'},
         'client_kwargs': {
-            'scope': 'https://www.googleapis.com/auth/drive \
+            'scope': 'https://www.googleapis.com/auth/gmail.metadata \
+                      https://www.googleapis.com/auth/drive \
                       https://www.googleapis.com/auth/drive.file \
                       https://www.googleapis.com/auth/spreadsheets \
                       https://www.googleapis.com/auth/presentations',

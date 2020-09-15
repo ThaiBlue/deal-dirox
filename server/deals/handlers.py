@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from json import dumps, loads
 import logging
 
-from .models import GoogleToken, HubspotToken, Account
+from .models import GoogleToken, HubspotToken, Account, Cache
 from .requests import GoogleAPI, HubspotAPI, OAuth2API
 from .constants import *
 
@@ -71,7 +71,6 @@ class User:
 			- token dictonary if success
 		'''
 		# get creadential from database
-		token = None
 		 
 		if service == 'hubspot':
 			token = HubspotToken.fetch_credential(user=request.user)
@@ -82,8 +81,8 @@ class User:
 			return None
 		
 		if token.expires_at <= datetime.now(get_localzone()) + timedelta(minutes=5): #if token expired
-			response = OAuth2API.fetch_access_token(request=request, refresh_token=token.refresh_token, service=oauth.create_client(service))
-			
+			response = OAuth2API.fetch_access_token(request=request, refresh_token=token.refresh_token, 
+																	service=oauth.create_client(service))
 			if response.status_code == 400: # if refresh token didn't work
 				token.delete() # delete invalid credential
 				return None
@@ -103,13 +102,43 @@ class User:
 			token.pop('refresh_token') # remove refresh_token attribute
 		
 		return token
+	
+	@classmethod
+	def cache_deal_setting(cls, request):
+		'''Cache deal's drive folder setting and working status'''
 		
+		if request.method == 'POST':
+			if not request.user.is_authenticated: # Authenication check
+				return HTTP_400_LOGIN_REQUIRE
+
+			# extract data
+			deal_status = request.POST.get('status')
+			folder_id = request.POST.get('folder_id')
+			deal_id = request.POST.get('deal_id')
+			
+			if deal_status is None or folder_id is None or deal_id is None:
+				return HTTP_400_CACHE_REQUEST_FAIL
+				
+			cache = Cache.get_deal_cache(user=request.user, deal_id=deal_id)
+				
+			if cache is None:
+				Cache.objects.create(user=request.user, deal_id=deal_id, status=deal_status, folder_id=folder_id)
+				return HTTP_200
+				
+			cache.folder_id = folder_id
+			cache.status = deal_status
+			cache.save()
+				
+			return HTTP_200
+				
+		return HTTP_405
+			
 class OAuth2:
 	'''Oauth2 API request handler'''
 	@staticmethod
 	def build_redirect_url(request, service):
 		'''Method use to generate redirect URL of this server'''
-		return 'https://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
+		return 'http://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
 	
 	@classmethod
 	def authorize(cls, request, service):
@@ -148,7 +177,7 @@ class OAuth2:
 			if service == 'google':
 				token = service_.authorize_access_token(request) # Get credential
 				# Save token into database
-				GoogleToken.register_credential(user=request.user, token=token)
+				status = GoogleToken.register_credential(user=request.user, token=token)
 				
 			else: # for hubspot service
 				# Get credential
@@ -156,6 +185,9 @@ class OAuth2:
 						client_id=service_.client_id, client_secret=service_.client_secret)
 				# Save token into database
 				HubspotToken.register_credential(user=request.user, token=token)
+				
+			if status == 'fail':
+				return HTTP_400_INVALID_SERVICE
 				
 			if 'refresh_token' in list(token.keys()):
 				token.pop('refresh_token') # remove refresh_token attribute
@@ -190,7 +222,6 @@ class OAuth2:
 					
 		return HTTP_405
 
-
 class GoogleService:
 	'''Google service API request handler'''		
 	@classmethod
@@ -222,7 +253,51 @@ class GoogleService:
 			return HttpResponse(content=response.text, content_type='application/json')
 				
 		return HTTP_405
+
+	@classmethod
+	def retrieve_token_info(cls, request):
+		'''Retrieve access_token info from google server'''
+		
+		if request.method == 'GET':			
+			if not request.user.is_authenticated: # Authentication check
+				return HTTP_400_LOGIN_REQUIRE
 				
+			token = User.fetch_access_token(request=request, service='google')
+			
+			if token is None:
+				return HTTP_400_NO_SERVICE_AVAILABLE
+				
+			if token == {}:
+				return HTTP_408
+
+			response = GoogleAPI.retrieve_token_info(access_token=token['access_token'])
+			
+			return HttpResponse(content=dumps(response), content_type='application/json')
+			
+		return HTTP_405
+		
+	@classmethod
+	def revoke_credential(cls, request):
+		'''Retrieve access_token info from hubspot server'''
+		
+		if request.method == 'GET':			
+			if not request.user.is_authenticated: # Authentication check
+				return HTTP_400_LOGIN_REQUIRE
+				
+			token = GoogleToken.fetch_credential(user=request.user)
+			
+			if token is None:
+				return HTTP_400_NO_SERVICE_AVAILABLE
+				
+			response = GoogleAPI.revoke_credential(refresh_token=token.refresh_token)
+			
+			if response.status_code == 200:
+				token.delete()
+				
+			return HttpResponse(content=dumps(response.json()), content_type='application/json')
+			
+		return HTTP_405
+
 class HubspotService:
 	'''Hubspot service API request handler'''
 	@classmethod
@@ -242,7 +317,16 @@ class HubspotService:
 				return HTTP_408
 				
 			deals = HubspotAPI.fetch_make_offer_deals(access_token=token['access_token'])
-				
+			
+			deal_ids = []
+			
+			for deal in deals['results']:
+				deal_ids.append(deal['id'])
+			
+			Cache.clean_cache(user=request.user, deal_id_list=deal_ids)
+			
+			deals['caches'] = Cache.caches_to_json(user=request.user)
+			
 			return HttpResponse(content=dumps(deals), content_type='application/json')
 
 		return HTTP_405
@@ -265,6 +349,50 @@ class HubspotService:
 			companyInfo = HubspotAPI.fetch_company_info(access_token=token['access_token'], dealID=dealID)
 				
 			return HttpResponse(content=dumps(companyInfo), content_type='application/json')	
+			
+		return HTTP_405
+	
+	@classmethod
+	def retrieve_token_info(cls, request):
+		'''Retrieve access_token info from hubspot server'''
+		
+		if request.method == 'GET':			
+			if not request.user.is_authenticated: # Authentication check
+				return HTTP_400_LOGIN_REQUIRE
+				
+			token = User.fetch_access_token(request=request, service='hubspot')
+			
+			if token is None:
+				return HTTP_400_NO_SERVICE_AVAILABLE
+				
+			if token == {}:
+				return HTTP_408
+
+			response = HubspotAPI.retrieve_token_info(access_token=token['access_token'])
+			
+			return HttpResponse(content=dumps(response), content_type='application/json')
+			
+		return HTTP_405
+
+	@classmethod
+	def revoke_credential(cls, request):
+		'''Retrieve access_token info from hubspot server'''
+		
+		if request.method == 'GET':			
+			if not request.user.is_authenticated: # Authentication check
+				return HTTP_400_LOGIN_REQUIRE
+				
+			token = HubspotToken.fetch_credential(user=request.user)
+			
+			if token is None:
+				return HTTP_400_NO_SERVICE_AVAILABLE
+				
+			response = HubspotAPI.revoke_credential(refresh_token=token.refresh_token)
+			
+			if response.status_code == 200:
+				token.delete()
+				
+			return HttpResponse(content=dumps(response.json()), content_type='application/json')
 			
 		return HTTP_405
 
