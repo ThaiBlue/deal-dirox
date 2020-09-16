@@ -1,5 +1,6 @@
-from requests import post, put, get
+from requests import post, put, get, delete
 from json import loads, dumps
+from django.http import HttpRequest
 
 from .constants import MAKE_OFFER
 
@@ -11,6 +12,14 @@ class OAuth2API:
 			- token {str} -- a Credential instance
 			- service {DjangoRemoteApp} -- a DjangoRemoteApp instance generate from Authlib
 		'''
+		
+		if not isinstance(refresh_token, str):
+			raise TypeError('refresh_token must be a string')
+		if not isinstance(service, object):
+			raise TypeError('service must be a string')
+		if not isinstance(request, HttpRequest):
+			raise TypeError('request must be a Django HttpRequest instance')
+		
 		url = 'https://oauth2.googleapis.com/token'
 
 		payload = {
@@ -44,6 +53,8 @@ class GoogleAPI:
 			raise TypeError('name MUST be string')
 		if not isinstance(parentID, str) and parentID is not None:
 			raise TypeError('parentID MUST be string')
+		if not isinstance(access_token, str):
+			raise TypeError('access_token must be a string')
 
 				
 		url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable"
@@ -72,12 +83,32 @@ class GoogleAPI:
 		# upload template
 		with open('template/ENG_INIT_Lead_2020_MM_DD.pptx', 'rb') as f:
 		    return put(response.headers.get('Location'), data=f)
+			
+	@classmethod
+	def retrieve_token_info(cls, access_token):
+		'''Retrieve access token infomation from google server'''
+		if not isinstance(access_token, str):
+			raise TypeError('access_token must be a string')
 
+		return get('https://gmail.googleapis.com/gmail/v1/users/me/profile', 
+					headers={'Authorization': 'Bearer ' + access_token}).json()
+
+	@classmethod
+	def revoke_credential(cls, refresh_token):
+		'''Revoke unused creadential'''
+		if not isinstance(refresh_token, str):
+			raise TypeError('refresh_token must be a string')
+
+		return post('https://oauth2.googleapis.com/revoke', params={'token': refresh_token},
+				    headers = {'content-type': 'application/x-www-form-urlencoded'})
 class HubspotAPI:
 	@classmethod
 	def fetch_make_offer_deals(cls, access_token):
 		'''Fetch make offer deals from Hubspot API server'''
 		
+		if not isinstance(access_token, str):
+			raise TypeError('access_token must be a string')
+
 		url = 'https://api.hubapi.com/crm/v3/objects/deals/search'
 		
 		properties = ['dealname','description','deal_summary','lead_overview_1','lead_overview_2','start_date','closedate']
@@ -105,6 +136,9 @@ class HubspotAPI:
 	@staticmethod
 	def fetch_company_id_from_deal_ID(access_token, dealID):
 		'''fetch from hubspot'''
+		if not isinstance(access_token, str):
+			raise TypeError('access_token must be a string')
+
 		url = 'https://api.hubapi.com/crm/v3/objects/deals/' + dealID + '/associations/companies'
 		
 		headers = {
@@ -116,7 +150,11 @@ class HubspotAPI:
 	@classmethod
 	def fetch_company_info(cls, access_token, dealID):
 		'''Fetch from hubspot'''
-		
+		if not isinstance(access_token, str):
+			raise TypeError('access_token must be a string')
+		if not isinstance(dealID, str):
+			raise TypeError('dealID must be a string')
+
 		companyInfo = cls.fetch_company_id_from_deal_ID(access_token, dealID)
 		
 		url = 'https://api.hubapi.com/crm/v3/objects/companies/' + companyInfo['results'][0]['id']
@@ -126,4 +164,20 @@ class HubspotAPI:
 		}
 		
 		return get(url=url, headers=headers).json()
+	
+	@classmethod
+	def retrieve_token_info(cls, access_token):
+		'''Retrieve access token infomation from hubspot server'''
+		if not isinstance(access_token, str):
+			raise TypeError('access_token must be a string')
+		
+		return get('https://api.hubapi.com/oauth/v1/access-tokens/' + access_token).json()
+	
+	@classmethod
+	def revoke_credential(cls, refresh_token):
+		'''Revoke unused creadential'''
+		if not isinstance(refresh_token, str):
+			raise TypeError('refresh_token must be a string')
+		
+		return delete('https://api.hubapi.com/oauth/v1/refresh-tokens/' + refresh_token)
 		
