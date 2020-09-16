@@ -13,6 +13,9 @@ const routes = [
         path: '/deal',
         name: 'deal',
         component: DealPage,
+        // meta: {
+        //     requiresAuth: true
+        // }
     },
 
     // {

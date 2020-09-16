@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <!-- <img class="logo-dirox-new-white" src="../assets/img/logo-dirox.png" > -->
         <LoginForm />
     </div>
 </template>
