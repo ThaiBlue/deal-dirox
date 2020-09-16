@@ -138,7 +138,7 @@ class OAuth2:
 	@staticmethod
 	def build_redirect_url(request, service):
 		'''Method use to generate redirect URL of this server'''
-		return 'http://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
+		return 'https://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
 	
 	@classmethod
 	def authorize(cls, request, service):
@@ -184,7 +184,7 @@ class OAuth2:
 				token = service_.authorize_access_token(request, grant_type='authorization_code', 
 						client_id=service_.client_id, client_secret=service_.client_secret)
 				# Save token into database
-				HubspotToken.register_credential(user=request.user, token=token)
+				status = HubspotToken.register_credential(user=request.user, token=token)
 				
 			if status == 'fail':
 				return HTTP_400_INVALID_SERVICE
