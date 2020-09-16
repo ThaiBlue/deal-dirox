@@ -2,7 +2,7 @@
     <div class="option">
         <div class="create">
             
-            <el-select v-model="value" placeholder="Choose Action" >
+            <el-select v-model="value" placeholder="Choose Action">
                 <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -11,8 +11,10 @@
                 >
                 </el-option>
             </el-select>
+
             <div class="button-apply">
-                <el-button @click.prevent="show" class="apply" :disabled="hiddenButton">Apply</el-button>
+                <el-button  @click.prevent="show" :class="{changed: changeColor}" 
+                    class="apply" :disabled="hiddenButton" >Apply</el-button>
                 <modal name = 'modal-folder-create' :height="690" :width="1028">
                     <CreateFolder />
                 </modal>
@@ -20,6 +22,7 @@
                     <SelectFolder />
                 </modal>
             </div>
+
         </div>
 
 
@@ -48,7 +51,13 @@ export default {
 
     computed: {
         hiddenButton (){
-            return false
+            // return this.value !== 'Create Folder'
+            return this.value === ''
+            // return false
+        },
+
+        changeColor (){
+            return this.value == this.value
         }
     },
 
@@ -95,11 +104,8 @@ export default {
             else if(this.value == 'Create Transfer to BA') {
                 this.$modal.show('modal-folder-select');
             }
-        },
+        }
 
-        // hide() {
-        //     this.$modal.hide('modal-folder');
-        // }
     }
 }
 </script>
@@ -139,29 +145,23 @@ export default {
         font-size: 42px;
     }
 
-
-    
 </style>
 
 
 <style scoped>
+    .changed {
+        background: #99FF92;
+    }
 
-    
-
+    .changed:hover{
+        background: #99FF92;
+    }
 
     .white {
        background-color: white;
        width: 200px;
        height: 200px;
     }
-
-
-    .blue {
-        width: 200px;
-        height: 200px;
-        background-color: blue;
-    }
-
 
     .page{
         width: 300px;
@@ -192,10 +192,13 @@ export default {
         border-radius: 10px;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
         border: solid 1px #979797;
-        background-color: #cacaca;
+        /* background-color: #cacaca; */
         cursor: pointer;
         outline: none;
+        
     }
+
+   
 
     .model-overlay {
         position: absolute;

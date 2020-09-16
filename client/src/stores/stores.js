@@ -64,7 +64,7 @@ export const store = new Vuex.Store({
                             this.state.deals.push({
                                 id: item.id,
                                 projectname: item.properties.dealname,
-                                status: 'Make Offer',
+                                stage: 'Make Offer',
                                 startdate: moment(item.properties.start_date).format('DD/MM/YYYY'),
                                 enddate: moment(item.properties.closedate).format('DD/MM/YYYY'),
                                 description: item.properties.description,
