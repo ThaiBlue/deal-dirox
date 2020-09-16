@@ -13,7 +13,7 @@
                 <div class="folder-name">
                     <div class="button-folder">
                         <button class="create" type="submit" v-on:click="onclickCreate">Create</button>
-                        <button class="cancel" type="submit">Cancel</button>
+                        <button class="cancel" type="submit" v-on:click="onclickHide">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,11 @@
                 this.$store.dispatch('assignCurrentFolderID', data.id);
             },
             onclickCreate() {
-                this.$store.dispatch('createInitLead')
+                this.$store.dispatch('createInitLead');
+                this.$modal.hide('modal-folder-select');
+            },
+            onclickHide() {
+                this.$modal.hide('modal-folder-select');
             }
         }
     }

@@ -44,12 +44,12 @@
             error: false
         }),
         methods: {
-            async login() {
-                await this.$store.dispatch('authenticate', {
+            login() {
+                this.$store.dispatch('authenticate', {
                     username: this.username,
                     password: this.password
                 })
-                await this.$store.dispatch('fetchDeals')
+                // await this.$store.dispatch('fetchDeals')
                 this.$router.push('/deal');
                 
                 // await this.$store.dispatch('assignCurrentDeal', 3)

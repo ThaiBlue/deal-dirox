@@ -20,7 +20,7 @@ from .deals.handlers import *
 urlpatterns = [
     path('accounts/admin', admin.site.urls),
     path('accounts/user/login', User._login),
-    path('accounts/user/logout', User._logout),
+    path('accounts/user/profile', User._logout),
     path('accounts/<str:service>/auth', OAuth2.authorize),
     path('accounts/<str:service>/auth/callback', OAuth2.callback),
     path('accounts/setting/cache', User.cache_deal_setting),

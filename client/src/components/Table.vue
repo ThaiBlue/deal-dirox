@@ -25,8 +25,11 @@
         method: {
             handleCurrentChange(val) {
                 this.$store.dispatch('assignCurrentDeal', val);
-      }
-        }
+            }
+        },
+        mounted() {
+            this.$store.dispatch('fetchDeals');
+        },
     }
 </script>
 <style>
