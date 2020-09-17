@@ -14,7 +14,7 @@
         
         <el-table-column prop="enddate" label="End Date" width="136"></el-table-column>
         
-        <el-table-column prop="folder" label="Folder" width="136"></el-table-column>
+        <el-table-column prop="folder.name" label="Folder" width="136"></el-table-column>
         
         <el-table-column prop="status" label="Status" width="154"></el-table-column>
     </el-table>
@@ -28,10 +28,10 @@
                 tableData: this.$store.state.deals
             }
         },
-        
-        method: {
+        methods: {
             handleCurrentChange(val) {
-                this.$store.dispatch('assignCurrentDeal', val);
+                
+                this.$store.dispatch('assignCurrentDeal', val.index);
             }
         },
         mounted() {

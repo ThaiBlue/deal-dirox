@@ -44,10 +44,11 @@ export default {
             this.$store.dispatch('assignCurrentFolderID', data.id);
         },
         onclickCreate() {
+            this.$modal.hide('modal-folder-create');
             this.$store.dispatch('createFolder', {name: this.foldername, parentID: [this.$store.state.currentFolderId]});
         },
         onclickHide() {
-            this.$modal.hide('modal-folder-create')
+            this.$modal.hide('modal-folder-create');
         }
     }
 }

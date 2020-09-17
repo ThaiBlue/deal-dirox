@@ -20,9 +20,11 @@ export const store = new Vuex.Store({
         huspotToken: {},
         folder: [],
         currentSlideID: '',
-        currentDeal: 0,
+        currentDeal: -1,
         currentCompanyName: '',
-        currentFolderId: 0,
+        currentFolderId: null,
+        googleAccountEmail: '',
+        hubspotAccountEmail: '',
     },
     getters: {
         // loggedIn(state) {
@@ -47,22 +49,54 @@ export const store = new Vuex.Store({
                     .then(response => {
                         //parse user info from response
                         this.state.profile = response.data;
-                        resolve(response)
+                        resolve(response);
                     })
                     .catch(err => {
-                        reject(err)
+                        reject(err);
                     })
             })
         },
-        fetchDeals(context) {
+        retrieveFolderMetaData(context, caches, deal) {
+            /* Return name and url of the Drive folder */
+            var headers = {
+                'Authorization': 'Bearer' + this.state.googleToken.access_token
+            }
+
+            var cache = caches.filter(el => el.deal_id == deal.id)[0]
+
+            if (cache === undefined) {
+                return ''
+            } else {
+                return new Promise((resolve, reject) => {
+                    axios.get('https://www.googleapis.com/drive/v3/files/' + cache.folder_id + '?fields=*', headers)
+                        .then(res => {
+                            resolve({
+                                name: res.data.name,
+                                url: res.date.webViewLink
+                            })
+                        })
+                        .catch(err => {
+                            reject({
+                                name: '',
+                                url: ''
+                            })
+                        })
+                })
+            }
+        },
+        async fetchDeals(context) {
             /* 
-                retrive deals from backend server 
+                retrive deals and cache from backend server
             */
+            await context.dispatch('fetchAccessToken', 'google');
+
             return new Promise((resolve, reject) => {
                 axios.get('/services/hubspot/crm/deals/makeoffer/all')
                     .then(response => {
-                        response.data.results.forEach(item => {
+                        response.data.results.forEach((item, index) => {
+                            var cache = response.data.caches.filter(el => el.deal_id == item.id)[0];
                             this.state.deals.push({
+                                index: index,
                                 id: item.id,
                                 projectname: item.properties.dealname,
                                 stage: 'Make Offer',
@@ -71,7 +105,9 @@ export const store = new Vuex.Store({
                                 description: item.properties.description,
                                 deal_summary: item.properties.deal_summary,
                                 lead_overview_1: item.properties.lead_overview_1,
-                                lead_overview_2: item.properties.lead_overview_2
+                                lead_overview_2: item.properties.lead_overview_2,
+                                status: (cache === undefined) ? '' : cache.status, // [0] is unpack the single element array
+                                folder: context.dispatch('retrieveFolderMetaData', response.data.caches, item)
                             })
                         });
                         resolve(response);
@@ -100,6 +136,7 @@ export const store = new Vuex.Store({
             /* 
                 get folder meta data from google drive 
             */
+            this.state.folder = [];
             await context.dispatch('fetchAccessToken');
             const drive = new DriveAPI(this.state.googleToken.access_token);
             var response = await drive.getListOfFolder();
@@ -139,11 +176,11 @@ export const store = new Vuex.Store({
             */
             await context.dispatch('fetchAccessToken', 'google');
             const drive = new DriveAPI(this.state.googleToken.access_token);
-            var parentID = folderInfo.parentID;
-            if (folderInfo.parentID === null) {
-                parentID = [];
+            var parentID = [];
+            if (folderInfo.parentID[0] !== null) {
+                parentID = folderInfo.parentID;
             }
-            var response = await drive.createFolder(folderInfo.name, folderInfo.parentID);
+            var response = await drive.createFolder(folderInfo.name, parentID);
             this.state.folder.push(response.data);
         },
         async prepareForInitLead(context) {
@@ -158,11 +195,12 @@ export const store = new Vuex.Store({
                     return Promise.reject(err.response);
                 })
 
-            const form = new FormData();
-            
             // form.append('name', );
-            form.append('parentID', this.state.currentFolderId);
-            
+            const form = new FormData();
+            if (this.state.currentFolderId !== null) {
+                form.append('parentID', this.state.currentFolderId);
+            }
+
             await axios.post('/services/google/drive/file/create/initlead', form)
                 .then(response => {
                     this.state.currentSlideID = response.data.id;
@@ -200,8 +238,78 @@ export const store = new Vuex.Store({
             /* assign current selected ID actions */
             this.state.currentFolderId = ID;
         },
-        resetFolder(context) {
-            this.state.folder = [];
+        fetchGoogleAccountInfo(context) {
+            /* Fetch service infomation or registered google account email info */
+            return new Promise((resolve, reject) => {
+                axios.get('services/google/info')
+                    .then(res => {
+                        this.state.googleAccountEmail = res.data.emailAddress;
+                        resolve(res);
+                    })
+                    .catch(err => {
+                        this.state.googleAccountEmail = 'No service';
+                        reject(err);
+                    })
+            })
+        },
+        fetchHubspotAccountInfo(context) {
+            /* Fetch service infomation or registered hubspot account email info */
+            return new Promise((resolve, reject) => {
+                axios.get('services/hubspot/info')
+                    .then(res => {
+                        this.state.hubspotAccountEmail = res.data.user;
+                        resolve(res);
+                    })
+                    .catch(err => {
+                        this.state.hubspotAccountEmail = 'No service';
+                        reject(err);
+                    })
+            })
+        },
+        updateCache(context, dealID, folderID, status) {
+            /* update cache from both client and server side */
+            return new Promise((resolve, reject) => {
+                const form = new FormData();
+                form.append('status', status);
+                form.append('folder_id', folderID);
+                form.append('deal_id', dealID);
+                axios.post('accounts/setting/cache', form)
+                    .then(res => {
+                        this.state.cache.push({
+                            deal_id: dealID,
+                            status: status,
+                            folder_id: folderID
+                        })
+                        resolve(res);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+            })
+        },
+        googleCredentialRevoke(context) {
+            return new Promise((resolve, reject) => {
+                axios.get('services/google/auth/token/revoke')
+                    .then(res => {
+                        this.state.googleAccountEmail = 'No service';
+                        resolve(res);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+            })
+        },
+        hubspotCredentialRevoke(context) {
+            return new Promise((resolve, reject) => {
+                axios.get('services/hubspot/auth/token/revoke')
+                    .then(res => {
+                        this.state.hubspotAccountEmail = 'No service';
+                        resolve(res);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+            })
         }
     }
 })

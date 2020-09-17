@@ -50,13 +50,13 @@ export default {
     },
 
     computed: {
-        hiddenButton (){
+        hiddenButton() {
             // return this.value !== 'Create Folder'
-            return this.value === ''
             // return false
+            return this.value === '' || this.$store.state.currentDeal === -1
         },
 
-        changeColor (){
+        changeColor() {
             return this.value == this.value
         }
     },
@@ -96,7 +96,6 @@ export default {
     },
     methods: {
         async show() {
-            await this.$store.dispatch('resetFolder');
             this.$store.dispatch('fetchFolder');
             if(this.value == 'Create Folder') {
                 this.$modal.show('modal-folder-create');

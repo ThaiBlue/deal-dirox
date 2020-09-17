@@ -7,9 +7,9 @@ from datetime import datetime, timedelta
 from json import dumps, loads
 import logging
 
-from .models import GoogleToken, HubspotToken, Account, Cache
-from .requests import GoogleAPI, HubspotAPI, OAuth2API
-from .constants import *
+from .models.sqlite import GoogleToken, HubspotToken, Account, Cache
+from .models.requests import GoogleAPI, HubspotAPI, OAuth2API
+from .models.constants import *
 
 
 logging.basicConfig(filename='deals_server.log', level=logging.DEBUG)

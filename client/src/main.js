@@ -27,17 +27,17 @@ var navigated = false
 
 router.beforeEach((to, from, next) => {
     if(!navigated) {
-        axios.get('accounts/user/profile')
-        .then(res => {
-            navigated = true
-            next('/deal')
-        })
-        .catch(err => {
-            navigated = true
-            next('/')
-        })
+        axios.get('')
+            .then(res => {
+                navigated = true
+                next('/deal')
+            })
+            .catch(err => {
+                navigated = true
+                next('/')
+            })
     } else {
-        next()
+        next();
     }
 })
 
