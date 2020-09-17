@@ -4,6 +4,7 @@
         <router-link to="/deal"></router-link>
         <router-link to="/dmeohieusaonokhongchayduoc"></router-link>
         <!-- <router-link to="/popup"></router-link> -->
+        <router-link to="/setting"></router-link>
     <router-view></router-view>
   </div> 
 </template>
