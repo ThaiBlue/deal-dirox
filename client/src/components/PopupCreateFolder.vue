@@ -18,7 +18,7 @@
 
                     <div class="button-folder">
                         <button class="create" type="submit" v-on:click="onclickCreate">Create</button>
-                        <button class="cancel" type="submit">Cancel</button>
+                        <button class="cancel" type="submit" v-on:click="onclickHide">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -43,8 +43,11 @@ export default {
         handleNodeClick(data) {
             this.$store.dispatch('assignCurrentFolderID', data.id);
         },
-        onclickCreate(){
+        onclickCreate() {
             this.$store.dispatch('createFolder', {name: this.foldername, parentID: [this.$store.state.currentFolderId]});
+        },
+        onclickHide() {
+            this.$modal.hide('modal-folder-create')
         }
     }
 }

@@ -40,22 +40,21 @@ class User:
 				
 			login(request, user) # Create new session
 			
-			# Generate profile
-			profile = Account.generate_profile(user)
-						
-			return HttpResponse(content=dumps(profile), content_type='application/json')
+			return HTTP_200
 		
 		return HTTP_405
 
 	@classmethod
-	def _logout(cls, request):
+	def profile(cls, request):
 		'''Handle backend user logout process'''
 		if not request.user.is_authenticated: # Verify authenticate status
 			return HTTP_400_LOGIN_REQUIRE
 			
 		if request.method == 'GET':
-			logout(request) # End session
-			return HTTP_200		
+			# Generate profile
+			profile = Account.generate_profile(user)
+						
+			return HttpResponse(content=dumps(profile), content_type='application/json')
 		
 		return HTTP_405
 		

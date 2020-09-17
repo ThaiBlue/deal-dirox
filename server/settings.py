@@ -32,8 +32,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = ['https://deal.dirox.dev', 'https://api.deal.dirox.dev','http://127.0.0.1:8000', 'http://localhost:8080']
 SESSION_COOKIE_SAMESITE = None
-# SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False # Should be True when deploy
 CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_AGE = 60 # cookie timeout in seconds
 
 # Setting Oauth2 clients
 AUTHLIB_OAUTH_CLIENTS = {

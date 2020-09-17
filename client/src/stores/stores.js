@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import FormData, { from } from 'form-data'
+import FormData from 'form-data'
 import moment from 'moment'
 import DriveAPI from '../assets/js/DriveAPI'
 import SlideAPI from '../assets/js/SlideAPI'
@@ -13,6 +13,7 @@ axios.defaults.withCredentials = true
 
 export const store = new Vuex.Store({
     state: {
+        nagivated: false,
         profile: {},
         deals: [],
         googleToken: {},
