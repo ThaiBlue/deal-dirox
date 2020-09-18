@@ -37,7 +37,6 @@ export default {
 
 <style scoped>
     
-    
     .container{
         //background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
         margin: 0 auto;
