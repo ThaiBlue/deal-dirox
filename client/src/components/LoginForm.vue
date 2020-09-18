@@ -49,7 +49,6 @@
                     username: this.username,
                     password: this.password
                 })
-                // await this.$store.dispatch('fetchDeals')
                 this.$router.push('/deal');
                 
                 // await this.$store.dispatch('assignCurrentDeal', 3)

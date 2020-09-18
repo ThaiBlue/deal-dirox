@@ -49,6 +49,7 @@ export const store = new Vuex.Store({
                     .then(response => {
                         //parse user info from response
                         this.state.profile = response.data;
+                        context.dispatch('fetchDeals');
                         resolve(response);
                     })
                     .catch(err => {
@@ -88,34 +89,35 @@ export const store = new Vuex.Store({
             /* 
                 retrive deals and cache from backend server
             */
+           
             await context.dispatch('fetchAccessToken', 'google');
 
-            return new Promise((resolve, reject) => {
-                axios.get('/services/hubspot/crm/deals/makeoffer/all')
-                    .then(response => {
-                        response.data.results.forEach((item, index) => {
-                            var cache = response.data.caches.filter(el => el.deal_id == item.id)[0];
-                            this.state.deals.push({
-                                index: index,
-                                id: item.id,
-                                projectname: item.properties.dealname,
-                                stage: 'Make Offer',
-                                startdate: moment(item.properties.start_date).format('DD/MM/YYYY'),
-                                enddate: moment(item.properties.closedate).format('DD/MM/YYYY'),
-                                description: item.properties.description,
-                                deal_summary: item.properties.deal_summary,
-                                lead_overview_1: item.properties.lead_overview_1,
-                                lead_overview_2: item.properties.lead_overview_2,
-                                status: (cache === undefined) ? '' : cache.status, // [0] is unpack the single element array
-                                folder: context.dispatch('retrieveFolderMetaData', response.data.caches, item)
-                            })
-                        });
-                        resolve(response);
+            try {
+                // var deals = [];
+                var response = await axios.get('/services/hubspot/crm/deals/makeoffer/all')
+                
+                response.data.results.forEach((item, index) => {
+                    var cache = response.data.caches.filter(el => el.deal_id == item.id)[0];
+                    this.state.deals.push({
+                        index: index,
+                        id: item.id,
+                        projectname: item.properties.dealname,
+                        stage: 'Make Offer',
+                        startdate: moment(item.properties.start_date).format('DD/MM/YYYY'),
+                        enddate: moment(item.properties.closedate).format('DD/MM/YYYY'),
+                        description: item.properties.description,
+                        deal_summary: item.properties.deal_summary,
+                        lead_overview_1: item.properties.lead_overview_1,
+                        lead_overview_2: item.properties.lead_overview_2,
+                        status: (cache === undefined) ? '' : cache.status, // [0] is unpack the single element array
+                        folder: context.dispatch('retrieveFolderMetaData', response.data.caches, item)
                     })
-                    .catch(err => {
-                        reject(err);
-                    })
-            })
+                });
+                
+            } catch (err) {
+                console.log(err)
+            }
+
         },
         fetchAccessToken(context) {
             /*
@@ -137,25 +139,34 @@ export const store = new Vuex.Store({
                 get folder meta data from google drive 
             */
             this.state.folder = [];
+            var owned = [];
+
             await context.dispatch('fetchAccessToken');
             const drive = new DriveAPI(this.state.googleToken.access_token);
-            var response = await drive.getListOfFolder();
-            const owned = [];
-            await response.data.files.forEach(item => {
-                if (item.ownedByMe) {
-                    owned.push({
-                        id: item.id,
-                        label: item.name,
-                        parents: item.parents[0],
-                        children: []
-                    })
-                }
-            })
+
+            try {
+                var response = await drive.getListOfFolder();
+                response.data.files.forEach(item => {
+                    if (item.ownedByMe) {
+                        owned.push({
+                            id: item.id,
+                            label: item.name,
+                            parents: item.parents[0],
+                            children: []
+                        })
+                    }
+                })
+                
+            } catch (err) {
+                console.log(err)
+            }
+
             const idMapping = owned.reduce((acc, el, i) => {
                 acc[el.id] = i;
                 return acc;
             }, {});
-            await owned.forEach(item => {
+
+            owned.forEach(item => {
                 // Handle the root element
                 if (idMapping[item.parents] === undefined) {
                     this.state.folder.push(item);
@@ -180,8 +191,12 @@ export const store = new Vuex.Store({
             if (folderInfo.parentID[0] !== null) {
                 parentID = folderInfo.parentID;
             }
-            var response = await drive.createFolder(folderInfo.name, parentID);
-            this.state.folder.push(response.data);
+            try {
+                var response = await drive.createFolder(folderInfo.name, parentID);
+                this.state.folder.push(response.data);
+            } catch (err) {
+                console.log(err)
+            }
         },
         async prepareForInitLead(context) {
             /* 

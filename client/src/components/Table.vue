@@ -30,13 +30,14 @@
         },
         methods: {
             handleCurrentChange(val) {
-                
                 this.$store.dispatch('assignCurrentDeal', val.index);
             }
         },
         mounted() {
-            this.$store.dispatch('fetchDeals');
-        },
+            if(this.$store.state.deals[0] === undefined) {
+                this.$store.dispatch('fetchDeals');
+            }
+        }
     }
 </script>
 <style>
