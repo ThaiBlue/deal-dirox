@@ -2,9 +2,7 @@
     <div class="container">
         <router-link to="/"></router-link>
         <router-link to="/deal"></router-link>
-        <router-link to="/dmeohieusaonokhongchayduoc"></router-link>
-        <!-- <router-link to="/popup"></router-link> -->
-        <router-view></router-view>
+    <router-view></router-view>
     </div>
 </template>
 <script>
@@ -13,9 +11,6 @@
         name: 'app',
         components: {},
         computed: {
-            // loggedIn() {
-            //     return this.$store.getters.loggedIn
-            // }
         },
     }
 </script>

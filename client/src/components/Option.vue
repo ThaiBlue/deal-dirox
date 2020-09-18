@@ -46,7 +46,7 @@ export default {
     
     components: {
         CreateFolder,
-        SelectFolder
+        SelectFolder,
     },
 
     computed: {
@@ -86,8 +86,6 @@ export default {
                 },
             ],
 
-
-            showModal: true,
 
             value: '',
 
