@@ -19,13 +19,14 @@ export const store = new Vuex.Store({
         googleToken: {}, // store google crendential
         googleAccountEmail: '', // store connected google account email 
         hubspotAccountEmail: '', // store connected hubspot account email 
-        
+
         currentSlideID: '', // cache current created slide ID
-        currentDeal: -1, // cache current selected deal
+        currentDeal: {}, // cache current deal object
         currentCompanyName: '', // cache current fetched company name
         currentFolderId: null, // cache current selected folder id
         folderCacheData: {}, // cache current fetched folder meta data
-        
+        idMappingForDeals: [], //cache deal indice
+        isLoged: false
     },
     getters: {
         // loggedIn(state) {
@@ -115,7 +116,6 @@ export const store = new Vuex.Store({
                         await context.dispatch('retrieveFolderMetaData', cache.folder_id)
                     }
                     this.state.deals.push({
-                        index: index,
                         id: item.id,
                         projectname: item.properties.dealname,
                         stage: 'Make Offer',
@@ -210,21 +210,29 @@ export const store = new Vuex.Store({
             try {
                 var response = await drive.createFolder(folderInfo.name, parentID);
                 context.dispatch('updateCache', {
-                    dealID: this.state.deals[this.state.currentDeal].id,
+                    dealID: this.state.currentDeal.id,
                     folderID: response.data.id,
-                    status: ''
+                    status: 'folder-created'
                 });
-                this.state.folder.push(response.data);
+
+                // update frondend cache
+                await context.dispatch('retrieveFolderMetaData', response.data.id);
                 
+                var index = this.state.deals.indexOf(this.state.currentDeal);
+                
+                this.state.deals[index].folder = this.state.folderCacheData;
+                this.state.deals[index].status = 'folder-created';
+                
+                this.state.folder.push(response.data);
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
         },
         async prepareForInitLead(context) {
             /* 
                 inner function that handle createInitLead prepare prossess 
             */
-            axios.get('services/hubspot/crm/deals/' + this.state.deals[this.state.currentDeal].id + '/associations/company/info')
+            axios.get('services/hubspot/crm/deals/' + this.state.currentDeal.id + '/associations/company/info')
                 .then(response => {
                     this.state.currentCompanyName = response.data.properties.name;
                 })
@@ -258,13 +266,23 @@ export const store = new Vuex.Store({
             */
             await context.dispatch('prepareForInitLead');
             await context.dispatch('fetchAccessToken');
+            await context.dispatch('generateIdMapping');
             const slide = new SlideAPI(this.state.googleToken.access_token, this.state.currentSlideID);
-            var res = await slide.updatePresentaion(
-                this.state.deals[this.state.currentDeal].description,
-                this.state.deals[this.state.currentDeal].deal_summary,
-                this.state.deals[this.state.currentDeal].lead_overview_1,
-                this.state.deals[this.state.currentDeal].lead_overview_2,
-                this.state.currentCompanyName)
+            try {
+                var res = await slide.updatePresentaion(
+                    this.state.currentDeal.description,
+                    this.state.currentDeal.deal_summary,
+                    this.state.currentDeal.lead_overview_1,
+                    this.state.currentDeal.lead_overview_2,
+                    this.state.currentCompanyName);
+                
+                // get index of current deal
+                var index = this.state.deals.indexOf(this.state.currentDeal);
+                this.state.deals[index].status = 'transfer-to-ba'
+                
+            } catch (err) {
+                console.log(err)
+            }
 
         },
         assignSlideID(context, ID) {

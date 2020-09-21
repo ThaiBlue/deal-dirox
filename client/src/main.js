@@ -23,18 +23,19 @@ const router = new VueRouter({
     mode: 'history'
 })
 
-var navigated = false
+var navigated = false;
 
 router.beforeEach((to, from, next) => {
     if(!navigated) {
         axios.get('')
             .then(res => {
-                navigated = true
-                next('/deal')
+                navigated = true; // resolve navigate infinite looop
+                store.state.isLoged = true; //cache login status
+                next('/deal');
             })
             .catch(err => {
-                navigated = true
-                next('/')
+                navigated = true;
+                next('/');
             })
     } else {
         next();

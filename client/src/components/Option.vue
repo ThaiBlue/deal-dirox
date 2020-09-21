@@ -48,16 +48,18 @@ export default {
         CreateFolder,
         SelectFolder,
     },
-
+    
     computed: {
         hiddenButton() {
             // return this.value !== 'Create Folder'
             // return false
-            return this.value === '' || this.$store.state.currentDeal === -1
+            var _ = require('lodash');
+            
+            return this.value === '' || _.isEmpty(this.$store.state.currentDeal);
         },
 
         changeColor() {
-            return this.value == this.value
+            return this.value == this.value;
         }
     },
 
@@ -85,7 +87,6 @@ export default {
                     label: 'Create Folder',
                 },
             ],
-
 
             value: '',
 
