@@ -1,5 +1,6 @@
 import LoginScreen from "./Layout/LoginScreen"
 import DealPage from "./Layout/DealPage"
+import SubFolder from "./components/SubFolder"
 
 const routes = [
     {
@@ -15,7 +16,10 @@ const routes = [
         //     requiresAuth: true
         // }
     },
+    {
+        path: '/sub',
+        component: SubFolder
+    }
+
 ]
-
-
 export default routes

@@ -23,23 +23,23 @@ const router = new VueRouter({
     mode: 'history'
 })
 
-var navigated = false
+// var navigated = false
 
-router.beforeEach((to, from, next) => {
-    if(!navigated) {
-        axios.get('')
-            .then(res => {
-                navigated = true
-                next('/deal')
-            })
-            .catch(err => {
-                navigated = true
-                next('/')
-            })
-    } else {
-        next();
-    }
-})
+// router.beforeEach((to, from, next) => {
+//     if(!navigated) {
+//         axios.get('')
+//             .then(res => {
+//                 navigated = true
+//                 next('/deal')
+//             })
+//             .catch(err => {
+//                 navigated = true
+//                 next('/')
+//             })
+//     } else {
+//         next();
+//     }
+// })
 
 new Vue({
     router: router,

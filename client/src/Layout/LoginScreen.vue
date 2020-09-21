@@ -9,10 +9,14 @@ import LoginForm from "../components/LoginForm"
 export default {
     name: 'LoginScreen',
     components:{
-        LoginForm
+        LoginForm,
     }
 }
 </script>
+
+<style>
+
+</style>
 
 
 <style scoped>

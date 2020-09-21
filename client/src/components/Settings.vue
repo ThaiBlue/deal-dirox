@@ -37,7 +37,6 @@
         <div class="button-setting">
             <el-button  class="cancel" type="info">Cancel</el-button>
             <el-button class="save" type="success">Save</el-button>
-
         </div>
     </div>
 </template>
