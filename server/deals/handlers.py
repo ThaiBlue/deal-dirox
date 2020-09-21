@@ -45,6 +45,18 @@ class User:
 		return HTTP_405
 
 	@classmethod
+	def _logout(cls, request):
+		'''Handle backend user logout process'''
+		if not request.user.is_authenticated: # Verify authenticate status
+			return HTTP_400_LOGIN_REQUIRE
+			
+		if request.method == 'GET':
+			logout(request)
+			return HTTP_200
+		
+		return HTTP_405
+
+	@classmethod
 	def profile(cls, request):
 		'''Handle backend user logout process'''
 		if not request.user.is_authenticated: # Verify authenticate status

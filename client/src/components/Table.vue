@@ -1,40 +1,43 @@
 <template>
-    <el-table class="table" :data="tableData" highlight-current-row border
-        @current-change="handleCurrentChange" height="200">
-
+    <el-table class="table" :data="tableData" highlight-current-row border @current-change="handleCurrentChange"
+        height="200">
         <el-table-column prop="no" label="No." type="index" width="60"></el-table-column>
-        
         <el-table-column prop="id" label="ID" width="132"></el-table-column>
-        
         <el-table-column prop="projectname" label="Project Name" width="204" show-overflow-tooltip></el-table-column>
-        
         <el-table-column prop="stage" label="Stage" width="128"></el-table-column>
-        
         <el-table-column prop="startdate" label="Start Date" width="136"></el-table-column>
-        
         <el-table-column prop="enddate" label="End Date" width="136"></el-table-column>
-        
-        <el-table-column prop="folder.name" label="Folder" width="136"></el-table-column>
-        
+        <el-table-column label="Folder" width="136">
+            <template slot-scope="scope">
+                <el-link type="primary" :href="currentFolderURL(scope.$index)">
+                    {{currentFolderName(scope.$index)}}
+                </el-link>
+            </template>
+        </el-table-column>
         <el-table-column prop="status" label="Status" width="154"></el-table-column>
     </el-table>
 </template>
 <script>
     export default {
         name: 'Table',
-        
         data() {
             return {
                 tableData: this.$store.state.deals
             }
         },
         methods: {
+            currentFolderURL(index) {
+                return this.tableData[index].folder.url
+            },
+            currentFolderName(index){
+                return this.tableData[index].folder.name
+            },
             handleCurrentChange(val) {
                 this.$store.dispatch('assignCurrentDeal', val.index);
             }
         },
         mounted() {
-            if(this.$store.state.deals[0] === undefined) {
+            if (this.$store.state.deals[0] === undefined) {
                 this.$store.dispatch('fetchDeals');
             }
         }

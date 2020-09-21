@@ -13,18 +13,19 @@ axios.defaults.withCredentials = true
 
 export const store = new Vuex.Store({
     state: {
-        nagivated: false,
-        profile: {},
-        deals: [],
-        googleToken: {},
-        huspotToken: {},
-        folder: [],
-        currentSlideID: '',
-        currentDeal: -1,
-        currentCompanyName: '',
-        currentFolderId: null,
-        googleAccountEmail: '',
-        hubspotAccountEmail: '',
+        folder: [], // store all drive folder meta data
+        profile: {}, // store user profile
+        deals: [], // store all make offer deal
+        googleToken: {}, // store google crendential
+        googleAccountEmail: '', // store connected google account email 
+        hubspotAccountEmail: '', // store connected hubspot account email 
+        
+        currentSlideID: '', // cache current created slide ID
+        currentDeal: -1, // cache current selected deal
+        currentCompanyName: '', // cache current fetched company name
+        currentFolderId: null, // cache current selected folder id
+        folderCacheData: {}, // cache current fetched folder meta data
+        
     },
     getters: {
         // loggedIn(state) {
@@ -57,47 +58,62 @@ export const store = new Vuex.Store({
                     })
             })
         },
-        retrieveFolderMetaData(context, caches, deal) {
-            /* Return name and url of the Drive folder */
-            var headers = {
-                'Authorization': 'Bearer' + this.state.googleToken.access_token
+        async retrieveFolderMetaData(context, folder_id) {
+            /* Return name and url of the Drive folder 
+            payload: {
+                caches: cache object,
+                deal: deal object
+            }
+            */
+            await context.dispatch('fetchAccessToken', 'google');
+
+            var config = {
+                url: 'https://www.googleapis.com/drive/v3/files/' + folder_id + '?fields=*',
+                method: 'get',
+                headers: {
+                    'Authorization': 'Bearer ' + this.state.googleToken.access_token
+                }
             }
 
-            var cache = caches.filter(el => el.deal_id == deal.id)[0]
+            try {
+                var res = await axios(config)
 
-            if (cache === undefined) {
-                return ''
-            } else {
-                return new Promise((resolve, reject) => {
-                    axios.get('https://www.googleapis.com/drive/v3/files/' + cache.folder_id + '?fields=*', headers)
-                        .then(res => {
-                            resolve({
-                                name: res.data.name,
-                                url: res.date.webViewLink
-                            })
-                        })
-                        .catch(err => {
-                            reject({
-                                name: '',
-                                url: ''
-                            })
-                        })
-                })
+                this.state.folderCacheData = {
+                    id: res.data.id,
+                    name: res.data.name,
+                    url: res.data.webViewLink
+                }
+
+            } catch (err) {
+                this.state.folderCacheData = {
+                    id: '',
+                    name: '',
+                    url: ''
+                }
             }
+
         },
         async fetchDeals(context) {
             /* 
                 retrive deals and cache from backend server
             */
-           
-            await context.dispatch('fetchAccessToken', 'google');
 
             try {
                 // var deals = [];
                 var response = await axios.get('/services/hubspot/crm/deals/makeoffer/all')
-                
-                response.data.results.forEach((item, index) => {
+
+                response.data.results.forEach(async (item, index) => {
                     var cache = response.data.caches.filter(el => el.deal_id == item.id)[0];
+
+                    if (cache === undefined) {
+                        this.state.folderCacheData = {
+                            id: '',
+                            name: '',
+                            url: ''
+                        }
+                    } else {
+                        await context.dispatch('retrieveFolderMetaData', cache.folder_id)
+                    }
                     this.state.deals.push({
                         index: index,
                         id: item.id,
@@ -110,10 +126,10 @@ export const store = new Vuex.Store({
                         lead_overview_1: item.properties.lead_overview_1,
                         lead_overview_2: item.properties.lead_overview_2,
                         status: (cache === undefined) ? '' : cache.status, // [0] is unpack the single element array
-                        folder: context.dispatch('retrieveFolderMetaData', response.data.caches, item)
+                        folder: this.state.folderCacheData
                     })
                 });
-                
+
             } catch (err) {
                 console.log(err)
             }
@@ -156,7 +172,7 @@ export const store = new Vuex.Store({
                         })
                     }
                 })
-                
+
             } catch (err) {
                 console.log(err)
             }
@@ -193,7 +209,13 @@ export const store = new Vuex.Store({
             }
             try {
                 var response = await drive.createFolder(folderInfo.name, parentID);
+                context.dispatch('updateCache', {
+                    dealID: this.state.deals[this.state.currentDeal].id,
+                    folderID: response.data.id,
+                    status: ''
+                });
                 this.state.folder.push(response.data);
+                
             } catch (err) {
                 console.log(err)
             }
@@ -281,20 +303,15 @@ export const store = new Vuex.Store({
                     })
             })
         },
-        updateCache(context, dealID, folderID, status) {
+        updateCache(context, payload) {
             /* update cache from both client and server side */
             return new Promise((resolve, reject) => {
                 const form = new FormData();
-                form.append('status', status);
-                form.append('folder_id', folderID);
-                form.append('deal_id', dealID);
+                form.append('status', payload.status);
+                form.append('folder_id', payload.folderID);
+                form.append('deal_id', payload.dealID);
                 axios.post('accounts/setting/cache', form)
                     .then(res => {
-                        this.state.cache.push({
-                            deal_id: dealID,
-                            status: status,
-                            folder_id: folderID
-                        })
                         resolve(res);
                     })
                     .catch(err => {

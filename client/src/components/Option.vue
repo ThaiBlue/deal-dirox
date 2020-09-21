@@ -95,6 +95,7 @@ export default {
     methods: {
         async show() {
             this.$store.dispatch('fetchFolder');
+            console.log(this.$store.state.deals)
             if(this.value == 'Create Folder') {
                 this.$modal.show('modal-folder-create');
             } 
