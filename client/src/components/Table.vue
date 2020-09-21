@@ -7,14 +7,20 @@
         <el-table-column prop="stage" label="Stage" width="128"></el-table-column>
         <el-table-column prop="startdate" label="Start Date" width="136"></el-table-column>
         <el-table-column prop="enddate" label="End Date" width="136"></el-table-column>
-        <el-table-column label="Folder" width="136">
+        <el-table-column label="Folder" width="136" show-overflow-tooltip>
             <template slot-scope="scope">
-                <el-link type="primary" :href="currentFolderURL(scope.$index)">
-                    {{currentFolderName(scope.$index)}}
-                </el-link>
+                <el-button type="text" size="small" @click.native.prevent="currentFolderURL(scope.$index)">
+                    {{currentFolderName(scope.$index)}} </el-button>
             </template>
         </el-table-column>
-        <el-table-column prop="status" label="Status" width="154"></el-table-column>
+        <el-table-column prop="status" label="Status" width="154">
+            <template slot-scope="scope">
+                <el-select v-model="tableData[scope.$index].status" @change="onChangeStatus(scope.$index)" placeholder="Status">
+                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </template>
+        </el-table-column>
     </el-table>
 </template>
 <script>
@@ -22,22 +28,45 @@
         name: 'Table',
         data() {
             return {
-                tableData: this.$store.state.deals
+                tableData: this.$store.state.deals,
+                options: [{
+                    value: 'folder-created',
+                    label: 'Folder Created'
+                }, {
+                    value: 'transfer-to-ba',
+                    label: 'Transfered to BA'
+                }, {
+                    value: 'proposal-made',
+                    label: 'Proposal made'
+                }, {
+                    value: 'contract-made',
+                    label: 'Contract made'
+                }, {
+                    value: 'won',
+                    label: 'Won'
+                }]
             }
         },
         methods: {
-            currentFolderURL(index) {
-                return this.tableData[index].folder.url
+            onChangeStatus(index) {
+                this.$store.dispatch('updateCache', {
+                        dealID: this.$store.state.deals[index].id,
+                        folderID: this.$store.state.deals[index].folder.id,
+                        status: this.$store.state.deals[index].status
+                    })
             },
-            currentFolderName(index){
+            currentFolderURL(index) {
+                return window.open(this.tableData[index].folder.url, "_blank");
+            },
+            currentFolderName(index) {
                 return this.tableData[index].folder.name
             },
             handleCurrentChange(val) {
-                this.$store.dispatch('assignCurrentDeal', val.index);
+                this.$store.dispatch('assignCurrentDeal', val);
             }
         },
         mounted() {
-            if (this.$store.state.deals[0] === undefined) {
+            if (this.$store.state.deals[0] === undefined && this.$store.state.isLoged) {
                 this.$store.dispatch('fetchDeals');
             }
         }
