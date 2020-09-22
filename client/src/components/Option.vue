@@ -21,6 +21,10 @@
                 <modal name = 'modal-folder-select' :height="690" :width="1028">
                     <SelectFolder />
                 </modal>
+                <modal name = 'modal-subfolder-create' :height="690" :width="1028">
+                    <SubFolder />
+                </modal>
+    
             </div>
 
         </div>
@@ -40,6 +44,7 @@
     
 import CreateFolder from "./PopupCreateFolder"
 import SelectFolder from "./PopupSelectFolder"
+import SubFolder from "./SubFolder"
 
 export default {
     name: 'Option',
@@ -47,6 +52,7 @@ export default {
     components: {
         CreateFolder,
         SelectFolder,
+        SubFolder
     },
     
     computed: {
@@ -96,7 +102,6 @@ export default {
     methods: {
         async show() {
             this.$store.dispatch('fetchFolder');
-            console.log(this.$store.state.deals)
             if(this.value == 'Create Folder') {
                 this.$modal.show('modal-folder-create');
             } 

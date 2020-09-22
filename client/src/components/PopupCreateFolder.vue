@@ -27,6 +27,7 @@
 </template>
 
 <script>
+
 export default {
     // name: 'Popup',
     data() {
@@ -44,8 +45,8 @@ export default {
             this.$store.dispatch('assignCurrentFolderID', data.id);
         },
         onclickCreate() {
-            this.$modal.hide('modal-folder-create');
-            this.$store.dispatch('createFolder', {name: this.foldername, parentID: [this.$store.state.currentFolderId]});
+            this.$store.dispatch('updateNewFolderName', this.foldername);
+            this.$modal.show('modal-subfolder-create');
         },
         onclickHide() {
             this.$modal.hide('modal-folder-create');
