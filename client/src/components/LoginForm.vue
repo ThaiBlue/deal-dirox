@@ -48,15 +48,11 @@
                 this.$store.dispatch('authenticate', {
                     username: this.username,
                     password: this.password
+                }).then(res => {
+                    this.$router.push('/deal');
+                }).catch(err => {
+                    console.log(err);
                 })
-                this.$router.push('/deal');
-                
-                // await this.$store.dispatch('assignCurrentDeal', 3)
-                // this.$store.dispatch('createInitLead')
-                
-                // await this.$store.dispatch('createFolder', {name:'initlead', parentID:['1RYMN2ItKqeMUWK923vsbPCFjnTXp8oxe']})
-                // await this.$store.dispatch('fetchFolder')
-                // console.log(this.$store.state.folder)
             },
         }
     }

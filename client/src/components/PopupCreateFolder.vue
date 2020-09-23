@@ -19,7 +19,7 @@
                     <div class="button-folder">
                         <div class="button-create">
                             <button class="create" type="submit" @click="onclickCreate">Create</button>
-                            <modal name = 'sub-folder-create' :height="690" :width="1028">
+                            <modal name = 'sub-folder-create' :height="462" :width="496">
                                 <SubFolder />
                             </modal>
                         </div>
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+
 import SubFolder from "./SubFolder"
 export default {
     // name: 'Popup',
@@ -56,8 +57,8 @@ export default {
         },
         
         onclickCreate() {
-            this.$modal.hide('modal-folder-create');
-            this.$store.dispatch('createFolder', {name: this.foldername, parentID: [this.$store.state.currentFolderId]});
+            this.$store.dispatch('updateNewFolderName', this.foldername);
+            this.$modal.show('sub-folder-create');
         },
 
         onclickHide() {

@@ -4,30 +4,23 @@
             <label for="">Create Sub Folder</label>
             <img src="../assets/img/close.svg" width="19" class="close">
         </div>
-
         <div class="main">
             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" 
                 @change="handleCheckAllChange" class="check-all">
                     Check all
             </el-checkbox>
-
             <div style="margin: 15px 0;"></div>
-            
             <el-checkbox-group v-model="checkedFolder" 
                 @change="handlecheckedFolderChange" class="sub-folder">
-            
                 <el-checkbox v-for="folder in folders" :label="folder"
                     :key="folder">
-            
                         {{folder}}
-            
                 </el-checkbox>
             </el-checkbox-group>
         </div>
-
         <div class="footer">
-            <el-button class="create" type="success">Create Sub Folder</el-button>
-            <el-button class="skip" type="info">Skip</el-button>
+            <el-button class="create" type="success" @click="onclickCreate()">Create Sub Folder</el-button>
+            <el-button class="skip" type="info" @click="onclickSkip()">Skip</el-button>
         </div>
     </div>
 </template>
@@ -54,6 +47,12 @@
                 let checkedCount = value.length;
                 this.checkAll = checkedCount === this.folders.length;
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.folders.length;
+            },
+            onclickCreate() {
+                this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: this.checkedFolder});
+            },
+            onclickSkip() {
+                this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: []});
             }
         }
     };
@@ -86,7 +85,6 @@
     .create-sub-folder {
         width: 496px;
         height: 462px;
-        border: 1px solid #979797;
         display: flex;
         align-items: center;
         flex-direction: column;
@@ -126,6 +124,17 @@
         width: 257px;
         display: flex;
         flex-direction: column;
+        justify-content: space-around;
+    }
+
+    .skip {
+        width: 155px;
+    }
+
+    .footer {
+        margin-bottom: 10px;
+        width: 496px;
+        display: flex;
         justify-content: space-around;
     }
 

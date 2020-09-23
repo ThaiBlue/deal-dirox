@@ -26,7 +26,8 @@ export const store = new Vuex.Store({
         currentFolderId: null, // cache current selected folder id
         folderCacheData: {}, // cache current fetched folder meta data
         idMappingForDeals: [], //cache deal indice
-        isLoged: false
+        isLoged: false,
+        newFolderName: ''
     },
     getters: {
         // loggedIn(state) {
@@ -59,17 +60,21 @@ export const store = new Vuex.Store({
                     })
             })
         },
-        async retrieveFolderMetaData(context, folder_id) {
+        async retrieveFolderMetaData(context, payload) {
             /* Return name and url of the Drive folder 
-            payload: {
-                caches: cache object,
-                deal: deal object
+            payload = {
+                folder_id: string,
+                deal_id: string
             }
-            */
-            await context.dispatch('fetchAccessToken', 'google');
+             */
+            try {
+                await context.dispatch('fetchAccessToken', 'google');
+            } catch (err) {
+                console.log(err)
+            }
 
             var config = {
-                url: 'https://www.googleapis.com/drive/v3/files/' + folder_id + '?fields=*',
+                url: 'https://www.googleapis.com/drive/v3/files/' + payload.folder_id + '?fields=*',
                 method: 'get',
                 headers: {
                     'Authorization': 'Bearer ' + this.state.googleToken.access_token
@@ -77,20 +82,32 @@ export const store = new Vuex.Store({
             }
 
             try {
-                var res = await axios(config)
+                var res = await axios(config);
 
-                this.state.folderCacheData = {
-                    id: res.data.id,
-                    name: res.data.name,
-                    url: res.data.webViewLink
+                if (res.data.trashed) {
+                    this.state.folderCacheData = {
+                        id: '',
+                        name: '',
+                        url: ''
+                    };
+                    context.dispatch('updateCache', {
+                        dealID: payload.deal_id,
+                        folderID: '',
+                        status: ''
+                    });
+                } else {
+                    this.state.folderCacheData = {
+                        id: res.data.id,
+                        name: res.data.name,
+                        url: res.data.webViewLink
+                    }
                 }
-
             } catch (err) {
                 this.state.folderCacheData = {
                     id: '',
                     name: '',
                     url: ''
-                }
+                };
             }
 
         },
@@ -104,7 +121,7 @@ export const store = new Vuex.Store({
                 var response = await axios.get('/services/hubspot/crm/deals/makeoffer/all')
 
                 response.data.results.forEach(async (item, index) => {
-                    var cache = response.data.caches.filter(el => el.deal_id == item.id)[0];
+                    var cache = response.data.caches.filter(el => el.deal_id == item.id)[0]; // [0] is unpack the single element array
 
                     if (cache === undefined) {
                         this.state.folderCacheData = {
@@ -113,7 +130,7 @@ export const store = new Vuex.Store({
                             url: ''
                         }
                     } else {
-                        await context.dispatch('retrieveFolderMetaData', cache.folder_id)
+                        await context.dispatch('retrieveFolderMetaData', {folder_id: cache.folder_id, deal_id: cache.deal_id})
                     }
                     this.state.deals.push({
                         id: item.id,
@@ -125,7 +142,7 @@ export const store = new Vuex.Store({
                         deal_summary: item.properties.deal_summary,
                         lead_overview_1: item.properties.lead_overview_1,
                         lead_overview_2: item.properties.lead_overview_2,
-                        status: (cache === undefined) ? '' : cache.status, // [0] is unpack the single element array
+                        status: (cache === undefined || cache.folder_id === '' || this.state.folderCacheData.id === '') ? '' : cache.status,
                         folder: this.state.folderCacheData
                     })
                 });
@@ -198,7 +215,8 @@ export const store = new Vuex.Store({
             /*
                 folderInfo : {
                     name: new folder name,
-                    parentID: ID of the parent folder
+                    parentID: ID of the parent folder,
+                    subFolder: array
                 }
             */
             await context.dispatch('fetchAccessToken', 'google');
@@ -209,6 +227,7 @@ export const store = new Vuex.Store({
             }
             try {
                 var response = await drive.createFolder(folderInfo.name, parentID);
+
                 context.dispatch('updateCache', {
                     dealID: this.state.currentDeal.id,
                     folderID: response.data.id,
@@ -216,14 +235,36 @@ export const store = new Vuex.Store({
                 });
 
                 // update frondend cache
-                await context.dispatch('retrieveFolderMetaData', response.data.id);
-                
+                await context.dispatch('retrieveFolderMetaData', {folder_id: response.data.id, deal_id: this.state.currentDeal.id});
+
                 var index = this.state.deals.indexOf(this.state.currentDeal);
-                
+
                 this.state.deals[index].folder = this.state.folderCacheData;
                 this.state.deals[index].status = 'folder-created';
-                
                 this.state.folder.push(response.data);
+
+                if (folderInfo.subFolder.includes('00. Customer documents')) {
+                    try {
+                        await drive.createFolder('00. Customer documents', [response.data.id]);
+                    } catch (err) {
+                        console.log(response)
+                    }
+                }
+                if (folderInfo.subFolder.includes('01. Proposal')) {
+                    try {
+                        await drive.createFolder('01. Proposal', [response.data.id]);
+                    } catch (err) {
+                        console.log(err)
+                    }
+                }
+                if (folderInfo.subFolder.includes('02. Contract')) {
+                    try {
+                        await drive.createFolder('02. Contract', [response.data.id]);
+                    } catch (err) {
+                        console.log(err)
+                    }
+                }
+
             } catch (err) {
                 console.log(err);
             }
@@ -275,11 +316,11 @@ export const store = new Vuex.Store({
                     this.state.currentDeal.lead_overview_1,
                     this.state.currentDeal.lead_overview_2,
                     this.state.currentCompanyName);
-                
+
                 // get index of current deal
                 var index = this.state.deals.indexOf(this.state.currentDeal);
                 this.state.deals[index].status = 'transfer-to-ba'
-                
+
             } catch (err) {
                 console.log(err)
             }
@@ -360,6 +401,9 @@ export const store = new Vuex.Store({
                         reject(err);
                     })
             })
+        },
+        updateNewFolderName(context, name) {
+            this.state.newFolderName = name;
         }
     }
 })
