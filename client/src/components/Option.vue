@@ -54,8 +54,8 @@ export default {
             // return this.value !== 'Create Folder'
             // return false
             var _ = require('lodash');
-            
-            return this.value === '' || _.isEmpty(this.$store.state.currentDeal);
+            return this.value === ''
+            // return this.value === '' || _.isEmpty(this.$store.state.currentDeal);
         },
 
         changeColor() {

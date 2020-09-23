@@ -17,8 +17,13 @@
                     </div>
 
                     <div class="button-folder">
-                        <button class="create" type="submit" v-on:click="onclickCreate">Create</button>
-                        <button class="cancel" type="submit" v-on:click="onclickHide">Cancel</button>
+                        <div class="button-create">
+                            <button class="create" type="submit" @click="onclickCreate">Create</button>
+                            <modal name = 'sub-folder-create' :height="690" :width="1028">
+                                <SubFolder />
+                            </modal>
+                        </div>
+                        <button class="cancel" type="submit" @click="onclickHide">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -27,6 +32,7 @@
 </template>
 
 <script>
+import SubFolder from "./SubFolder"
 export default {
     // name: 'Popup',
     data() {
@@ -39,18 +45,26 @@ export default {
             foldername: '',
         };
     },
+
+    components: {
+        SubFolder
+    },
+    
     methods: {
         handleNodeClick(data) {
             this.$store.dispatch('assignCurrentFolderID', data.id);
         },
+        
         onclickCreate() {
             this.$modal.hide('modal-folder-create');
             this.$store.dispatch('createFolder', {name: this.foldername, parentID: [this.$store.state.currentFolderId]});
         },
+
         onclickHide() {
             this.$modal.hide('modal-folder-create');
-        }
-    }
+        },
+
+    },
 }
 </script>
 

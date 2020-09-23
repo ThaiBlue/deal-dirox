@@ -60,20 +60,29 @@
 </script>
 
 <style>
-    .el-checkbox__label{
-        /* font-family: ABeeZee;
+    .el-checkbox .el-checkbox__label{
+        font-family: ABeeZee;
         font-style: normal;
         font-weight: normal;
         font-size: 18px;
         line-height: 21px;
         text-align: left;
-        color: #000000; */
+        color: #000000;
     }
-
 
 </style>
 
 <style scoped>
+    label {
+        font-family: ABeeZee;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 18px;
+        line-height: 21px;
+        text-align: left;
+        color: #000000;
+    }
+
     .create-sub-folder {
         width: 496px;
         height: 462px;
@@ -93,34 +102,23 @@
 
     .close {
         float: right;
-        /* margin-right: 20px; */
+        cursor: pointer;
+        margin-right: 20px;
     }
 
-    label {
-        font-family: ABeeZee;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 18px;
-        line-height: 21px;
-        text-align: left;
-
-        color: #000000;
-    }
 
     .main {
         display: flex;
         flex-direction: column;
         border: 1px solid #979797;
+        border-left: none;
+        border-right: none;
         width: 496px;
         align-items: center;
         height: 317px;
-        font-family: ABeeZee;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 18px;
-        line-height: 21px;
-        text-align: left;
-        color: #000000;
+    }
+    .check-all {
+        margin-top: 22px;
     }
 
     .sub-folder {
