@@ -1,7 +1,7 @@
 <template>
     <div class="setting">
         <img @click.prevent="show" src="../assets/img/setting-icon.png" width="56">
-        <modal name = "modal-setting" :width="741" :height="741">
+        <modal name = "modal-setting" :clickToClose="false" :width="741" :height="741">
             <Settings />
         </modal>
 

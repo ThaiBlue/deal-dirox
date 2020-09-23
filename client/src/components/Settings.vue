@@ -102,10 +102,16 @@
                 }
             },
             onclickSave() {
-                this.$modal.hide('modal-setting');
+                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                    .is_available) {
+                    this.$modal.hide('modal-setting');
+                }
             },
             onclickCancel() {
-                this.$modal.hide('modal-setting');
+                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                    .is_available) {
+                    this.$modal.hide('modal-setting');
+                }
             }
         }
     }
