@@ -22,6 +22,7 @@
                 <modal name = 'modal-subfolder-create' :height="690" :width="1028">
                     <SubFolder />
                 </modal>
+    
             </div>
         </div>
         <div class="page">
@@ -46,7 +47,7 @@ export default {
     components: {
         CreateFolder,
         SelectFolder,
-        SubFolder
+        // SubFolder
     },
     
     computed: {
@@ -54,8 +55,8 @@ export default {
             // return this.value !== 'Create Folder'
             // return false
             var _ = require('lodash');
-            
-            return this.value === '' || _.isEmpty(this.$store.state.currentDeal);
+            return this.value === ''
+            // return this.value === '' || _.isEmpty(this.$store.state.currentDeal);
         },
 
         changeColor() {
@@ -97,6 +98,7 @@ export default {
         async show() {
             this.$store.dispatch('fetchFolder');
             if(this.value == 'Create Folder') {
+                console.log(this.$store.state.currentFolderId)
                 this.$modal.show('modal-folder-create');
             } 
             else if(this.value == 'Create Transfer to BA') {

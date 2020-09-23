@@ -2,7 +2,7 @@
     <div class="create-sub-folder">
         <div class="header">
             <label for="">Create Sub Folder</label>
-            <img src="../assets/img/close.svg" width="19" class="close">
+            <img src="../assets/img/close.svg" v-on:click='onclickClose()' width="19" class="close">
         </div>
         <div class="main">
             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" 
@@ -19,8 +19,8 @@
             </el-checkbox-group>
         </div>
         <div class="footer">
-            <el-button class="create" type="success" v-on:click="onclickCreate()">Create Sub Folder</el-button>
-            <el-button class="skip" type="info" v-on:click="onclickSkip()">Skip</el-button>
+            <el-button class="create" type="success" @click="onclickCreate()">Create Sub Folder</el-button>
+            <el-button class="skip" type="info" @click="onclickSkip()">Skip</el-button>
         </div>
     </div>
 </template>
@@ -49,34 +49,47 @@
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.folders.length;
             },
             onclickCreate() {
+                this.$modal.hide('sub-folder-create');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: this.checkedFolder});
             },
             onclickSkip() {
+                this.$modal.hide('sub-folder-create');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: []});
+            },
+            onclickClose() {
+                this.$modal.hide('sub-folder-create');
             }
         }
     };
 </script>
 
 <style>
-    .el-checkbox__label{
-        /* font-family: ABeeZee;
+    .el-checkbox .el-checkbox__label{
+        font-family: ABeeZee;
         font-style: normal;
         font-weight: normal;
         font-size: 18px;
         line-height: 21px;
         text-align: left;
-        color: #000000; */
+        color: #000000;
     }
-
 
 </style>
 
 <style scoped>
+    label {
+        font-family: ABeeZee;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 18px;
+        line-height: 21px;
+        text-align: left;
+        color: #000000;
+    }
+
     .create-sub-folder {
         width: 496px;
         height: 462px;
-        border: 1px solid #979797;
         display: flex;
         align-items: center;
         flex-direction: column;
@@ -92,34 +105,23 @@
 
     .close {
         float: right;
-        /* margin-right: 20px; */
+        cursor: pointer;
+        margin-right: 20px;
     }
 
-    label {
-        font-family: ABeeZee;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 18px;
-        line-height: 21px;
-        text-align: left;
-
-        color: #000000;
-    }
 
     .main {
         display: flex;
         flex-direction: column;
         border: 1px solid #979797;
+        border-left: none;
+        border-right: none;
         width: 496px;
         align-items: center;
         height: 317px;
-        font-family: ABeeZee;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 18px;
-        line-height: 21px;
-        text-align: left;
-        color: #000000;
+    }
+    .check-all {
+        margin-top: 22px;
     }
 
     .sub-folder {
@@ -127,6 +129,17 @@
         width: 257px;
         display: flex;
         flex-direction: column;
+        justify-content: space-around;
+    }
+
+    .skip {
+        width: 155px;
+    }
+
+    .footer {
+        margin-bottom: 10px;
+        width: 496px;
+        display: flex;
         justify-content: space-around;
     }
 

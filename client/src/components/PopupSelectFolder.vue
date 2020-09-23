@@ -49,6 +49,9 @@
             onclickHide() {
                 this.$modal.hide('modal-folder-select');
             }
+        },
+        beforeDestroy() {
+            this.$store.dispatch('assignCurrentFolderID', null);
         }
     }
 </script>

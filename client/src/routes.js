@@ -16,10 +16,5 @@ const routes = [
         //     requiresAuth: true
         // }
     },
-    {
-        path: '/sub',
-        component: SubFolder
-    }
-
 ]
 export default routes
