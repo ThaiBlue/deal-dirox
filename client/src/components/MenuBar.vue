@@ -1,7 +1,7 @@
 <template>
     <div class="setting">
         <img @click.prevent="show" src="../assets/img/setting-icon.png" width="56">
-        <modal name = "modal-login" :width="741" :height="741">
+        <modal name = "modal-setting" :width="741" :height="741">
             <Settings />
         </modal>
 
@@ -17,8 +17,7 @@ export default {
     },
     methods: {
         show () {
-            this.$modal.show('modal-login')
-            console.log('Here')
+            this.$modal.show('modal-setting')
         }
     }
 }

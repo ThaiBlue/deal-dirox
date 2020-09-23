@@ -1,7 +1,6 @@
 <template>
     <div class="option">
         <div class="create">
-            
             <el-select v-model="value" placeholder="Choose Action">
                 <el-option
                     v-for="item in options"
@@ -11,7 +10,6 @@
                 >
                 </el-option>
             </el-select>
-
             <div class="button-apply">
                 <el-button  @click.prevent="show" :class="{changed: changeColor}" 
                     class="apply" :disabled="hiddenButton" >Apply</el-button>
@@ -24,12 +22,8 @@
                 <modal name = 'modal-subfolder-create' :height="690" :width="1028">
                     <SubFolder />
                 </modal>
-    
             </div>
-
         </div>
-
-
         <div class="page">
             <el-pagination
                 :page-size="2"

@@ -18,7 +18,7 @@ export const store = new Vuex.Store({
         deals: [], // store all make offer deal
         googleToken: {}, // store google crendential
         googleAccountEmail: '', // store connected google account email 
-        hubspotAccountEmail: '', // store connected hubspot account email 
+        hubspotAccountEmail: '', // store connected hubspot account email
 
         currentSlideID: '', // cache current created slide ID
         currentDeal: {}, // cache current deal object
@@ -175,6 +175,7 @@ export const store = new Vuex.Store({
             var owned = [];
 
             await context.dispatch('fetchAccessToken');
+            
             const drive = new DriveAPI(this.state.googleToken.access_token);
 
             try {
@@ -241,25 +242,26 @@ export const store = new Vuex.Store({
 
                 this.state.deals[index].folder = this.state.folderCacheData;
                 this.state.deals[index].status = 'folder-created';
-                this.state.folder.push(response.data);
+                
+                // this.state.folder.push(response.data);
 
                 if (folderInfo.subFolder.includes('00. Customer documents')) {
                     try {
-                        await drive.createFolder('00. Customer documents', [response.data.id]);
+                        drive.createFolder('00. Customer documents', [response.data.id]);
                     } catch (err) {
                         console.log(response)
                     }
                 }
                 if (folderInfo.subFolder.includes('01. Proposal')) {
                     try {
-                        await drive.createFolder('01. Proposal', [response.data.id]);
+                        drive.createFolder('01. Proposal', [response.data.id]);
                     } catch (err) {
                         console.log(err)
                     }
                 }
                 if (folderInfo.subFolder.includes('02. Contract')) {
                     try {
-                        await drive.createFolder('02. Contract', [response.data.id]);
+                        drive.createFolder('02. Contract', [response.data.id]);
                     } catch (err) {
                         console.log(err)
                     }
@@ -343,7 +345,7 @@ export const store = new Vuex.Store({
                         resolve(res);
                     })
                     .catch(err => {
-                        this.state.googleAccountEmail = 'No service';
+                        this.state.profile.service.google.is_available = false;
                         reject(err);
                     })
             })
@@ -357,7 +359,7 @@ export const store = new Vuex.Store({
                         resolve(res);
                     })
                     .catch(err => {
-                        this.state.hubspotAccountEmail = 'No service';
+                        this.state.profile.service.hubspot.is_available = false;
                         reject(err);
                     })
             })
@@ -374,37 +376,42 @@ export const store = new Vuex.Store({
                         resolve(res);
                     })
                     .catch(err => {
+                        console.log(err)
                         reject(err);
                     })
             })
         },
         googleCredentialRevoke(context) {
+            /* Remove access right for this app */
             return new Promise((resolve, reject) => {
                 axios.get('services/google/auth/token/revoke')
                     .then(res => {
-                        this.state.googleAccountEmail = 'No service';
+                        this.state.profile.service.google.is_available = false;
                         resolve(res);
                     })
                     .catch(err => {
+                        console.log(err)
                         reject(err);
                     })
             })
         },
         hubspotCredentialRevoke(context) {
+            /* Remove access right for this app */
             return new Promise((resolve, reject) => {
                 axios.get('services/hubspot/auth/token/revoke')
                     .then(res => {
-                        this.state.hubspotAccountEmail = 'No service';
+                        this.state.profile.service.hubspot.is_available = false;
                         resolve(res);
                     })
                     .catch(err => {
+                        console.log(err)
                         reject(err);
                     })
             })
         },
         updateNewFolderName(context, name) {
             this.state.newFolderName = name;
-        }
+        },
     }
 })
 

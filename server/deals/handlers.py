@@ -1,5 +1,6 @@
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 from authlib.integrations.django_client import OAuth
 from tzlocal import get_localzone
@@ -40,8 +41,10 @@ class User:
 				
 			login(request, user) # Create new session
 			
-			return HTTP_200
-		
+			profile = Account.generate_profile(user)
+						
+			return HttpResponse(content=dumps(profile), content_type='application/json')
+					
 		return HTTP_405
 
 	@classmethod
@@ -64,7 +67,7 @@ class User:
 			
 		if request.method == 'GET':
 			# Generate profile
-			profile = Account.generate_profile(user)
+			profile = Account.generate_profile(request.user)
 						
 			return HttpResponse(content=dumps(profile), content_type='application/json')
 		
@@ -203,7 +206,7 @@ class OAuth2:
 			if 'refresh_token' in list(token.keys()):
 				token.pop('refresh_token') # remove refresh_token attribute
 				
-			return HttpResponse(content=dumps(token), content_type='application/json')
+			return redirect('https://deal.dirox.dev')
 			
 		return HTTP_405
 		
@@ -305,7 +308,7 @@ class GoogleService:
 			if response.status_code == 200:
 				token.delete()
 				
-			return HttpResponse(content=dumps(response.json()), content_type='application/json')
+			return HttpResponse(content=response, content_type='application/json')
 			
 		return HTTP_405
 
@@ -400,10 +403,10 @@ class HubspotService:
 				
 			response = HubspotAPI.revoke_credential(refresh_token=token.refresh_token)
 			
-			if response.status_code == 200:
+			if response.status_code == 204 or response.status_code == 200:
 				token.delete()
 				
-			return HttpResponse(content=dumps(response.json()), content_type='application/json')
+			return HTTP_200
 			
 		return HTTP_405
 
