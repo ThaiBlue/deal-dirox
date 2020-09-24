@@ -75,10 +75,14 @@
             }
         },
         mounted() {
-            if (this.$store.state.deals[0] === undefined && this.$store.state.isLoged) {
-                this.$store.dispatch('fetchDeals');
+            if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google.is_available) {
+                if (this.$store.state.deals[0] === undefined && this.$store.state.isLoged) {
+                    this.$store.dispatch('fetchDeals');
+                }
+            } else {
+                this.$modal.show('modal-setting');
             }
-        }
+        },
     }
 </script>
 <style>

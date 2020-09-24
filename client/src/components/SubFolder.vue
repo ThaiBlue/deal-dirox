@@ -2,7 +2,7 @@
     <div class="create-sub-folder">
         <div class="header">
             <label for="">Create Sub Folder</label>
-            <img src="../assets/img/close.svg" width="19" class="close">
+            <img src="../assets/img/close.svg" v-on:click='onclickClose()' width="19" class="close">
         </div>
         <div class="main">
             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" 
@@ -49,10 +49,15 @@
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.folders.length;
             },
             onclickCreate() {
+                this.$modal.hide('sub-folder-create');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: this.checkedFolder});
             },
             onclickSkip() {
+                this.$modal.hide('sub-folder-create');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: []});
+            },
+            onclickClose() {
+                this.$modal.hide('sub-folder-create');
             }
         }
     };

@@ -24,24 +24,25 @@ const router = new VueRouter({
 })
 
 
-// var navigated = false;
+var navigated = false;
 
-// router.beforeEach((to, from, next) => {
-//     if(!navigated) {
-//         axios.get('')
-//             .then(res => {
-//                 navigated = true; // resolve navigate infinite looop
-//                 store.state.isLoged = true; //cache login status
-//                 next('/deal');
-//             })
-//             .catch(err => {
-//                 navigated = true;
-//                 next('/');
-//             })
-//     } else {
-//         next();
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    if(!navigated) {
+        axios.get('accounts/user/profile')
+            .then(res => {
+                navigated = true; // resolve navigate infinite looop
+                store.state.isLoged = true; //cache login status
+                store.state.profile = res.data;
+                next('/deal');
+            })
+            .catch(err => {
+                navigated = true;
+                next('/');
+            })
+    } else {
+        next();
+    }
+})
 
 new Vue({
     router: router,

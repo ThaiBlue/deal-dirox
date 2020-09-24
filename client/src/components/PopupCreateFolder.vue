@@ -66,6 +66,9 @@ export default {
         },
 
     },
+    beforeDestroy() {
+        this.$store.dispatch('assignCurrentFolderID', null);
+    },
 }
 </script>
 

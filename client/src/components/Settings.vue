@@ -1,57 +1,121 @@
 <template>
     <div class="settings">
-        
         <div class="top">
             <label class="setting-label">SETTING</label>
-            <img class="close" src="../assets/img/close.svg">
+            <img class="close" v-on:click='onclickCancel()' src="../assets/img/close.svg">
         </div>
-
         <div class="middle">
             <div class="hubspot-account">
                 <div class="hubspot">
                     <img src="../assets/img/hubspot-img.svg" alt="">
                     <div class="hubspot-label">
                         <label class="setting-label">HubSpot Account</label>
-                        <div class="gmail">{{mail}}</div>
+                        <div class="gmail">{{onchangStatusHubspotEmail}}</div>
                     </div>
                 </div>
-                <el-button type="danger">Disconnect</el-button>
-
+                <el-button :type="onchangeStatusHubspot" v-on:click="onclickConnectHubspot()">
+                    {{onchangeFunctionStatusHubspot}}</el-button>
             </div>
-
             <div class="drive-account">
                 <div class="drive">
                     <img src="../assets/img/drive.svg" alt="">
                     <div class="drive-label">
                         <label class="setting-label">Google Drive Account</label>
-                        <div class="gmail">{{mail}}</div>
+                        <div class="gmail">{{onchangStatusGoogleEmail}}</div>
                     </div>
                 </div>
-                <el-button class="success" type="success">Connect</el-button>
+                <el-button :type="onchangeStatusGoogle" v-on:click="onclickConnectGoogle()">
+                    {{onchangeFunctionStatusGoogle}}</el-button>
             </div>
         </div>
-
         <div class="Feature">
         </div>
-
         <div class="button-setting">
-            <el-button  class="cancel" type="info">Cancel</el-button>
-            <el-button class="save" type="success">Save</el-button>
+            <el-button class="cancel" type="info" v-on:click='onclickCancel()'>Cancel</el-button>
+            <el-button class="save" type="success" v-on:click='onclickSave()'>Save</el-button>
         </div>
     </div>
 </template>
-
 <script>
-export default {
-    data() {
-        return {
-            mail: 'tien.tran@dirox.net',
+    export default {
+        computed: {
+            onchangStatusGoogleEmail() {
+                if (this.$store.state.profile.service.google.is_available) {
+                    this.$store.dispatch('fetchGoogleAccountInfo');
+                    return this.$store.state.googleAccountEmail
+                } else {
+                    return 'Not connect'
+                }
+            },
+            onchangStatusHubspotEmail() {
+                if (this.$store.state.profile.service.hubspot.is_available) {
+                    this.$store.dispatch('fetchHubspotAccountInfo');
+                    return this.$store.state.hubspotAccountEmail
+                } else {
+                    return 'Not connect'
+                }
+            },
+            onchangeStatusHubspot() {
+                if (this.$store.state.profile.service.hubspot.is_available) {
+                    return 'danger';
+                } else {
+                    return 'success';
+                }
+            },
+            onchangeStatusGoogle() {
+                if (this.$store.state.profile.service.google.is_available) {
+                    return 'danger';
+                } else {
+                    return 'success';
+                }
+            },
+            onchangeFunctionStatusGoogle() {
+                if (this.$store.state.profile.service.google.is_available) {
+                    return 'Disconnect';
+                } else {
+                    return 'Connect';
+                }
+            },
+            onchangeFunctionStatusHubspot() {
+                if (this.$store.state.profile.service.hubspot.is_available) {
+                    return 'Disconnect';
+                } else {
+                    return 'Connect';
+                }
+            },
+        },
+        methods: {
+            onclickConnectHubspot() {
+                if (this.$store.state.profile.service.hubspot.is_available) {
+                    this.$store.dispatch('hubspotCredentialRevoke');
+                } else {
+                    window.location.replace("https://api.deal.dirox.dev/accounts/hubspot/auth");
+                    this.hubspotStatus = true;
+                }
+            },
+            onclickConnectGoogle() {
+                if (this.$store.state.profile.service.google.is_available) {
+                    this.$store.dispatch('googleCredentialRevoke');
+                } else {
+                    window.location.replace("https://api.deal.dirox.dev/accounts/google/auth");
+                    this.googleStatus = true;
+                }
+            },
+            onclickSave() {
+                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                    .is_available) {
+                    this.$modal.hide('modal-setting');
+                }
+            },
+            onclickCancel() {
+                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                    .is_available) {
+                    this.$modal.hide('modal-setting');
+                }
+            }
         }
-    },
-}
+    }
 </script>
-
-
 <style scoped>
     .settings {
         width: 741px;
@@ -64,7 +128,7 @@ export default {
         box-sizing: border-box;
         background: #FFFFFF;
     }
-    
+
     .top {
         width: 635px;
         text-align: center;
@@ -81,7 +145,6 @@ export default {
         color: #000000;
     }
 
-
     .middle {
         height: 314px;
         width: 635px;
@@ -92,8 +155,6 @@ export default {
         border-left: none;
         border-right: none;
     }
-
-
 
     .hubspot-account {
         background: #DAF5FF;
@@ -107,8 +168,8 @@ export default {
         justify-content: space-around;
         align-items: center;
     }
-    
-    .drive-account{
+
+    .drive-account {
         background: #DAF5FF;
         border: 1px solid #A1DCF2;
         box-sizing: border-box;
@@ -158,8 +219,6 @@ export default {
         justify-content: space-around;
     }
 
-
-
     .el-button {
         height: 40px;
         width: 130px;
@@ -168,7 +227,7 @@ export default {
         border-radius: 17px;
     }
 
-    .success {        
+    .success {
         height: 40px;
         width: 130px;
         border: 1px solid #A3E470;
@@ -199,6 +258,4 @@ export default {
         width: 160px;
         height: 49px;
     }
-
-
 </style>
