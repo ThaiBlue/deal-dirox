@@ -9,24 +9,13 @@ import LoginForm from "../components/LoginForm"
 export default {
     name: 'LoginScreen',
     components:{
-        LoginForm,
+        LoginForm
     }
 }
 </script>
 
-<style>
-    .body {
-        height: 100vh;
-    }
-</style>
-
 
 <style scoped>
-    .container{
-        height: 1024px;
-    }
-
-
     .logo-dirox-new-white {
         width: 203px;
         height: 152px;

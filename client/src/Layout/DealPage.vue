@@ -1,5 +1,5 @@
 <template>
-    <div class="container" id="wrapper">
+    <div class="container">
         <div class="bar">
             <div class="filtertableimageoption">
                 <div class="filterimagetable">
@@ -34,23 +34,23 @@ export default {
 
 </script>
 
+<style>
+    body {
+        overflow-x: auto;
+    }
+</style>
 
 <style scoped>
-    
-    .container{
-        //background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
-        margin: 0 auto;
+    .container {
+        /* height: 1024px; */
         width: 1440px;
+        /* margin: 0 auto; */
     }
 
-
     img {
-        //float: right;
-        //margin-right: 32px;
-        //margin-top: 50px;
-        position: absolute;
-        right: 30px;
-        top: 30px
+        float: right;
+        margin-right: 32px;
+        margin-top: 50px;
     }
 
 

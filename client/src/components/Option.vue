@@ -21,30 +21,15 @@
                 <modal name = 'modal-folder-select' :height="690" :width="1028">
                     <SelectFolder />
                 </modal>
-                <!-- <modal name = 'modal-subfolder-create' :height="690" :width="1028">
-                    <SubFolder />
-                </modal> -->
-    
             </div>
 
         </div>
-
-
-        <div class="page">
-            <el-pagination
-                :page-size="2"
-                :pager-count="5"
-                layout="prev, pager, next"
-                :total="10">
-            </el-pagination>
-        </div>        
     </div>
 </template>
 <script>
     
 import CreateFolder from "./PopupCreateFolder"
 import SelectFolder from "./PopupSelectFolder"
-import SubFolder from "./SubFolder"
 
 export default {
     name: 'Option',
@@ -52,7 +37,6 @@ export default {
     components: {
         CreateFolder,
         SelectFolder,
-        // SubFolder
     },
     
     computed: {

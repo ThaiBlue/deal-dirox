@@ -2,7 +2,6 @@ __pycache__
 .DS_Store
 node_modules
 /dist
-/home/caotien/Develop/deal-dirox/client/src/components/test.vue
 # local env files
 .env.local
 .env.*.local

@@ -2,17 +2,25 @@
     <el-table class="table" :data="tableData" highlight-current-row border @current-change="handleCurrentChange"
         height="200">
         <el-table-column prop="no" label="No." type="index" width="60"></el-table-column>
+        
         <el-table-column prop="id" label="ID" width="132"></el-table-column>
+        
         <el-table-column prop="projectname" label="Project Name" width="204" show-overflow-tooltip></el-table-column>
+        
         <el-table-column prop="stage" label="Stage" width="128"></el-table-column>
+        
         <el-table-column prop="startdate" label="Start Date" width="136"></el-table-column>
+        
         <el-table-column prop="enddate" label="End Date" width="136"></el-table-column>
+        
         <el-table-column label="Folder" width="136" show-overflow-tooltip>
             <template slot-scope="scope">
                 <el-button type="text" size="small" @click.native.prevent="currentFolderURL(scope.$index)">
-                    {{currentFolderName(scope.$index)}} </el-button>
+                    {{currentFolderName(scope.$index)}}
+                </el-button>
             </template>
         </el-table-column>
+        
         <el-table-column prop="status" label="Status" width="180">
             <template slot-scope="scope">
                 <el-select v-model="tableData[scope.$index].status" @change="onChangeStatus(scope.$index)" placeholder="Status">
@@ -22,6 +30,7 @@
             </template>
         </el-table-column>
     </el-table>
+
 </template>
 <script>
     export default {

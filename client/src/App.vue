@@ -5,17 +5,18 @@
         <router-view></router-view>
     </div>
 </template>
+
 <script>
     import axios from 'axios'
     export default {
         name: 'app',
-        components: {},
-        computed: {
-        },
     }
 </script>
+
 <style>
     body {
         background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
+        height: 100vh;
+        overflow: hidden;
     }
 </style>

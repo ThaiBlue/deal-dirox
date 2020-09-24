@@ -18,7 +18,6 @@ export default {
     methods: {
         show () {
             this.$modal.show('modal-login')
-            console.log('Here')
         }
     }
 }
@@ -33,5 +32,6 @@ export default {
 <style scoped>
     .setting {
         cursor: pointer;
+        margin-top: 64%;
     }
 </style>
