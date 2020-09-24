@@ -32,6 +32,6 @@ export default {
 <style scoped>
     .setting {
         cursor: pointer;
-        margin-top: 64%;
+        /* margin-top: 64%; */
     }
 </style>

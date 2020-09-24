@@ -77,7 +77,9 @@ export default {
         width: 667px;
         display: flex;
         justify-content: space-between;
+        align-items: center;
     }
+
     div.search-box button{
         background-color:transparent;
         border: none;

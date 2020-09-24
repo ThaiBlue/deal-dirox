@@ -11,7 +11,6 @@
                 </div>
                 <Option />
             </div>
-            <MenuBar />
         </div>
     </div>
 </template>
@@ -24,7 +23,6 @@ import Option from "../components/Option"
 export default {
     name: 'DealPage',
     components: {
-        MenuBar,
         Table,
         FilterVue,
         Option
@@ -42,15 +40,13 @@ export default {
 
 <style scoped>
     .container {
-        /* height: 1024px; */
-        width: 1440px;
-        /* margin: 0 auto; */
+        width: 1168px;
     }
 
     img {
         float: right;
-        margin-right: 32px;
-        margin-top: 50px;
+        /* margin-right: 32px;
+        margin-top: 50px; */
     }
 
 
@@ -59,7 +55,7 @@ export default {
         height: 112px;  
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        /* align-items: center; */
     }
 
 
@@ -73,6 +69,7 @@ export default {
 
 
     .filtertableimageoption{ /* Class with (Filter and Image Table) and Option  */
+        /* border: 1px solid red; */
         height: 962px;
         width: 1168px;
         display: flex;
@@ -83,6 +80,7 @@ export default {
 
     .bar{
         width: 1428px;
+        margin: 0 auto;
         display: flex;
         flex-direction: row-reverse;
         justify-content: space-between;
