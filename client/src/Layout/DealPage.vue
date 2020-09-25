@@ -35,18 +35,14 @@ export default {
 <style>
     body {
         overflow-x: auto;
+        width: 120vh;
+        margin: 0 auto;
     }
 </style>
 
 <style scoped>
-    .container {
-        width: 1168px;
-    }
-
     img {
         float: right;
-        /* margin-right: 32px;
-        margin-top: 50px; */
     }
 
 
@@ -55,7 +51,6 @@ export default {
         height: 112px;  
         display: flex;
         justify-content: space-between;
-        /* align-items: center; */
     }
 
 
@@ -69,7 +64,6 @@ export default {
 
 
     .filtertableimageoption{ /* Class with (Filter and Image Table) and Option  */
-        /* border: 1px solid red; */
         height: 962px;
         width: 1168px;
         display: flex;
@@ -79,8 +73,8 @@ export default {
 
 
     .bar{
-        width: 1428px;
-        margin: 0 auto;
+        width: 1168px;
+        /* margin: 0 auto; */
         display: flex;
         flex-direction: row-reverse;
         justify-content: space-between;
