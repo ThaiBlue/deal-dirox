@@ -1,5 +1,5 @@
 <template>
-    <div class="container" id="wrapper">
+    <div class="container">
         <div class="bar">
             <div class="filtertableimageoption">
                 <div class="filterimagetable">
@@ -11,7 +11,6 @@
                 </div>
                 <Option />
             </div>
-            <MenuBar />
         </div>
     </div>
 </template>
@@ -24,7 +23,6 @@ import Option from "../components/Option"
 export default {
     name: 'DealPage',
     components: {
-        MenuBar,
         Table,
         FilterVue,
         Option
@@ -39,23 +37,17 @@ export default {
 
 </script>
 
+<style>
+    body {
+        overflow-x: auto;
+        width: 120vh;
+        margin: 0 auto;
+    }
+</style>
 
 <style scoped>
-    
-    .container{
-        //background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
-        margin: 0 auto;
-        width: 1440px;
-    }
-
-
     img {
-        //float: right;
-        //margin-right: 32px;
-        //margin-top: 50px;
-        position: absolute;
-        right: 30px;
-        top: 30px
+        float: right;
     }
 
 
@@ -64,7 +56,6 @@ export default {
         height: 112px;  
         display: flex;
         justify-content: space-between;
-        align-items: center;
     }
 
 
@@ -87,7 +78,8 @@ export default {
 
 
     .bar{
-        width: 1428px;
+        width: 1168px;
+        /* margin: 0 auto; */
         display: flex;
         flex-direction: row-reverse;
         justify-content: space-between;

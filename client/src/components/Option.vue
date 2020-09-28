@@ -19,27 +19,16 @@
                 <modal name = 'modal-folder-select' :height="690" :width="1028">
                     <SelectFolder />
                 </modal>
-                <modal name = 'modal-subfolder-create' :height="690" :width="1028">
-                    <SubFolder />
-                </modal>
-    
             </div>
         </div>
-        <div class="page">
-            <el-pagination
-                :page-size="2"
-                :pager-count="5"
-                layout="prev, pager, next"
-                :total="10">
-            </el-pagination>
-        </div>        
+        <MenuBar />
     </div>
 </template>
 <script>
     
 import CreateFolder from "./PopupCreateFolder"
 import SelectFolder from "./PopupSelectFolder"
-import SubFolder from "./SubFolder"
+import MenuBar from "./MenuBar"
 
 export default {
     name: 'Option',
@@ -47,7 +36,7 @@ export default {
     components: {
         CreateFolder,
         SelectFolder,
-        // SubFolder
+        MenuBar
     },
     
     computed: {
@@ -60,7 +49,7 @@ export default {
         },
 
         changeColor() {
-            return this.value == this.value;
+            return this.value == this.value
         }
     },
 
@@ -171,6 +160,10 @@ export default {
     .option{
         display: flex;
         justify-content: space-between;
+        width: 700px;
+        height: 56px;
+        flex-direction: row-reverse;
+        align-items: center;
     }
 
 

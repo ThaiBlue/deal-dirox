@@ -98,6 +98,7 @@
         width: 475px;
         height: 50px;
         padding-left: 10px;
+        outline: none;
     }
 
     .password-login {
@@ -116,6 +117,7 @@
         width: 475px;
         height: 50px;
         padding-left: 10px;
+        outline: none;
     }
 
     .button {

@@ -6,8 +6,8 @@ import moment from 'moment'
 import DriveAPI from '../assets/js/DriveAPI'
 
 Vue.use(Vuex)
-// axios.defaults.baseURL = 'https://api.deal.dirox.dev'
-axios.defaults.baseURL = 'http://127.0.0.1:8000'
+axios.defaults.baseURL = 'https://api.deal.dirox.dev'
+// axios.defaults.baseURL = 'http://127.0.0.1:8000'
 axios.defaults.withCredentials = true
 
 export const store = new Vuex.Store({
