@@ -15,14 +15,14 @@ Vue.use(Vuelidate)
 Vue.use(VueRouter)
 Vue.use(VModal)
 
-axios.defaults.baseURL = 'https://api.deal.dirox.dev'
+// axios.defaults.baseURL = 'https://api.deal.dirox.dev'
+axios.defaults.baseURL = 'http://127.0.0.1:8000'
 axios.defaults.withCredentials = true
 
 const router = new VueRouter({
     routes,
     mode: 'history'
 })
-
 
 var navigated = false;
 

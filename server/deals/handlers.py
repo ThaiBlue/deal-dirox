@@ -3,15 +3,15 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 
 from authlib.integrations.django_client import OAuth
-from tzlocal import get_localzone
 from datetime import datetime, timedelta
+from tzlocal import get_localzone
 from json import dumps, loads
 import logging
 
 from .models.sqlite import GoogleToken, HubspotToken, Account, Cache
 from .models.requests import GoogleAPI, HubspotAPI, OAuth2API
 from .models.constants import *
-
+from .models.thread import requestThread
 
 logging.basicConfig(filename='deals_server.log', level=logging.DEBUG)
 
@@ -246,25 +246,51 @@ class GoogleService:
 		
 		if request.method == 'POST':
 			#retrieve token from database
-			token = User.fetch_access_token(request=request, service='google')
+			google_token = User.fetch_access_token(request=request, service='google')
+			hubspot_token = User.fetch_access_token(request=request, service='hubspot')
 			
 			#handle error
-			if token is None:
+			if google_token is None or hubspot_token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
 			
-			if token == {}:
+			if google_token == {} or hubspot_token == {}:
 				return HTTP_408
 			
 			name = request.POST.get('name')
+			deal_id = request.POST.get('deal_id')
 			
 			if name is None:
-				name = f'ENG_INIT_Lead_2020_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'	
-							
-			#Upload template
-			response = GoogleAPI.upload_init_lead_template(access_token=token['access_token'], 
-								name=name, parentID=request.POST.get('parentID'))
+				name = f'ENG_INIT_Lead_{datetime.now().strftime("%Y")}_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'	
+						
+			notesThread = requestThread(target=HubspotAPI.fetch_notes, kwargs={'access_token': hubspot_token['access_token'], 'deal_id': deal_id})
+			companyThread = requestThread(target=HubspotAPI.fetch_company_info, kwargs={'access_token': hubspot_token['access_token'], 'dealID': deal_id})
+			dealThread = requestThread(target=HubspotAPI.fetch_deal_info, kwargs={'access_token': hubspot_token['access_token'], 'deal_id': deal_id})
+			initLeadThread = requestThread(target=GoogleAPI.upload_init_lead_template, kwargs={'access_token': google_token['access_token'], 'name': name, 'parentID': request.POST.get('parentID')})
 			
-			return HttpResponse(content=response.text, content_type='application/json')
+			threads = [notesThread, companyThread, dealThread, initLeadThread]
+			
+			notesThread.start()
+			companyThread.start()
+			dealThread.start()
+			initLeadThread.start()
+			
+			data = []
+			
+			for thread in threads:
+				response = thread.join()
+													
+				if isinstance(response, dict):
+					data.append(response)
+					continue
+					
+				if response.status_code != 200:
+					return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
+
+				data.append(response.json())
+				
+			response = GoogleAPI.fill_out_the_template(access_token=google_token['access_token'], deal=data[2], company=data[1], notes=data[0], slide_id=data[3]['id'])
+								
+			return HttpResponse(content=response.text, content_type='application/json', status=response.status_code)
 				
 		return HTTP_405
 
@@ -286,13 +312,13 @@ class GoogleService:
 
 			response = GoogleAPI.retrieve_token_info(access_token=token['access_token'])
 			
-			return HttpResponse(content=dumps(response), content_type='application/json')
-			
+			return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
+						
 		return HTTP_405
 		
 	@classmethod
 	def revoke_credential(cls, request):
-		'''Retrieve access_token info from hubspot server'''
+		'''Retrieve access_token info from google server'''
 		
 		if request.method == 'GET':			
 			if not request.user.is_authenticated: # Authentication check
@@ -308,10 +334,10 @@ class GoogleService:
 			if response.status_code == 200:
 				token.delete()
 				
-			return HttpResponse(content=response, content_type='application/json')
+			return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
 			
-		return HTTP_405
-
+		return HTTP_405		
+		
 class HubspotService:
 	'''Hubspot service API request handler'''
 	@classmethod
@@ -329,9 +355,14 @@ class HubspotService:
 				
 			if token == {}:
 				return HTTP_408
-				
-			deals = HubspotAPI.fetch_make_offer_deals(access_token=token['access_token'])
+											
+			response = HubspotAPI.fetch_make_offer_deals(access_token=token['access_token'], 
+										properties=['dealname', 'start_date','closedate'])
 			
+			if response.status_code != 200:
+				return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
+			
+			deals = response.json()
 			deal_ids = []
 			
 			for deal in deals['results']:
@@ -344,28 +375,7 @@ class HubspotService:
 			return HttpResponse(content=dumps(deals), content_type='application/json')
 
 		return HTTP_405
-	
-	@classmethod
-	def get_company_info(cls, request, dealID):
-		'''Retrieve company ID from Hubspot'''
-		if request.method == 'GET':			
-			if not request.user.is_authenticated: # Authentication check
-				return HTTP_400_LOGIN_REQUIRE
-				
-			token = User.fetch_access_token(request=request, service='hubspot')
-			
-			if token is None:
-				return HTTP_400_NO_SERVICE_AVAILABLE
-				
-			if token == {}:
-				return HTTP_408
-				
-			companyInfo = HubspotAPI.fetch_company_info(access_token=token['access_token'], dealID=dealID)
-				
-			return HttpResponse(content=dumps(companyInfo), content_type='application/json')	
-			
-		return HTTP_405
-	
+		
 	@classmethod
 	def retrieve_token_info(cls, request):
 		'''Retrieve access_token info from hubspot server'''
@@ -384,7 +394,7 @@ class HubspotService:
 
 			response = HubspotAPI.retrieve_token_info(access_token=token['access_token'])
 			
-			return HttpResponse(content=dumps(response), content_type='application/json')
+			return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
 			
 		return HTTP_405
 
@@ -406,7 +416,7 @@ class HubspotService:
 			if response.status_code == 204 or response.status_code == 200:
 				token.delete()
 				
-			return HTTP_200
+			return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
 			
 		return HTTP_405
 
@@ -414,4 +424,5 @@ def test(request):
 	# Authentication check
 	if not request.user.is_authenticated:
 		return HTTP_400_LOGIN_REQUIRE
+	
 	return HttpResponse('Hello World')
