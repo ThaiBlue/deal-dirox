@@ -61,6 +61,7 @@ export const store = new Vuex.Store({
                     })
             })
         },
+        
         async retrieveFolderMetaData(context, payload) {
             /* Return name and url of the Drive folder 
             payload = {
