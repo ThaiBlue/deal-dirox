@@ -4,11 +4,10 @@ import axios from 'axios'
 import FormData from 'form-data'
 import moment from 'moment'
 import DriveAPI from '../assets/js/DriveAPI'
-import SlideAPI from '../assets/js/SlideAPI'
-import HubspotAPI from '../assets/js/HubspotAPI'
 
 Vue.use(Vuex)
 axios.defaults.baseURL = 'https://api.deal.dirox.dev'
+// axios.defaults.baseURL = 'http://127.0.0.1:8000'
 axios.defaults.withCredentials = true
 
 export const store = new Vuex.Store({
@@ -26,6 +25,7 @@ export const store = new Vuex.Store({
         currentFolderId: null, // cache current selected folder id
         folderCacheData: {}, // cache current fetched folder meta data
         idMappingForDeals: [], //cache deal indice
+        selectFunctionCache: '',
         isLoged: false,
         newFolderName: ''
     },
@@ -140,10 +140,6 @@ export const store = new Vuex.Store({
                         stage: 'Make Offer',
                         startdate: moment(item.properties.start_date).format('DD/MM/YYYY'),
                         enddate: moment(item.properties.closedate).format('DD/MM/YYYY'),
-                        description: item.properties.description,
-                        deal_summary: item.properties.deal_summary,
-                        lead_overview_1: item.properties.lead_overview_1,
-                        lead_overview_2: item.properties.lead_overview_2,
                         status: (cache === undefined || cache.folder_id === '' || this.state.folderCacheData.id === '') ? '' : cache.status,
                         folder: this.state.folderCacheData
                     })
@@ -273,32 +269,6 @@ export const store = new Vuex.Store({
                 console.log(err);
             }
         },
-        async prepareForInitLead(context) {
-            /* 
-                inner function that handle createInitLead prepare prossess 
-            */
-            axios.get('services/hubspot/crm/deals/' + this.state.currentDeal.id + '/associations/company/info')
-                .then(response => {
-                    this.state.currentCompanyName = response.data.properties.name;
-                })
-                .catch(err => {
-                    return Promise.reject(err.response);
-                })
-
-            // form.append('name', );
-            const form = new FormData();
-            if (this.state.currentFolderId !== null) {
-                form.append('parentID', this.state.currentFolderId);
-            }
-
-            await axios.post('/services/google/drive/file/create/initlead', form)
-                .then(response => {
-                    this.state.currentSlideID = response.data.id;
-                })
-                .catch(err => {
-                    return Promise.reject(err.response);
-                })
-        },
         assignCurrentDeal(context, currentDeal) {
             /* 
                 assign current selected deal 
@@ -309,21 +279,24 @@ export const store = new Vuex.Store({
             /*
                 send create InitLead request to google service
             */
-            await context.dispatch('prepareForInitLead');
-            await context.dispatch('fetchAccessToken');
-            await context.dispatch('generateIdMapping');
-            const slide = new SlideAPI(this.state.googleToken.access_token, this.state.currentSlideID);
+                       
             try {
-                var res = await slide.updatePresentaion(
-                    this.state.currentDeal.description,
-                    this.state.currentDeal.deal_summary,
-                    this.state.currentDeal.lead_overview_1,
-                    this.state.currentDeal.lead_overview_2,
-                    this.state.currentCompanyName);
-
+                const form = new FormData();
+                console.log(this.state.currentDeal)
+                console.log(this.state.currentFolderId)
+                form.append('deal_id', this.state.currentDeal.id);
+                form.append('parentID', this.state.currentFolderId);
+                var response = await axios.post('services/google/drive/file/create/initlead', form)
+                
                 // get index of current deal
                 var index = this.state.deals.indexOf(this.state.currentDeal);
-                this.state.deals[index].status = 'transfer-to-ba'
+                this.state.deals[index].status = 'transfer-to-ba';
+                context.dispatch('updateCache', {
+                    dealID: this.state.deals[index].id,
+                    folderID: this.state.deals[index].folder.id,
+                    status: 'transfer-to-ba'
+                })
+
 
             } catch (err) {
                 console.log(err)
@@ -412,8 +385,14 @@ export const store = new Vuex.Store({
             })
         },
         updateNewFolderName(context, name) {
+            // Cache new folder name that typed from Create folder popup
             this.state.newFolderName = name;
         },
+        resetSelect(context) {
+            // reset all selection on deal page
+            this.state.currentDeal = {};
+            this.state.selectFunctionCache = '';
+        }
     }
 })
 

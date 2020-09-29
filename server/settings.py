@@ -58,7 +58,7 @@ AUTHLIB_OAUTH_CLIENTS = {
         'authorize_url': 'https://app.hubspot.com/oauth/authorize',
         'access_token_url': 'https://api.hubapi.com/oauth/v1/token',
         'client_kwargs': {
-            'scope': 'contacts'
+            'scope': 'contacts files'
         }
     }
 }

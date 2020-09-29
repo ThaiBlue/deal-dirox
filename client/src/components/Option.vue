@@ -78,7 +78,7 @@ export default {
                 },
             ],
 
-            value: '',
+            value: this.$store.state.selectFunctionCache,
 
             name: ''
         }

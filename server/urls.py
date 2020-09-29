@@ -32,6 +32,5 @@ urlpatterns = [
     path('services/hubspot/auth/token/revoke', HubspotService.revoke_credential),
     path('services/google/drive/file/create/initlead', GoogleService.create_init_lead),
     path('services/hubspot/crm/deals/makeoffer/all', HubspotService.get_makeoffer_deals),
-    path('services/hubspot/crm/deals/<str:dealID>/associations/company/info', HubspotService.get_company_info),
     path('', test)
 ]

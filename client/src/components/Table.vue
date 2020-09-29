@@ -23,7 +23,8 @@
         
         <el-table-column prop="status" label="Status" width="180">
             <template slot-scope="scope">
-                <el-select v-model="tableData[scope.$index].status" @change="onChangeStatus(scope.$index)" placeholder="Status">
+                <el-select v-model="tableData[scope.$index].status" @change="onChangeStatus(scope.$index)"
+                    placeholder="Status">
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
@@ -59,10 +60,10 @@
         methods: {
             onChangeStatus(index) {
                 this.$store.dispatch('updateCache', {
-                        dealID: this.$store.state.deals[index].id,
-                        folderID: this.$store.state.deals[index].folder.id,
-                        status: this.$store.state.deals[index].status
-                    })
+                    dealID: this.$store.state.deals[index].id,
+                    folderID: this.$store.state.deals[index].folder.id,
+                    status: this.$store.state.deals[index].status
+                })
             },
             currentFolderURL(index) {
                 return window.open(this.tableData[index].folder.url, "_blank");
@@ -75,7 +76,8 @@
             }
         },
         mounted() {
-            if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google.is_available) {
+            if (this.$store.state.profile.service.hubspot.is_available & this.$store.state.profile.service.google
+                .is_available) {
                 if (this.$store.state.deals[0] === undefined && this.$store.state.isLoged) {
                     this.$store.dispatch('fetchDeals');
                 }

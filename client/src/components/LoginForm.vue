@@ -6,12 +6,12 @@
             <form action="#" class="form-login" @submit.prevent="login">
                 <div class="email-login">
                     <label for="email">Email or Username</label>
-                    <input type="email" class="email-box" placeholder="Type your Email or Username here"
+                    <input type="email" class="email-box" onkeypress="onkeypressEmailField(event)" placeholder="Type your Email or Username here"
                         v-model="username">
                 </div>
                 <div class="password-login">
                     <label for="password">Password</label>
-                    <input type="password" class="password-box" placeholder="Type your password here"
+                    <input type="password" class="password-box" onkeypress="onkeypressPasswordField(event)" placeholder="Type your password here"
                         v-model.trim="password">
                 </div>
                 <!-- ^([a-z]+)[.]([a-z]+)@(dirox[.]net|synexser[.]com) -->
@@ -54,6 +54,14 @@
                     console.log(err);
                 })
             },
+            onkeypressEmailField(event) {
+                if (event.key === "Enter") {
+                    console.log("dev me")
+                }
+            },
+            onkeypressPasswordField(event) {
+                console.log("dev me")
+            }
         }
     }
 </script>
