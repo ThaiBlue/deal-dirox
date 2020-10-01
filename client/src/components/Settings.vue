@@ -4,6 +4,7 @@
             <label class="setting-label">SETTING</label>
             <img class="close" v-on:click='onclickCancel()' src="../assets/img/close.svg">
         </div>
+
         <div class="middle">
             <div class="hubspot-account">
                 <div class="hubspot">
@@ -13,7 +14,7 @@
                         <div class="gmail">{{onchangStatusHubspotEmail}}</div>
                     </div>
                 </div>
-                <el-button :type="onchangeStatusHubspot" v-on:click="onclickConnectHubspot()">
+                <el-button :type="onchangeStatusHubspot" @click="onclickConnectHubspot()">
                     {{onchangeFunctionStatusHubspot}}</el-button>
             </div>
             <div class="drive-account">
@@ -31,8 +32,10 @@
         <div class="Feature">
         </div>
         <div class="button-setting">
-            <el-button class="cancel" type="info" v-on:click='onclickCancel()'>Cancel</el-button>
-            <el-button class="save" type="success" v-on:click='onclickSave()'>Save</el-button>
+            <el-button class="cancel" type="info" @click='onclickCancel()'>Cancel</el-button>
+            <el-button class="save" type="success" @click='onclickSave()'>Save</el-button>
+            <el-button class="logout" type="primary" @click="onclickLogout" round>Log out</el-button>
+
         </div>
     </div>
 </template>
@@ -112,8 +115,20 @@
                     .is_available) {
                     this.$modal.hide('modal-setting');
                 }
+            },
+            onclickLogout() {
+                this.$store.dispatch('logout')
+                    .then(response => {
+                        alert('Bitch')
+                        this.$router.push('/')
+                        // console.log(response)
+                    })
+                    
+                    .catch(err => {
+                        console.log(err)
+                    })
             }
-        }
+        },
     }
 </script>
 <style scoped>
@@ -251,7 +266,15 @@
     }
 
     .save {
+        box-sizing: border-box;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+        border-radius: 17px;
+        width: 160px;
+        height: 49px;
         border: 1px solid #A3E470;
+    }
+
+    .loggout {
         box-sizing: border-box;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         border-radius: 17px;

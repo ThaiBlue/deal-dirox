@@ -40,6 +40,21 @@ export const store = new Vuex.Store({
         // }
     },
     actions: {
+        logout() {
+            return new Promise((resolve, reject) => {
+                const form = new FormData();
+                axios.get('/accounts/user/logout')
+                    .then(response => {
+                        resolve(response);
+                        console.log(response)
+                    })
+                    .catch(err => {
+                        // console.log(err)
+                        reject(err);
+                    })
+            })         
+        },
+
         authenticate(context, credentials) {
             /* 
                 send authenticate request to backend server 
@@ -56,7 +71,7 @@ export const store = new Vuex.Store({
                         resolve(response);
                     })
                     .catch(err => {
-                        console.log(err)
+                        // console.log(err)
                         reject(err);
                     })
             })

@@ -6,52 +6,40 @@
             <form action="#" class="form-login" @submit.prevent="login">
                 <div class="email-login">
                     <label for="email">Email or Username</label>
-                    <input type="email" class="email-box" onkeypress="onkeypressEmailField(event)" placeholder="Type your Email or Username here"
-                        v-model="username">
+                    <input type="email" class="email-box" onkeypress="onkeypressEmailField(event)"
+                        placeholder="Type your Email or Username here" v-model="username">
                 </div>
+
                 <div class="password-login">
                     <label for="password">Password</label>
                     <input type="password" class="password-box" onkeypress="onkeypressPasswordField(event)" placeholder="Type your password here"
                         v-model.trim="password">
                 </div>
-                <!-- ^([a-z]+)[.]([a-z]+)@(dirox[.]net|synexser[.]com) -->
-                <!-- <el-alert
-                title="Email or Password is incorrect"
-                type="error"
-                center
-                show-icon
-                @close="error"
-                :model=error
-                >
-            </el-alert> -->
-                <!-- <el-alert
-                title="success alert"
-                type="success"
-                show-icon>
-            </el-alert> -->
             </form>
-            <!-- <router-link to="/deal"><button type="submit" class="button">LOGIN</button></router-link> -->
             <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
         </div>
     </div>
 </template>
+
 <script>
     export default {
-        name: 'LoginForm',
         data: () => ({
             username: '',
             password: '',
             error: false
         }),
+
         methods: {
             login() {
                 this.$store.dispatch('authenticate', {
                     username: this.username,
                     password: this.password
-                }).then(res => {
-                    this.$router.push('/deal');
-                }).catch(err => {
-                    console.log(err);
+                })
+                    .then(res => {
+                        this.$router.push('/deal');
+                })
+                    .catch(err => {
+                        console.log(err);
                 })
             },
             onkeypressEmailField(event) {
@@ -65,6 +53,7 @@
         }
     }
 </script>
+
 <style scoped>
     .login-to-deal-dirox {
         color: #FFFFFF;
