@@ -138,7 +138,7 @@ export default {
 
 
 <style scoped>
-    .changed {
+    .chanel-button apply el-button--default is-disabled changedged {
         background: #99FF92;
     }
 

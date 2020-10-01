@@ -34,8 +34,7 @@
         <div class="button-setting">
             <el-button class="cancel" type="info" @click='onclickCancel()'>Cancel</el-button>
             <el-button class="save" type="success" @click='onclickSave()'>Save</el-button>
-            <el-button class="logout" type="primary" @click="onclickLogout" round>Log out</el-button>
-
+            <el-button class="logout" type="danger" @click="onclickLogout()">Log out</el-button>v
         </div>
     </div>
 </template>
@@ -105,13 +104,15 @@
                 }
             },
             onclickSave() {
-                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                if (this.$store.state.profile.service.hubspot.is_available && 
+                    this.$store.state.profile.service.google
                     .is_available) {
                     this.$modal.hide('modal-setting');
                 }
             },
             onclickCancel() {
-                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                if (this.$store.state.profile.service.hubspot.is_available && 
+                    this.$store.state.profile.service.google
                     .is_available) {
                     this.$modal.hide('modal-setting');
                 }
@@ -119,9 +120,8 @@
             onclickLogout() {
                 this.$store.dispatch('logout')
                     .then(response => {
-                        alert('Bitch')
+                        alert("You've Logged out from DEAL@DIROX")
                         this.$router.push('/')
-                        // console.log(response)
                     })
                     
                     .catch(err => {
@@ -131,6 +131,18 @@
         },
     }
 </script>
+
+<style>
+    .el-button logout el-button--danger {
+        box-sizing: border-box;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+        border-radius: 17px;
+        /* width: 140px; */
+        height: 49px;
+    }
+
+</style>
+
 <style scoped>
     .settings {
         width: 741px;
@@ -169,6 +181,7 @@
         justify-content: space-around;
         border-left: none;
         border-right: none;
+        border: 1px solid black
     }
 
     .hubspot-account {
@@ -240,15 +253,17 @@
         box-sizing: border-box;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         border-radius: 17px;
+        /* border: 1px solid black; */
     }
 
     .success {
         height: 40px;
         width: 130px;
-        border: 1px solid #A3E470;
+        /* border: 1px solid #A3E470; */
         box-sizing: border-box;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         border-radius: 17px;
+        /* border: 1px solid black; */
     }
 
     .Feature {
@@ -272,13 +287,5 @@
         width: 160px;
         height: 49px;
         border: 1px solid #A3E470;
-    }
-
-    .loggout {
-        box-sizing: border-box;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-        border-radius: 17px;
-        width: 160px;
-        height: 49px;
     }
 </style>
