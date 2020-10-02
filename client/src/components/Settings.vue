@@ -30,11 +30,11 @@
             </div>
         </div>
         <div class="Feature">
+            <el-button class="logout" type="danger" @click="onclickLogout()">Log out</el-button>
         </div>
         <div class="button-setting">
             <el-button class="cancel" type="info" @click='onclickCancel()'>Cancel</el-button>
             <el-button class="save" type="success" @click='onclickSave()'>Save</el-button>
-            <el-button class="logout" type="danger" @click="onclickLogout()">Log out</el-button>v
         </div>
     </div>
 </template>
@@ -120,7 +120,7 @@
             onclickLogout() {
                 this.$store.dispatch('logout')
                     .then(response => {
-                        alert("You've Logged out from DEAL@DIROX")
+                        alert("You've logged out from DEAL@DIROX.")
                         this.$router.push('/')
                     })
                     
@@ -132,16 +132,6 @@
     }
 </script>
 
-<style>
-    .el-button logout el-button--danger {
-        box-sizing: border-box;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-        border-radius: 17px;
-        /* width: 140px; */
-        height: 49px;
-    }
-
-</style>
 
 <style scoped>
     .settings {
@@ -181,7 +171,7 @@
         justify-content: space-around;
         border-left: none;
         border-right: none;
-        border: 1px solid black
+        border-bottom: none;
     }
 
     .hubspot-account {
@@ -211,11 +201,12 @@
     }
 
     .hubspot {
-        width: 341px;
+        width: 415px;
         height: 85px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        /* margin-right: 10px; */
     }
 
     .drive {
@@ -229,6 +220,10 @@
     .hubspot-label {
         display: flex;
         flex-direction: column;
+        width: 340px;
+        /* align-self: flex-start; */
+        /* align-items: center; */
+        /* width: 303px; */
     }
 
     .drive-label {
@@ -269,6 +264,13 @@
     .Feature {
         width: 625px;
         height: 142px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #979797;
+        border-top: none;
+        border-left: none;
+        border-right: none;
     }
 
     .cancel {
@@ -287,5 +289,10 @@
         width: 160px;
         height: 49px;
         border: 1px solid #A3E470;
+    }
+
+    .logout {
+        align-self: flex-end;
+        margin-bottom: 20px;
     }
 </style>

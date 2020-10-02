@@ -12,7 +12,7 @@
 
                 <div class="password-login">
                     <label for="password">Password</label>
-                    <input type="password" class="password-box" onkeypress="onkeypressPasswordField(event)" placeholder="Type your password here"
+                    <input type="password" class="password-box" onkeypress="onkeypressPasswordField()" placeholder="Type your password here"
                         v-model.trim="password">
                 </div>
             </form>
@@ -47,7 +47,7 @@
                     console.log("dev me")
                 }
             },
-            onkeypressPasswordField(event) {
+            onkeypressPasswordField() {
                 console.log("dev me")
             }
         }
