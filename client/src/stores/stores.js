@@ -45,6 +45,7 @@ export const store = new Vuex.Store({
                 const form = new FormData();
                 axios.get('/accounts/user/logout')
                     .then(response => {
+                        this.state.deals = [];
                         resolve(response);
                         console.log(response)
                     })
@@ -148,7 +149,7 @@ export const store = new Vuex.Store({
                     } else {
                         await context.dispatch('retrieveFolderMetaData', {folder_id: cache.folder_id, deal_id: cache.deal_id})
                     }
-                    await this.state.deals.push({
+                    this.state.deals.push({
                         id: item.id,
                         projectname: item.properties.dealname,
                         stage: 'Make Offer',
@@ -310,9 +311,10 @@ export const store = new Vuex.Store({
                     folderID: this.state.deals[index].folder.id,
                     status: 'transfer-to-ba'
                 })
-
+                window.alert("Transfer to BA successed")
 
             } catch (err) {
+                window.alert("Transfer to BA failed")
                 console.log(err)
             }
 
