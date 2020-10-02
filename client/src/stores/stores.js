@@ -54,7 +54,6 @@ export const store = new Vuex.Store({
                     })
             })         
         },
-
         authenticate(context, credentials) {
             /* 
                 send authenticate request to backend server 
@@ -71,7 +70,7 @@ export const store = new Vuex.Store({
                         resolve(response);
                     })
                     .catch(err => {
-                        // console.log(err)
+                        window.alert("Login fail. Wrong user id or password. Please try again!!!")
                         reject(err);
                     })
             })
@@ -149,7 +148,7 @@ export const store = new Vuex.Store({
                     } else {
                         await context.dispatch('retrieveFolderMetaData', {folder_id: cache.folder_id, deal_id: cache.deal_id})
                     }
-                    this.state.deals.push({
+                    await this.state.deals.push({
                         id: item.id,
                         projectname: item.properties.dealname,
                         stage: 'Make Offer',
