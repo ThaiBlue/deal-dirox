@@ -182,7 +182,7 @@ export const store = new Vuex.Store({
         },
         async fetchFolder(context) {
             /* 
-                get folder meta data from google drive 
+                get folder meta data from google drive
             */
             this.state.folder = [];
             var owned = [];
@@ -194,7 +194,7 @@ export const store = new Vuex.Store({
             try {
                 var response = await drive.getListOfFolder();
                 response.data.files.forEach(item => {
-                    if (item.ownedByMe) {
+                    if(item.ownedByMe) {
                         owned.push({
                             id: item.id,
                             label: item.name,
