@@ -10,6 +10,11 @@
     import axios from 'axios'
     export default {
         name: 'app',
+        watch: {
+            $route: function(to) {
+                document.title = to.meta.title
+            }
+        }
     }
 </script>
 
@@ -17,6 +22,6 @@
     body {
         background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
         height: 100vh;
-        /* overflow: hidden; */
+        overflow: hidden;
     }
 </style>

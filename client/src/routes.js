@@ -5,15 +5,18 @@ const routes = [
     {
         path: '/',
         name: 'home',
-        component: LoginScreen
+        component: LoginScreen,
+        meta: {title: 'DEAL@DIROX'}
     },
+
     {
         path: '/deal',
         name: 'deal',
         component: DealPage,
+        meta: {title: 'DEAL'}
         // meta: {
         //     requiresAuth: true
         // }
-    }
+    },
 ]
 export default routes
