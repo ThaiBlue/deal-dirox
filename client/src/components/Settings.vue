@@ -213,7 +213,7 @@
         width: 415px;
         height: 85px;
         display: flex;
-        justify-content: space-between;
+        /* justify-content: space-between; */
         align-items: center;
     }
 
@@ -221,9 +221,6 @@
         display: flex;
         flex-direction: column;
         width: 340px;
-        /* align-self: flex-start; */
-        /* align-items: center; */
-        /* width: 303px; */
     }
 
     .drive-label {
@@ -248,17 +245,14 @@
         box-sizing: border-box;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         border-radius: 17px;
-        /* border: 1px solid black; */
     }
 
     .success {
         height: 40px;
         width: 130px;
-        /* border: 1px solid #A3E470; */
         box-sizing: border-box;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         border-radius: 17px;
-        /* border: 1px solid black; */
     }
 
     .Feature {

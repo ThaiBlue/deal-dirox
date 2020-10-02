@@ -1,5 +1,6 @@
 import LoginScreen from "./Layout/LoginScreen"
 import DealPage from "./Layout/DealPage"
+import test from "./components/Settings"
 
 const routes = [
     {
@@ -18,5 +19,10 @@ const routes = [
         //     requiresAuth: true
         // }
     },
+
+    {
+        path: '/test',
+        component:test
+    }
 ]
 export default routes
