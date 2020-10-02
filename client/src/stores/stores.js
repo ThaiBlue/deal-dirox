@@ -27,7 +27,8 @@ export const store = new Vuex.Store({
         idMappingForDeals: [], //cache deal indice
         selectFunctionCache: '',
         isLoged: false,
-        newFolderName: ''
+        newFolderName: '',
+        from_login: false
     },
     getters: {
         // loggedIn(state) {
@@ -66,6 +67,7 @@ export const store = new Vuex.Store({
                 axios.post('/accounts/user/login', form)
                     .then(response => {
                         //parse user info from response
+                        this.state.by_login = true;
                         this.state.profile = response.data;
                         context.dispatch('fetchDeals');
                         resolve(response);
