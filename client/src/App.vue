@@ -10,6 +10,11 @@
     import axios from 'axios'
     export default {
         name: 'app',
+        watch: {
+            $route: function(to) {
+                document.title = to.meta.title
+            }
+        }
     }
 </script>
 

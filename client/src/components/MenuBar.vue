@@ -25,13 +25,12 @@ export default {
 
 <style>
     .vm--container .vm--modal{
-        border-radius: 42px;
+        border-radius: 10px;
     }
 </style>
 
 <style scoped>
     .setting {
         cursor: pointer;
-        /* margin-top: 64%; */
     }
 </style>

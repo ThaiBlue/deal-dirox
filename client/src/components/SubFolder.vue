@@ -4,6 +4,7 @@
             <label for="">Create Sub Folder</label>
             <img src="../assets/img/close.svg" v-on:click='onclickClose()' width="19" class="close">
         </div>
+
         <div class="main">
             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" 
                 @change="handleCheckAllChange" class="check-all">
@@ -18,16 +19,24 @@
                 </el-checkbox>
             </el-checkbox-group>
         </div>
+
         <div class="footer">
-            <el-button class="create" type="success" @click="onclickCreate()">Create Sub Folder</el-button>
-            <el-button class="skip" type="info" @click="onclickSkip()">Skip</el-button>
+            <el-button  class="create" type="success" @click="onclickCreate()">Create Sub Folder</el-button>
+            <el-button  class="skip" type="info" @click="onclickSkip()">Skip</el-button>
+            <modal name = 'success' :width="733" :height="266">
+                <Success />
+            </modal>
         </div>
     </div>
 </template>
 
 <script>
+    import Success from "./SuccessPopUp"
     const folderOption = ['00. Customer documents', '01. Proposal', '02. Contract'];
     export default {
+        components: {
+            Success
+        },
         data() {
             return {
                 checkAll: false,
@@ -48,14 +57,19 @@
                 this.checkAll = checkedCount === this.folders.length;
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.folders.length;
             },
+
             onclickCreate() {
-                this.$modal.hide('sub-folder-create');
+                // this.$modal.hide('sub-folder-create');
+                this.$modal.show('success');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: this.checkedFolder});
             },
+
             onclickSkip() {
-                this.$modal.hide('sub-folder-create');
+                // this.$modal.hide('sub-folder-create');
+                this.$modal.show('success');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: []});
             },
+
             onclickClose() {
                 this.$modal.hide('sub-folder-create');
             }
@@ -96,6 +110,7 @@
         justify-content: space-around;
         box-sizing: border-box;
         background: #FFFFFF;
+        border-radius: 15px;
     }
 
     .header {

@@ -27,7 +27,8 @@ export const store = new Vuex.Store({
         idMappingForDeals: [], //cache deal indice
         selectFunctionCache: '',
         isLoged: false,
-        newFolderName: ''
+        newFolderName: '',
+        from_login: false
     },
     getters: {
         // loggedIn(state) {
@@ -40,6 +41,21 @@ export const store = new Vuex.Store({
         // }
     },
     actions: {
+        logout() {
+            return new Promise((resolve, reject) => {
+                const form = new FormData();
+                axios.get('/accounts/user/logout')
+                    .then(response => {
+                        this.state.deals = [];
+                        resolve(response);
+                        console.log(response)
+                    })
+                    .catch(err => {
+                        // console.log(err)
+                        reject(err);
+                    })
+            })         
+        },
         authenticate(context, credentials) {
             /* 
                 send authenticate request to backend server 
@@ -51,16 +67,18 @@ export const store = new Vuex.Store({
                 axios.post('/accounts/user/login', form)
                     .then(response => {
                         //parse user info from response
+                        this.state.by_login = true;
                         this.state.profile = response.data;
                         context.dispatch('fetchDeals');
                         resolve(response);
                     })
                     .catch(err => {
-                        console.log(err)
+                        window.alert("Login fail. Wrong user id or password. Please try again!!!")
                         reject(err);
                     })
             })
         },
+        
         async retrieveFolderMetaData(context, payload) {
             /* Return name and url of the Drive folder 
             payload = {
@@ -166,7 +184,7 @@ export const store = new Vuex.Store({
         },
         async fetchFolder(context) {
             /* 
-                get folder meta data from google drive 
+                get folder meta data from google drive
             */
             this.state.folder = [];
             var owned = [];
@@ -178,12 +196,14 @@ export const store = new Vuex.Store({
             try {
                 var response = await drive.getListOfFolder();
                 response.data.files.forEach(item => {
-                    owned.push({
-                        id: item.id,
-                        label: item.name,
-                        parents: item.parents[0],
-                        children: []
-                    })
+                    if(item.ownedByMe) {
+                        owned.push({
+                            id: item.id,
+                            label: item.name,
+                            parents: item.parents[0],
+                            children: []
+                        })
+                    }
                 })
 
             } catch (err) {
@@ -293,9 +313,10 @@ export const store = new Vuex.Store({
                     folderID: this.state.deals[index].folder.id,
                     status: 'transfer-to-ba'
                 })
-
+                window.alert("Transfer to BA successed")
 
             } catch (err) {
+                window.alert("Transfer to BA failed")
                 console.log(err)
             }
 
