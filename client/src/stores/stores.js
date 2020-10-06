@@ -48,10 +48,8 @@ export const store = new Vuex.Store({
                     .then(response => {
                         this.state.deals = [];
                         resolve(response);
-                        console.log(response)
                     })
                     .catch(err => {
-                        // console.log(err)
                         reject(err);
                     })
             })         

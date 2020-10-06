@@ -49,6 +49,7 @@
                     return 'Not connect'
                 }
             },
+
             onchangStatusHubspotEmail() {
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     this.$store.dispatch('fetchHubspotAccountInfo');
@@ -57,6 +58,7 @@
                     return 'Not connect'
                 }
             },
+
             onchangeStatusHubspot() {
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     return 'danger';
@@ -64,6 +66,7 @@
                     return 'success';
                 }
             },
+
             onchangeStatusGoogle() {
                 if (this.$store.state.profile.service.google.is_available) {
                     return 'danger';
@@ -71,6 +74,7 @@
                     return 'success';
                 }
             },
+
             onchangeFunctionStatusGoogle() {
                 if (this.$store.state.profile.service.google.is_available) {
                     return 'Disconnect';
@@ -78,6 +82,7 @@
                     return 'Connect';
                 }
             },
+
             onchangeFunctionStatusHubspot() {
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     return 'Disconnect';

@@ -1,9 +1,9 @@
 <template>
-    <div class="popup">
-        <img class="close" src="../assets/img/close_pop_up_icon.svg" @click="hide">
+    <div class="popup" @exit="hide1">
+        <img class="close" src="../assets/img/close_pop_up_icon.svg" @click="hide" >
         <div class="main">
             <img src="../assets/img/checked.svg" alt="">
-            <label>Folders "{{folder}}" created successfully!</label>
+            <label>Folders created successfully!</label>
         </div>
     </div>
 </template>
@@ -12,16 +12,23 @@
 export default {
     data () {
         return {
-            folder: 'test'
+            opened: false
         }
     },
-
     methods: {
         hide() {
+            // this.opened = false
+            this.$modal.hide('sub-folder-create') 
+            this.$modal.hide('modal-folder-create')
+        },
+
+        hide1() {
+            console.log('Here ?')
+            // this.opened = true
             this.$modal.hide('sub-folder-create') 
             this.$modal.hide('modal-folder-create')
         }
-    }
+    },
 }
 </script>
 

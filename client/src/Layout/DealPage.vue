@@ -26,13 +26,7 @@ export default {
         Table,
         FilterVue,
         Option
-    },
-    methods: {
-        // onclickCancel() {
-        //     // this.$store.dispatch("resetSelect");
-        // }
-    },
-
+    }
 }
 
 </script>

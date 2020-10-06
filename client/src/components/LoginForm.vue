@@ -13,7 +13,7 @@
                 <div class="password-login">
                     <label for="password">Password</label>
                     <input type="password" class="password-box" onkeypress="onkeypressPasswordField()" placeholder="Type your password here"
-                        v-model.trim="password">
+                        v-model.trim="password" @keypress.enter="login()">
                 </div>
             </form>
             <button type="submit" class="button" @click.prevent="login()">LOGIN</button>
@@ -37,9 +37,10 @@
                 })
                     .then(res => {
                         this.$router.push('/deal');
+                        console.log('Passed')
                 })
                     .catch(err => {
-                        console.log(err);
+                        console.log('error here')
                 })
             },
             onkeypressEmailField(event) {
