@@ -81,7 +81,8 @@ class User:
 			token = {
 				'access_token': Auth0.jwt_token_generator(request, user).decode(encoding='UTF-8', errors='strict'),
 				'token_type': 'Bearer',
-				'expired_in': 3600
+				'expired_in': 3600,
+				'expiration_time': (datetime.utcnow() + timedelta(hours=1)).isoformat()
 			}			
 			
 			return HttpResponse(content=dumps(token), content_type='application/json')

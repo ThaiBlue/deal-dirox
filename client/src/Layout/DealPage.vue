@@ -20,6 +20,8 @@ import MenuBar from "../components/MenuBar"
 import Table from "../components/Table"
 import FilterVue from "../components/Filter"
 import Option from "../components/Option"
+import moment from 'moment'
+
 export default {
     name: 'DealPage',
     components: {
@@ -27,10 +29,9 @@ export default {
         FilterVue,
         Option
     },
-    methods: {
-        // onclickCancel() {
-        //     // this.$store.dispatch("resetSelect");
-        // }
+    mounted() {
+        setTimeout(() => { localStorage.removeItem('credential');  this.$router.push('/')} , 
+        moment.utc(localStorage.credential.expiration_time).diff(moment.utc()));
     },
 
 }

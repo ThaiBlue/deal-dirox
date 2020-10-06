@@ -3,44 +3,38 @@ import App from './App.vue';
 import VueRouter from 'vue-router'
 import routes from "./routes"
 import uielement from "./uielement"
-import {
-    store
-} from "./stores/stores"
+import { store } from "./stores/stores"
 import Vuelidate from 'vuelidate'
 import VModal from 'vue-js-modal'
 import axios from 'axios'
+import moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.use(Vuelidate)
 Vue.use(VueRouter)
 Vue.use(VModal)
 
-axios.defaults.baseURL = 'https://api.deal.dirox.dev'
-// axios.defaults.baseURL = 'http://127.0.0.1:8000'
-axios.defaults.withCredentials = true
-
 const router = new VueRouter({
     routes,
     mode: 'history'
 })
 
-var navigated = false;
+var navigated = false
 
 router.beforeEach((to, from, next) => {
     if(!navigated) {
-        axios.get('accounts/user/profile')
-            .then(res => {
-                navigated = true; // resolve navigate infinite looop
-                store.state.isLoged = true; //cache login status
-                store.state.profile = res.data;
-                next('/deal');
-            })
-            .catch(err => {
-                navigated = true;
+        navigated = true
+        if (localStorage.credential !== undefined) {
+            if(moment.utc(localStorage.credential.expiration_time)<moment().utc()) {
                 next('/');
-            })
+            } else {
+                next('/deal');
+            }
+        } else {
+            next('/');
+        }
     } else {
-        next();
+        next()
     }
 })
 
