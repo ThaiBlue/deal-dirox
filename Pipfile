@@ -12,6 +12,9 @@ authlib = "*"
 requests = "*"
 pytz = "*"
 tzlocal = "*"
+ldap3 = "*"
+passlib = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.8"

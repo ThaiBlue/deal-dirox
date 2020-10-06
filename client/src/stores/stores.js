@@ -178,14 +178,12 @@ export const store = new Vuex.Store({
             try {
                 var response = await drive.getListOfFolder();
                 response.data.files.forEach(item => {
-                    if (item.ownedByMe) {
-                        owned.push({
-                            id: item.id,
-                            label: item.name,
-                            parents: item.parents[0],
-                            children: []
-                        })
-                    }
+                    owned.push({
+                        id: item.id,
+                        label: item.name,
+                        parents: item.parents[0],
+                        children: []
+                    })
                 })
 
             } catch (err) {
@@ -378,7 +376,7 @@ export const store = new Vuex.Store({
                         resolve(res);
                     })
                     .catch(err => {
-                        console.log(err)
+                        console.log(err);
                         reject(err);
                     })
             })

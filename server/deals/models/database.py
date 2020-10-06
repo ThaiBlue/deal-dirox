@@ -7,7 +7,30 @@ from tzlocal import get_localzone
 
 from .constants import FETCHING_TIME
 
-class Account:
+class Account:        
+    @classmethod
+    def find_user(cls, user_id):
+        '''Find user from database'''
+        
+        if not isinstance(user_id, str):
+            raise TypeError("user_id must be an string")
+
+        if '@' in user_id: # if user_id is an email
+            try: 
+                User.objects.get(email=user_id)
+            except:
+                return None
+            else:
+                return User.objects.get(email=user_id)
+
+        else: # if user_id is a username
+            try:
+                User.objects.get(username=user_id)
+            except:
+                return None
+            else:
+                return User.objects.get(username=user_id)
+                
     @classmethod
     def authenticate(cls, user_id, password):
         """
@@ -18,22 +41,8 @@ class Account:
         if not isinstance(password, str):
             raise TypeError("user_id must be an string")
         
-        if '@' in user_id: # if user_id is an email
-            try: 
-                User.objects.get(email=user_id)
-            except:
-                return None
-            else:
-                user = User.objects.get(email=user_id)
-
-        else: # if user_id is a username
-            try:
-                User.objects.get(username=user_id)
-            except:
-                return None
-            else:
-                user = User.objects.get(username=user_id)
-
+        user = cls.find_user(user_id)
+        
         # Verify password
         if check_password(password, user.password):
             return user

@@ -1,5 +1,5 @@
+from .models.database import GoogleToken, HubspotToken, Cache
 from django.contrib import admin
-from .models.sqlite import GoogleToken, HubspotToken, Cache
 
 # Register your models here.
 admin.site.register(GoogleToken)
