@@ -9,12 +9,12 @@ from passlib.hash import ldap_salted_sha1 as lss
 from datetime import datetime, timedelta
 from tzlocal import get_localzone
 from json import dumps, loads
+from urllib.parse import urlparse, parse_qs
 import logging
 
-from .models.database import GoogleToken, HubspotToken, Account, Cache
+from .models.database import GoogleToken, HubspotToken, Account, Cache, State
 from .models.requests import GoogleAPI, HubspotAPI, OAuth2API
 from .models.thread import requestThread
-from .models.auth0 import *
 from .models.constants import *
 from .models.auth0 import *
 
@@ -183,10 +183,11 @@ class User:
 			
 class OAuth2:
 	'''Oauth2 API request handler'''
+	
 	@staticmethod
 	def build_redirect_url(request, service):
 		'''Method use to generate redirect URL of this server'''
-		return 'http://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
+		return 'https://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
 	
 	@classmethod
 	def authorize(cls, request, service):
@@ -203,12 +204,19 @@ class OAuth2:
 		if request.method == 'GET':
 			# Instantiate google service  
 			service_ = oauth.create_client(service)
+			
 			# create redirect uri
 			redirect_uri = cls.build_redirect_url(request=request, service=service)
-			# set cookie for the request
-			login(request, user)
+			
 			# Lead user to Authentication page
-			return service_.authorize_redirect(request, redirect_uri)
+			url = service_.authorize_redirect(request, redirect_uri)['Location']
+			
+			state = parse_qs(urlparse(url).query)['state'][0]
+			
+			State.register_state(user=user, state=state)
+			
+			return HttpResponse(content=dumps({'redirect_url': url}), content_type='application/json')
+			
 			
 		return HTTP_405
 		
@@ -218,13 +226,14 @@ class OAuth2:
 		if service not in ['google', 'hubspot']: # Validate request
 			return HTTP_404
 			
-		if request.method == 'GET':
-			if request.user.is_authenticated:
-				return HTTP_400_LOGIN_REQUIRE
+		if request.method == 'GET':		
 			
-			# clean the session
-			user = request.user
-			logout(user)
+			state = parse_qs(urlparse(request.get_full_path()).query)['state'][0]
+			
+			state = State.find_user(user=user)
+			
+			if state is None:
+				return HTTP_400_LOGIN_REQUIRE
 						
 			# Instantiate google service  
 			service_ = oauth.create_client(service)
@@ -232,7 +241,7 @@ class OAuth2:
 			if service == 'google':
 				token = service_.authorize_access_token(request) # Get credential
 				# Save token into database
-				status = GoogleToken.register_credential(user=user, token=token)
+				status = GoogleToken.register_credential(user=state.user, token=token)
 				
 			else: # for hubspot service
 				# Get credential
@@ -240,8 +249,10 @@ class OAuth2:
 						client_id=service_.client_id, client_secret=service_.client_secret)
 						
 				# Save token into database
-				status = HubspotToken.register_credential(user=user, token=token)
-				
+				status = HubspotToken.register_credential(user=state.user, token=token)
+			
+			state.delete()
+			
 			if status == 'fail':
 				return HTTP_400_INVALID_SERVICE
 				
@@ -255,7 +266,7 @@ class OAuth2:
 	@classmethod
 	def retrieve_access_token(cls, request, service):
 		'''Return google access token from database'''
-				# Validate request
+		# Validate request
 		if service not in ['google', 'hubspot']:
 			return HTTP_404
 

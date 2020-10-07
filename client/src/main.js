@@ -19,7 +19,7 @@ const router = new VueRouter({
     mode: 'history'
 })
 
-// var navigated = false
+var navigated = false
 
 // router.beforeEach((to, from, next) => {
 //     if(!navigated) {
@@ -37,6 +37,37 @@ const router = new VueRouter({
 //         next()
 //     }
 // })
+router.beforeEach((to, from, next) => {
+    if(!navigated) {
+        navigated = true
+        if (localStorage.access_token !== undefined) {
+            if(moment.utc(localStorage.expiration_time)<moment().utc()) {
+                next('/');
+            } else {
+                var config = {
+                    url: 'https://api.deal.dirox.dev/accounts/user/profile',
+                    method: 'get',
+                    headers: {
+                        'Authorization': 'Bearer '+ localStorage.access_token
+                    }
+                }
+                axios(config)
+                .then(response => {
+                    store.state.profile = response.data;
+                    next('/deal');
+                })
+                .catch(err => {
+                    next('/');
+                })
+
+            }
+        } else {
+            next('/');
+        }
+    } else {
+        next()
+    }
+})
 
 new Vue({
     router: router,
