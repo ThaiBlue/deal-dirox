@@ -227,6 +227,49 @@ class Credential(models.Model):
             'expires_at': self.expires_at.isoformat()
         }
         
+class State(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    state = models.TextField()
+    expires_in = models.PositiveIntegerField()
+    expires_at = models.DateTimeField()
+    creation_time = models.DateTimeField(auto_now=True)
+    update_time = models.DateTimeField(auto_now=True)
+    
+    @classmethod
+    def register_state(cls, user, state):
+        '''Find user from database'''
+        
+        if not isinstance(user, User):
+            raise TypeError("user must be an a User instance")
+        if not isinstance(state, str):
+            raise TypeError("user must be an a string")
+        
+        # check if there is a unused state
+        try:
+            cls.objects.get(user=user)
+        except:
+            pass
+        else:
+            cls.objects.get(user=user).delete()
+        
+        cls.objects.create(user=user, state=state)  
+      
+    @classmethod
+    def find_state(cls, user):
+        '''Find user from database'''
+        
+        if not isinstance(user, User):
+            raise TypeError("user must be an a User instance")
+        
+        # check if there is a unused state
+        try:
+            cls.objects.get(user=user)
+        except:
+            return None
+        else:
+            return cls.objects.get(user=user)
+             
+        
 # Google credential
 class GoogleToken(Credential):
 	pass

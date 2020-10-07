@@ -91,7 +91,8 @@
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     this.$store.dispatch('hubspotCredentialRevoke');
                 } else {
-                    window.location.replace("https://api.deal.dirox.dev/accounts/hubspot/auth");
+                    // window.location.replace("https://api.deal.dirox.dev/accounts/hubspot/auth");
+                    this.$store.dispatch('registerService', 'hubspot');
                     this.hubspotStatus = true;
                 }
             },
@@ -99,7 +100,8 @@
                 if (this.$store.state.profile.service.google.is_available) {
                     this.$store.dispatch('googleCredentialRevoke');
                 } else {
-                    window.location.replace("https://api.deal.dirox.dev/accounts/google/auth");
+                    // window.location.replace("https://api.deal.dirox.dev/accounts/google/auth");
+                    this.$store.dispatch('registerService', 'google');
                     this.googleStatus = true;
                 }
             },
@@ -118,15 +120,9 @@
                 }
             },
             onclickLogout() {
-                this.$store.dispatch('logout')
-                    .then(response => {
-                        alert("You've logged out from DEAL@DIROX.")
-                        this.$router.push('/')
-                    })
-                    
-                    .catch(err => {
-                        console.log(err)
-                    })
+                this.$store.dispatch('logout');
+                alert("You've logged out from DEAL@DIROX.");
+                this.$router.push('/');
             }
         },
     }

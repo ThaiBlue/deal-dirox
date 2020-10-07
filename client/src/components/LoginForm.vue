@@ -36,6 +36,7 @@
                     password: this.password
                 })
                     .then(res => {
+                        this.$store.dispatch('fetchDeals');
                         this.$router.push('/deal');
                 })
                     .catch(err => {

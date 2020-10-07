@@ -39,13 +39,13 @@ export const store = new Vuex.Store({
     },
     actions: {
         logout() {
-            localStorage.removeItem('credential');
-            this.$router.push('/');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('expiration_time');
         },
         authenticate(context, credentials) {
             /* 
                 send authenticate request to backend server 
-            */
+            */            
             return new Promise((resolve, reject) => {
                 const form = new FormData();
                 form.append('user_id', credentials.username);
@@ -53,8 +53,8 @@ export const store = new Vuex.Store({
                 axios.post('/accounts/user/authorize', form)
                     .then(response => {
                         //parse user info from response
-                        localStorage.setItem('credential', response.data)
-                        context.dispatch('fetchDeals');
+                        localStorage.setItem('access_token', response.data.access_token)
+                        localStorage.setItem('expiration_time', response.data.expiration_time)
                         context.dispatch('fetchProfile');
                         resolve(response);
                     })
@@ -66,7 +66,15 @@ export const store = new Vuex.Store({
         },
         fetchProfile() {
             return new Promise((resolve, reject) => {
-                axios.get('/accounts/user/profile', {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                
+                var config = {
+                    url: 'https://api.deal.dirox.dev/accounts/user/profile',
+                    method: 'get',
+                    headers: {
+                        'Authorization': 'Bearer '+ localStorage.access_token
+                    }
+                }
+                axios(config)
                 .then(response => {
                     this.state.profile = response.data;
                 })
@@ -132,8 +140,15 @@ export const store = new Vuex.Store({
             */
 
             try {
+                var config = {
+                    url: 'https://api.deal.dirox.dev/services/hubspot/crm/deals/makeoffer/all',
+                    method: 'get',
+                    headers: {
+                        'Authorization': 'Bearer '+ localStorage.access_token
+                    }
+                }
                 
-                var response = await axios.get('/services/hubspot/crm/deals/makeoffer/all', {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                var response = await axios(config)
 
                 response.data.results.forEach(async (item, index) => {
                     var cache = response.data.caches.filter(el => el.deal_id == item.id)[0]; // [0] is unpack the single element array
@@ -166,8 +181,17 @@ export const store = new Vuex.Store({
             /*
                 fetch access token from backend server
             */
+           
+            var config = {
+                url: 'https://api.deal.dirox.dev/services/google/auth/token',
+                method: 'get',
+                headers: {
+                    'Authorization': 'Bearer '+ localStorage.access_token
+                }
+            }
+
             return new Promise((resolve, reject) => {
-                axios.get('/services/google/auth/token', {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                axios(config)
                     .then(response => {
                         this.state.googleToken = response.data;
                         resolve(response);
@@ -294,13 +318,18 @@ export const store = new Vuex.Store({
                        
             try {
                 const form = new FormData();
-                console.log(this.state.currentDeal)
-                console.log(this.state.currentFolderId)
                 form.append('deal_id', this.state.currentDeal.id);
                 form.append('parentID', this.state.currentFolderId);
-                var response = await axios.post('services/google/drive/file/create/initlead', form, 
-                                {'Authorization': 'Bearer '+ localStorage.credential.access_token})
                 
+                var config = {
+                    url: 'https://api.deal.dirox.dev/services/google/drive/file/create/initlead',
+                    method: 'post',
+                    headers: {
+                        'Authorization': 'Bearer '+ localStorage.access_token
+                    },
+                    data: form
+                };
+                var response = await axios(config)
                 // get index of current deal
                 var index = this.state.deals.indexOf(this.state.currentDeal);
                 this.state.deals[index].status = 'transfer-to-ba';
@@ -327,8 +356,17 @@ export const store = new Vuex.Store({
         },
         fetchGoogleAccountInfo() {
             /* Fetch service infomation or registered google account email info */
+            
+            var config = {
+                url: 'https://api.deal.dirox.dev/services/google/info',
+                method: 'get',
+                headers: {
+                    'Authorization': 'Bearer '+ localStorage.access_token
+                }
+            }
+
             return new Promise((resolve, reject) => {
-                axios.get('services/google/info', {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                axios(config)
                     .then(res => {
                         this.state.googleAccountEmail = res.data.emailAddress;
                         resolve(res);
@@ -341,8 +379,17 @@ export const store = new Vuex.Store({
         },
         fetchHubspotAccountInfo() {
             /* Fetch service infomation or registered hubspot account email info */
+            
+            var config = {
+                url: 'https://api.deal.dirox.dev/services/hubspot/info',
+                method: 'get',
+                headers: {
+                    'Authorization': 'Bearer '+ localStorage.access_token
+                }
+            }
+
             return new Promise((resolve, reject) => {
-                axios.get('services/hubspot/info', {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                axios(config)
                     .then(res => {
                         this.state.hubspotAccountEmail = res.data.user;
                         resolve(res);
@@ -360,7 +407,17 @@ export const store = new Vuex.Store({
                 form.append('status', payload.status);
                 form.append('folder_id', payload.folderID);
                 form.append('deal_id', payload.dealID);
-                axios.post('accounts/setting/cache', form, {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                
+                var config = {
+                    url: 'https://api.deal.dirox.dev/accounts/setting/cache',
+                    method: 'post',
+                    headers: {
+                        'Authorization': 'Bearer '+ localStorage.access_token
+                    },
+                    data: form
+                };
+                
+                axios(config)
                     .then(res => {
                         resolve(res);
                     })
@@ -372,8 +429,17 @@ export const store = new Vuex.Store({
         },
         googleCredentialRevoke() {
             /* Remove access right for this app */
+            
+            var config = {
+                url: 'https://api.deal.dirox.dev/services/google/auth/token/revoke',
+                method: 'get',
+                headers: {
+                    'Authorization': 'Bearer '+ localStorage.access_token
+                }
+            };
+
             return new Promise((resolve, reject) => {
-                axios.get('services/google/auth/token/revoke', {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                axios(config)
                     .then(res => {
                         this.state.profile.service.google.is_available = false;
                         resolve(res);
@@ -386,8 +452,17 @@ export const store = new Vuex.Store({
         },
         hubspotCredentialRevoke() {
             /* Remove access right for this app */
+            
+            var config = {
+                url: 'https://api.deal.dirox.dev/services/hubspot/auth/token/revoke',
+                method: 'get',
+                headers: {
+                    'Authorization': 'Bearer '+ localStorage.access_token
+                }
+            };
+
             return new Promise((resolve, reject) => {
-                axios.get('services/hubspot/auth/token/revoke', {'Authorization': 'Bearer '+ localStorage.credential.access_token})
+                axios(config)
                     .then(res => {
                         this.state.profile.service.hubspot.is_available = false;
                         resolve(res);
@@ -406,7 +481,38 @@ export const store = new Vuex.Store({
             // reset all selection on deal page
             this.state.currentDeal = {};
             this.state.selectFunctionCache = '';
-        }
+        },
+        registerService(context, service) {
+            /* 
+                Register third party service for this app
+            */
+           
+            if(!['google', 'hubspot'].includes(service)) {
+                throw new Error('service must be google or hubspot');
+            }
+            
+            var config = {
+                url: 'https://api.deal.dirox.dev/accounts/' + service + '/auth',
+                method: 'get',
+                headers: {
+                    'Authorization': 'Bearer '+ localStorage.access_token
+                }
+            };
+
+            return new Promise((resolve, reject) => {
+                axios(config)
+                    .then(res => {
+                        // console.log()
+                        window.location.replace(res.data.redirect_url)
+                        resolve(res);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        reject(err);
+                    })
+            })
+
+        },
     }
 })
 

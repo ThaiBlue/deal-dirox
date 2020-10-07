@@ -30,8 +30,8 @@ export default {
         Option
     },
     mounted() {
-        setTimeout(() => { localStorage.removeItem('credential');  this.$router.push('/')} , 
-        moment.utc(localStorage.credential.expiration_time).diff(moment.utc()));
+        window.setTimeout(() => { localStorage.removeItem('access_token'); localStorage.removeItem('expiration_time');  this.$router.push('/')}, 
+        moment.utc(localStorage.expiration_time).diff(moment.utc()));
     },
 
 }
