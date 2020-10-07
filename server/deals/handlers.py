@@ -41,8 +41,8 @@ class User:
 			if 'user_id' not in list(request_data.keys()) and 'password' not in list(request_data.keys()):
 				return HTTP_400_INVALID_QUERY
 				
-			user_id = credential['user_id'][0]
-			password = credential['password'][0]
+			user_id = request_data['user_id'][0]
+			password = request_data['password'][0]
 			
 	    	# Connect to LDAP server
 			server = Server(host=LDAP_HOST)
@@ -81,9 +81,10 @@ class User:
 				return HTTP_400_WRONG_PASSWORD
 				
 			conn.unbind() # disconnect LDAP server
-			# login(request, user) # Create new session
 			
-			profile = Account.generate_profile(user=request.user)
+			profile = Account.generate_profile(user=user)
+			
+			login(request, user) # Create new session
 										
 			return HttpResponse(content=dumps(profile), content_type='application/json')
 
@@ -97,9 +98,7 @@ class User:
 			return HTTP_400_LOGIN_REQUIRE
 					
 		if request.method == 'GET':
-			# Generate profile
-			profile = Account.generate_profile(request.user)
-						
+			logout(request.user) # end session
 			return HttpResponse(content=dumps(profile), content_type='application/json')
 		
 		return HTTP_405
@@ -132,9 +131,9 @@ class User:
 		
 		# get creadential from database
 		if service == 'hubspot':
-			token = HubspotToken.fetch_credential(user=request.user)
+			token = HubspotToken.fetch_credential(user=user)
 		else:
-			token = GoogleToken.fetch_credential(user=request.user)
+			token = GoogleToken.fetch_credential(user=user)
 			
 		if token is None:
 			return None
@@ -153,9 +152,9 @@ class User:
 			
 			# update credential
 			if service == 'hubspot':
-				HubspotToken.register_credential(user=request.user, token=token)
+				HubspotToken.register_credential(user=user, token=token)
 			else:
-				GoogleToken.register_credential(user=request.user, token=token)
+				GoogleToken.register_credential(user=user, token=token)
 		else:
 			token = token.to_json() # transfer to dictionary
 			token.pop('refresh_token') # remove refresh_token attribute
@@ -218,19 +217,11 @@ class OAuth2:
 		if request.method == 'GET':
 			# Instantiate google service  
 			service_ = oauth.create_client(service)
-			
 			# create redirect uri
 			redirect_uri = cls.build_redirect_url(request=request, service=service)
 			# Lead user to Authentication page
-			url = service_.authorize_redirect(request, redirect_uri)['Location']
-			
-			state = parse_qs(urlparse(url).query)['state'][0]
-			
-			State.register_state(user=user, state=state)
-			
-			return HttpResponse(content=dumps({'redirect_url': url}), content_type='application/json')
-			
-			
+			return service_.authorize_redirect(request, redirect_uri)['Location']
+						
 		return HTTP_405
 		
 	@classmethod
