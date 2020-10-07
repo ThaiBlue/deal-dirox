@@ -13,7 +13,7 @@ from json import dumps, loads
 from urllib.parse import urlparse, parse_qs
 import logging
 
-from .models.database import GoogleToken, HubspotToken, Account, Cache, State
+from .models.database import GoogleToken, HubspotToken, Account, Cache
 from .models.requests import GoogleAPI, HubspotAPI, OAuth2API
 from .models.thread import requestThread
 from .models.constants import *
@@ -231,7 +231,7 @@ class OAuth2:
 		if service not in ['google', 'hubspot']: # Validate request
 			return HTTP_404
 			
-		if request.user.is_authenticated:
+		if not request.user.is_authenticated:
 			return HTTP_400_LOGIN_REQUIRE
 			
 		if request.method == 'GET':						
