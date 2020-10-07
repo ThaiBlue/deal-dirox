@@ -55,6 +55,12 @@
     }
 </script>
 
+<style>
+    /* body {
+        height: 100vh;
+    } */
+</style>
+
 <style scoped>
     .login-to-deal-dirox {
         color: #FFFFFF;

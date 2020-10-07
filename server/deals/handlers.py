@@ -1,17 +1,22 @@
 from django.contrib.auth import login, logout
-from django.http import HttpResponse
+from django.contrib.auth import models
 from django.shortcuts import redirect
+from django.http import HttpResponse
 
+from ldap3 import Server, Connection, ALL_ATTRIBUTES
 from authlib.integrations.django_client import OAuth
+from passlib.hash import ldap_salted_sha1 as lss
 from datetime import datetime, timedelta
 from tzlocal import get_localzone
 from json import dumps, loads
 import logging
 
-from .models.sqlite import GoogleToken, HubspotToken, Account, Cache
+from .models.database import GoogleToken, HubspotToken, Account, Cache
 from .models.requests import GoogleAPI, HubspotAPI, OAuth2API
-from .models.constants import *
 from .models.thread import requestThread
+from .models.auth0 import *
+from .models.constants import *
+from .models.auth0 import *
 
 logging.basicConfig(filename='deals_server.log', level=logging.DEBUG)
 
@@ -24,8 +29,9 @@ oauth.register('hubspot')
 
 class User:
 	'''Contain a set of user API request handler'''
+	
 	@classmethod
-	def _login(cls, request):
+	def authorize(cls, request):
 		'''Handle backend user login process'''
 		
 		if request.method == 'POST':			
@@ -33,48 +39,74 @@ class User:
 			user_id = request.POST.get('user_id')
 			password = request.POST.get('password')
 			
-			# Verify user
-			user = Account.authenticate(user_id=user_id, password=password)
-				
-			if user is None: # if no user found
-				return HTTP_400_AUTHENTICATION_FAIL
-				
-			login(request, user) # Create new session
+	    	# Connect to LDAP server
+			server = Server(host=LDAP_HOST)
+			conn = Connection(server, user='cn=ldap-ro,dc=DIROX,dc=ldap', password=LDAP_PWD)
+			conn.start_tls()
+			conn.bind()
+	        
+			# Searching for user data
+			if '@' in user_id:
+				conn.search('ou=users,dc=DIROX,dc=ldap', f'(mail={user_id})', attributes=[ALL_ATTRIBUTES])
+			else:
+				conn.search('ou=users,dc=DIROX,dc=ldap', f'(uid={user_id})', attributes=[ALL_ATTRIBUTES])
 			
-			profile = Account.generate_profile(user)
-						
-			return HttpResponse(content=dumps(profile), content_type='application/json')
+			
+			if conn.entries == []: #if  user not found
+				user = Account.find_user(user_id)
+				
+				#Clean cache data of a invalid user user
+				if user is not None:
+					user.delete()
 					
-		return HTTP_405
+				return HTTP_400_USER_NOT_FOUND
+				
+			# if conn.entries[0].title not in ALLOWED_ACCESS_TITLE
+			# 	return HTTP_403_USER_FORBIDDEN
 
-	@classmethod
-	def _logout(cls, request):
-		'''Handle backend user logout process'''
-		if not request.user.is_authenticated: # Verify authenticate status
-			return HTTP_400_LOGIN_REQUIRE
+			user = Account.find_user(user_id)
 			
-		if request.method == 'GET':
-			logout(request)
-			return HTTP_200
-		
+			# Auto create new user
+			if user is None:
+				models.User.objects.create_user(username=conn.entries[0].uid.value, email=conn.entries[0].mail.value, password='')
+				user = Account.find_user(user_id)
+				
+			# Verify password
+			if not lss.verify(password, conn.entries[0].userPassword.value):
+				return HTTP_400_WRONG_PASSWORD
+				
+			conn.unbind() # disconnect LDAP server
+			# login(request, user) # Create new session
+							
+			token = {
+				'access_token': Auth0.jwt_token_generator(request, user).decode(encoding='UTF-8', errors='strict'),
+				'token_type': 'Bearer',
+				'expired_in': 3600,
+				'expiration_time': (datetime.utcnow() + timedelta(hours=1)).isoformat()
+			}			
+			
+			return HttpResponse(content=dumps(token), content_type='application/json')
+
 		return HTTP_405
 
 	@classmethod
 	def profile(cls, request):
 		'''Handle backend user logout process'''
-		if not request.user.is_authenticated: # Verify authenticate status
+		user = Auth0.verify_identity(request)
+		
+		if user is None:
 			return HTTP_400_LOGIN_REQUIRE
-			
+					
 		if request.method == 'GET':
 			# Generate profile
-			profile = Account.generate_profile(request.user)
+			profile = Account.generate_profile(user)
 						
 			return HttpResponse(content=dumps(profile), content_type='application/json')
 		
 		return HTTP_405
 		
 	@classmethod
-	def fetch_access_token(cls, request, service):
+	def fetch_access_token(cls, user, service):
 		'''
 			Fetch access token from credential that store in database
 			- request {HTTPRequest} - request that client make
@@ -84,12 +116,12 @@ class User:
 			- None if permanent error occur
 			- token dictonary if success
 		'''
+		
 		# get creadential from database
-		 
 		if service == 'hubspot':
-			token = HubspotToken.fetch_credential(user=request.user)
+			token = HubspotToken.fetch_credential(user=user)
 		else:
-			token = GoogleToken.fetch_credential(user=request.user)
+			token = GoogleToken.fetch_credential(user=user)
 			
 		if token is None:
 			return None
@@ -108,9 +140,9 @@ class User:
 			
 			# update credential
 			if service == 'hubspot':
-				HubspotToken.register_credential(user=request.user, token=token)
+				HubspotToken.register_credential(user=user, token=token)
 			else:
-				GoogleToken.register_credential(user=request.user, token=token)
+				GoogleToken.register_credential(user=user, token=token)
 		else:
 			token = token.to_json() # transfer to dictionary
 			token.pop('refresh_token') # remove refresh_token attribute
@@ -122,9 +154,11 @@ class User:
 		'''Cache deal's drive folder setting and working status'''
 		
 		if request.method == 'POST':
-			if not request.user.is_authenticated: # Authenication check
+			user = Auth0.verify_identity(request)
+			
+			if user is None:
 				return HTTP_400_LOGIN_REQUIRE
-
+				
 			# extract data
 			deal_status = request.POST.get('status')
 			folder_id = request.POST.get('folder_id')
@@ -133,10 +167,10 @@ class User:
 			if deal_status is None or folder_id is None or deal_id is None:
 				return HTTP_400_CACHE_REQUEST_FAIL
 				
-			cache = Cache.get_deal_cache(user=request.user, deal_id=deal_id)
+			cache = Cache.get_deal_cache(user=user, deal_id=deal_id)
 				
 			if cache is None:
-				Cache.objects.create(user=request.user, deal_id=deal_id, status=deal_status, folder_id=folder_id)
+				Cache.objects.create(user=user, deal_id=deal_id, status=deal_status, folder_id=folder_id)
 				return HTTP_200
 				
 			cache.folder_id = folder_id
@@ -152,14 +186,16 @@ class OAuth2:
 	@staticmethod
 	def build_redirect_url(request, service):
 		'''Method use to generate redirect URL of this server'''
-		return 'https://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
+		return 'http://' + request.get_host() + '/accounts/'+ service + '/auth/callback'
 	
 	@classmethod
 	def authorize(cls, request, service):
 		'''Handle 3rd service OAuth2.0 authentication'''
-		if not request.user.is_authenticated: # Authenication check
-			return HTTP_400_LOGIN_REQUIRE		
-
+		user = Auth0.verify_identity(request)
+		
+		if user is None:
+			return HTTP_400_LOGIN_REQUIRE
+		
 		# Validate request
 		if service not in ['google', 'hubspot']:
 			return HTTP_404
@@ -169,6 +205,8 @@ class OAuth2:
 			service_ = oauth.create_client(service)
 			# create redirect uri
 			redirect_uri = cls.build_redirect_url(request=request, service=service)
+			# set cookie for the request
+			login(request, user)
 			# Lead user to Authentication page
 			return service_.authorize_redirect(request, redirect_uri)
 			
@@ -181,24 +219,28 @@ class OAuth2:
 			return HTTP_404
 			
 		if request.method == 'GET':
-			# Authenication check
-			if not request.user.is_authenticated:
-				return HTTP_400_LOGIN_REQUIRE		
-				
+			if request.user.is_authenticated:
+				return HTTP_400_LOGIN_REQUIRE
+			
+			# clean the session
+			user = request.user
+			logout(user)
+						
 			# Instantiate google service  
 			service_ = oauth.create_client(service)
 			
 			if service == 'google':
 				token = service_.authorize_access_token(request) # Get credential
 				# Save token into database
-				status = GoogleToken.register_credential(user=request.user, token=token)
+				status = GoogleToken.register_credential(user=user, token=token)
 				
 			else: # for hubspot service
 				# Get credential
 				token = service_.authorize_access_token(request, grant_type='authorization_code', 
 						client_id=service_.client_id, client_secret=service_.client_secret)
+						
 				# Save token into database
-				status = HubspotToken.register_credential(user=request.user, token=token)
+				status = HubspotToken.register_credential(user=user, token=token)
 				
 			if status == 'fail':
 				return HTTP_400_INVALID_SERVICE
@@ -218,10 +260,12 @@ class OAuth2:
 			return HTTP_404
 
 		if request.method == 'GET':
-			if not request.user.is_authenticated: # Authenication check
-				return HTTP_400_LOGIN_REQUIRE
+			user = Auth0.verify_identity(request)
 			
-			token = User.fetch_access_token(request=request, service=service)
+			if user is None:
+				return HTTP_400_LOGIN_REQUIRE
+					
+			token = User.fetch_access_token(user=user, service=service)
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -241,13 +285,16 @@ class GoogleService:
 	@classmethod
 	def create_init_lead(cls, request):
 		'''Create a new InitLead document on Drive'''
-		if not request.user.is_authenticated: # Authenication check
-			return HTTP_400_LOGIN_REQUIRE
 		
+		user = Auth0.verify_identity(request)
+		
+		if user is None:
+			return HTTP_400_LOGIN_REQUIRE
+				
 		if request.method == 'POST':
 			#retrieve token from database
-			google_token = User.fetch_access_token(request=request, service='google')
-			hubspot_token = User.fetch_access_token(request=request, service='hubspot')
+			google_token = User.fetch_access_token(user=user, service='google')
+			hubspot_token = User.fetch_access_token(user=user, service='hubspot')
 			
 			#handle error
 			if google_token is None or hubspot_token is None:
@@ -299,10 +346,12 @@ class GoogleService:
 		'''Retrieve access_token info from google server'''
 		
 		if request.method == 'GET':			
-			if not request.user.is_authenticated: # Authentication check
+			user = Auth0.verify_identity(request)
+			
+			if user is None:
 				return HTTP_400_LOGIN_REQUIRE
-				
-			token = User.fetch_access_token(request=request, service='google')
+						
+			token = User.fetch_access_token(user=user, service='google')
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -321,10 +370,12 @@ class GoogleService:
 		'''Retrieve access_token info from google server'''
 		
 		if request.method == 'GET':			
-			if not request.user.is_authenticated: # Authentication check
+			user = Auth0.verify_identity(request)
+			
+			if user is None:
 				return HTTP_400_LOGIN_REQUIRE
-				
-			token = GoogleToken.fetch_credential(user=request.user)
+						
+			token = GoogleToken.fetch_credential(user=user)
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -345,10 +396,12 @@ class HubspotService:
 		'''Handle Hubspot API call to fetch all "Make Offer" deals'''
 				
 		if request.method == 'GET':			
-			if not request.user.is_authenticated: # Authentication check
-				return HTTP_400_LOGIN_REQUIRE
+			user = Auth0.verify_identity(request)
 			
-			token = User.fetch_access_token(request=request, service='hubspot')
+			if user is None:
+				return HTTP_400_LOGIN_REQUIRE
+					
+			token = User.fetch_access_token(user=user, service='hubspot')
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -368,9 +421,9 @@ class HubspotService:
 			for deal in deals['results']:
 				deal_ids.append(deal['id'])
 			
-			Cache.clean_cache(user=request.user, deal_id_list=deal_ids)
+			Cache.clean_cache(user=user, deal_id_list=deal_ids)
 			
-			deals['caches'] = Cache.caches_to_json(user=request.user)
+			deals['caches'] = Cache.caches_to_json(user=user)
 			
 			return HttpResponse(content=dumps(deals), content_type='application/json')
 
@@ -381,10 +434,12 @@ class HubspotService:
 		'''Retrieve access_token info from hubspot server'''
 		
 		if request.method == 'GET':			
-			if not request.user.is_authenticated: # Authentication check
+			user = Auth0.verify_identity(request)
+			
+			if user is None:
 				return HTTP_400_LOGIN_REQUIRE
-				
-			token = User.fetch_access_token(request=request, service='hubspot')
+						
+			token = User.fetch_access_token(user=user, service='hubspot')
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -403,10 +458,12 @@ class HubspotService:
 		'''Retrieve access_token info from hubspot server'''
 		
 		if request.method == 'GET':			
-			if not request.user.is_authenticated: # Authentication check
+			user = Auth0.verify_identity(request)
+			
+			if user is None:
 				return HTTP_400_LOGIN_REQUIRE
-				
-			token = HubspotToken.fetch_credential(user=request.user)
+						
+			token = HubspotToken.fetch_credential(user=user)
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -420,9 +477,8 @@ class HubspotService:
 			
 		return HTTP_405
 
-def test(request):
-	# Authentication check
-	if not request.user.is_authenticated:
-		return HTTP_400_LOGIN_REQUIRE
+def test(request):		
+	token = Auth0.jwt_token_generator(request, uid='test')
 	
+	return HttpResponse(content=token)
 	return HttpResponse('Hello World')

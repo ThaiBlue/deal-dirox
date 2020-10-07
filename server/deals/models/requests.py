@@ -1,12 +1,13 @@
-from requests import post, put, get, delete
 from django.http import HttpRequest
+
+from requests import post, put, get, delete
 from json import loads, dumps
 from datetime import datetime
+
+import os
 import re
-import time
 
 from .constants import MAKE_OFFER
-from .thread import requestThread
 					
 class OAuth2API:
 	@classmethod
@@ -42,7 +43,15 @@ class OAuth2API:
 		# fetch data
 		return post(url='https://oauth2.googleapis.com/token', headers=headers, data=payload)
 
-class GoogleAPI:	
+class GoogleAPI:
+	@staticmethod
+	def read_in_chunks(file_object, chunk_size=0):
+	    while True:
+	        data = file_object.read(chunk_size)
+	        if not data:
+	            break
+	        yield data
+	
 	@classmethod
 	def upload_init_lead_template(cls, access_token, name, parentID=None):
 		'''
@@ -57,7 +66,6 @@ class GoogleAPI:
 			raise TypeError('parentID MUST be string')
 		if not isinstance(access_token, str):
 			raise TypeError('access_token must be a string')
-
 				
 		url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable"
 
@@ -81,10 +89,10 @@ class GoogleAPI:
 		
 		if response.status_code != 200:
 			return response
-			
+				
 		# upload template
-		with open('template/ENG_INIT_Lead_YYYY_MM_DD.pptx', 'rb') as f:
-		    return put(response.headers.get('Location'), data=f)
+		with open('template/ENG_INIT_Lead_YYYY_MM_DD.pptx', 'rb') as f:			
+			return put(response.headers.get('Location'), data=cls.read_in_chunks(f))
 			
 	@classmethod
 	def retrieve_token_info(cls, access_token):
