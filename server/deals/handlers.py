@@ -38,7 +38,7 @@ class User:
 			# Extract authenticate infomation
 			request_data = parse_qs(urlparse(request.get_full_path()).query)
 			
-			if 'user_id' not in list(request_data.keys()) and 'password' not in list(request_data.keys()):
+			if 'user_id' not in list(request_data.keys()) or 'password' not in list(request_data.keys()):
 				return HTTP_400_INVALID_QUERY
 				
 			user_id = request_data['user_id'][0]
@@ -98,8 +98,8 @@ class User:
 			return HTTP_400_LOGIN_REQUIRE
 					
 		if request.method == 'GET':
-			logout(request.user) # end session
-			return HttpResponse(content=dumps(profile), content_type='application/json')
+			logout(request) # end session
+			return HttpResponse(content=dumps({'uid':request.user.username, 'status':'logout success'}), content_type='application/json')
 		
 		return HTTP_405
 
@@ -118,7 +118,7 @@ class User:
 		return HTTP_405
 		
 	@classmethod
-	def fetch_access_token(cls, user, service):
+	def fetch_access_token(cls, request, service):
 		'''
 			Fetch access token from credential that store in database
 			- request {HTTPRequest} - request that client make
@@ -131,9 +131,9 @@ class User:
 		
 		# get creadential from database
 		if service == 'hubspot':
-			token = HubspotToken.fetch_credential(user=user)
+			token = HubspotToken.fetch_credential(user=request.user)
 		else:
-			token = GoogleToken.fetch_credential(user=user)
+			token = GoogleToken.fetch_credential(user=request.user)
 			
 		if token is None:
 			return None
@@ -152,9 +152,9 @@ class User:
 			
 			# update credential
 			if service == 'hubspot':
-				HubspotToken.register_credential(user=user, token=token)
+				HubspotToken.register_credential(user=request.user, token=token)
 			else:
-				GoogleToken.register_credential(user=user, token=token)
+				GoogleToken.register_credential(user=request.user, token=token)
 		else:
 			token = token.to_json() # transfer to dictionary
 			token.pop('refresh_token') # remove refresh_token attribute
@@ -220,13 +220,13 @@ class OAuth2:
 			# create redirect uri
 			redirect_uri = cls.build_redirect_url(request=request, service=service)
 			# Lead user to Authentication page
-			return service_.authorize_redirect(request, redirect_uri)['Location']
+			return service_.authorize_redirect(request, redirect_uri)
 						
 		return HTTP_405
 		
 	@classmethod
 	def callback(cls, request, service):
-		'''Handle retrieving 3rd OAuth2.0 authentication credential'''	
+		'''Handle retrieving 3rd OAuth 2.0 authentication credential'''	
 		
 		if service not in ['google', 'hubspot']: # Validate request
 			return HTTP_404
@@ -273,7 +273,7 @@ class OAuth2:
 			
 		if request.method == 'GET':			
 					
-			token = User.fetch_access_token(user=request.user, service=service)
+			token = User.fetch_access_token(request=request, service=service)
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -299,8 +299,8 @@ class GoogleService:
 				
 		if request.method == 'GET':
 			#retrieve token from database
-			google_token = User.fetch_access_token(user=request.user, service='google')
-			hubspot_token = User.fetch_access_token(user=request.user, service='hubspot')
+			google_token = User.fetch_access_token(request=request, service='google')
+			hubspot_token = User.fetch_access_token(request=request, service='hubspot')
 			
 			#handle error
 			if google_token is None or hubspot_token is None:
@@ -311,10 +311,11 @@ class GoogleService:
 				
 			request_data = parse_qs(urlparse(request.get_full_path()).query)
 			
-			if 'deal_id' not in list(request_data.keys()):
+			if 'deal_id' not in list(request_data.keys()) or 'parentID' not in list(request_data.keys()):
 				return HTTP_400_INVALID_QUERY
 
 			deal_id = request_data['deal_id'][0]
+			parent_id = request_data['deal_id'][0]
 			
 			if 'name' not in list(request_data.keys()):
 				name = f'ENG_INIT_Lead_{datetime.now().strftime("%Y")}_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'	
@@ -324,7 +325,7 @@ class GoogleService:
 			notesThread = requestThread(target=HubspotAPI.fetch_notes, kwargs={'access_token': hubspot_token['access_token'], 'deal_id': deal_id})
 			companyThread = requestThread(target=HubspotAPI.fetch_company_info, kwargs={'access_token': hubspot_token['access_token'], 'dealID': deal_id})
 			dealThread = requestThread(target=HubspotAPI.fetch_deal_info, kwargs={'access_token': hubspot_token['access_token'], 'deal_id': deal_id})
-			initLeadThread = requestThread(target=GoogleAPI.upload_init_lead_template, kwargs={'access_token': google_token['access_token'], 'name': name, 'parentID': request.GET.get('parentID')})
+			initLeadThread = requestThread(target=GoogleAPI.upload_init_lead_template, kwargs={'access_token': google_token['access_token'], 'name': name, 'parentID': parent_id})
 			
 			threads = [notesThread, companyThread, dealThread, initLeadThread]
 			
@@ -362,7 +363,7 @@ class GoogleService:
 			
 		if request.method == 'GET':						
 						
-			token = User.fetch_access_token(user=request.user, service='google')
+			token = User.fetch_access_token(request=request, service='google')
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -410,7 +411,7 @@ class HubspotService:
 			
 		if request.method == 'GET':						
 					
-			token = User.fetch_access_token(user=request.user, service='hubspot')
+			token = User.fetch_access_token(request=request, service='hubspot')
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -447,7 +448,7 @@ class HubspotService:
 			
 		if request.method == 'GET':						
 						
-			token = User.fetch_access_token(user=request.user, service='hubspot')
+			token = User.fetch_access_token(request=request, service='hubspot')
 			
 			if token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE

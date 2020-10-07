@@ -38,13 +38,7 @@ export default {
         Table,
         FilterVue,
         Option
-    },
-
-    mounted() {
-        window.setTimeout(() => { localStorage.removeItem('access_token'); localStorage.removeItem('expiration_time');  this.$router.push('/')}, 
-        moment.utc(localStorage.expiration_time).diff(moment.utc()));
-    },
-
+    }
 }
 
 </script>

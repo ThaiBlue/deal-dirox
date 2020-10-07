@@ -11,7 +11,7 @@ import VModal from 'vue-js-modal'
 import axios from 'axios'
 import moment from 'moment'
 
-axios.defaults.withCredentials=true
+axios.defaults.withCredentials = true
 axios.defaults.baseURL = 'https://api.deal.dirox.dev'
 
 Vue.config.productionTip = false

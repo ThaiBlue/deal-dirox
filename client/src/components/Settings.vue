@@ -96,8 +96,7 @@
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     this.$store.dispatch('hubspotCredentialRevoke');
                 } else {
-                    // window.location.replace("https://api.deal.dirox.dev/accounts/hubspot/auth");
-                    this.$store.dispatch('registerService', 'hubspot');
+                    window.location.replace("https://api.deal.dirox.dev/accounts/hubspot/auth");
                     this.hubspotStatus = true;
                 }
             },
@@ -105,8 +104,7 @@
                 if (this.$store.state.profile.service.google.is_available) {
                     this.$store.dispatch('googleCredentialRevoke');
                 } else {
-                    // window.location.replace("https://api.deal.dirox.dev/accounts/google/auth");
-                    this.$store.dispatch('registerService', 'google');
+                    window.location.replace("https://api.deal.dirox.dev/accounts/google/auth");
                     this.googleStatus = true;
                 }
             },

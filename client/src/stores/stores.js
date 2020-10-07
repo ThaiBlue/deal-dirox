@@ -40,19 +40,14 @@ export const store = new Vuex.Store({
     actions: {
         logout() {
             return new Promise((resolve, reject) => {
-                axios.get('/accounts/user/logout')
+                axios.get('accounts/user/logout')
                     .then(response => {
-                        this.state.deals = [];
                         resolve(response);
                     })
                     .catch(err => {
                         reject(err);
                     })
             })
-            // localStorage.removeItem('access_token');
-            // localStorage.removeItem('expiration_time');
-            // localStorage.removeItem('credential');
-            // this.$router.push('/');
         },
 
         authenticate(context, credentials) {
@@ -60,12 +55,10 @@ export const store = new Vuex.Store({
                 send authenticate request to backend server 
             */
             return new Promise((resolve, reject) => {
-                axios.get('/accounts/user/login?user_id=' + credentials.username + '&password=' + credentials.password)
+                axios.get('accounts/user/login?user_id=' + credentials.username + '&password=' + credentials.password)
                     .then(response => {
                         //parse user info from response
-                        localStorage.setItem('access_token', response.data.access_token)
-                        localStorage.setItem('expiration_time', response.data.expiration_time)
-                        context.dispatch('fetchProfile');
+                        this.state.profile = response.data;
                         resolve(response);
                     })
                     .catch(err => {
@@ -74,27 +67,6 @@ export const store = new Vuex.Store({
                     })
             })
         },
-
-        fetchProfile() {
-            return new Promise((resolve, reject) => {
-
-                var config = {
-                    url: 'https://api.deal.dirox.dev/accounts/user/profile',
-                    method: 'get',
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.access_token
-                    }
-                }
-                axios(config)
-                    .then(response => {
-                        this.state.profile = response.data;
-                    })
-                    .catch(err => {
-
-                    })
-            })
-        },
-
         async retrieveFolderMetaData(context, payload) {
             /* Return name and url of the Drive folder 
             payload = {
@@ -152,7 +124,7 @@ export const store = new Vuex.Store({
             */
 
             try {
-                var response = await axios.get('/services/hubspot/crm/deals/makeoffer/all')
+                var response = await axios.get('services/hubspot/crm/deals/makeoffer/all')
 
                 response.data.results.forEach(async (item, index) => {
                     var cache = response.data.caches.filter(el => el.deal_id == item.id)[0]; // [0] is unpack the single element array
@@ -349,7 +321,7 @@ export const store = new Vuex.Store({
         fetchGoogleAccountInfo() {
             /* Fetch service infomation or registered google account email info */
             return new Promise((resolve, reject) => {
-                axios.get('/services/google/info')
+                axios.get('services/google/info')
                     .then(res => {
                         this.state.googleAccountEmail = res.data.emailAddress;
                         resolve(res);
@@ -364,7 +336,7 @@ export const store = new Vuex.Store({
             /* Fetch service infomation or registered hubspot account email info */
 
             return new Promise((resolve, reject) => {
-                axios.get('/services/hubspot/info')
+                axios.get('services/hubspot/info')
                     .then(res => {
                         this.state.hubspotAccountEmail = res.data.user;
                         resolve(res);
@@ -394,7 +366,7 @@ export const store = new Vuex.Store({
             /* Remove access right for this app */
             
             return new Promise((resolve, reject) => {
-                axios.get('/services/google/auth/token/revoke')
+                axios.get('services/google/auth/token/revoke')
                     .then(res => {
                         this.state.profile.service.google.is_available = false;
                         resolve(res);
@@ -409,7 +381,7 @@ export const store = new Vuex.Store({
             /* Remove access right for this app */
 
             return new Promise((resolve, reject) => {
-                axios.get('/services/hubspot/auth/token/revoke')
+                axios.get('services/hubspot/auth/token/revoke')
                     .then(res => {
                         this.state.profile.service.hubspot.is_available = false;
                         resolve(res);
