@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import FormData from 'form-data'
 import moment from 'moment'
 import DriveAPI from '../assets/js/DriveAPI'
 
@@ -26,7 +25,6 @@ export const store = new Vuex.Store({
         folderCacheData: {}, // cache current fetched folder meta data
         idMappingForDeals: [], //cache deal indice
         selectFunctionCache: '',
-        isLoged: false,
         newFolderName: ''
     },
     getters: {
@@ -45,10 +43,7 @@ export const store = new Vuex.Store({
                 send authenticate request to backend server 
             */
             return new Promise((resolve, reject) => {
-                const form = new FormData();
-                form.append('user_id', credentials.username);
-                form.append('password', credentials.password);
-                axios.post('/accounts/user/login', form)
+                axios.get('/accounts/user/login?user_id=' + credentials.username+'&password=' + credentials.password)
                     .then(response => {
                         //parse user info from response
                         this.state.profile = response.data;
@@ -278,12 +273,10 @@ export const store = new Vuex.Store({
             */
                        
             try {
-                const form = new FormData();
-                console.log(this.state.currentDeal)
-                console.log(this.state.currentFolderId)
                 form.append('deal_id', this.state.currentDeal.id);
                 form.append('parentID', this.state.currentFolderId);
-                var response = await axios.post('services/google/drive/file/create/initlead', form)
+                var response = await axios.get('services/google/drive/file/create/initlead?deal_id='
+                                        +this.state.currentDeal.id + '&parentID=' + this.state.currentFolderId)
                 
                 // get index of current deal
                 var index = this.state.deals.indexOf(this.state.currentDeal);
@@ -339,11 +332,8 @@ export const store = new Vuex.Store({
         updateCache(context, payload) {
             /* update cache from both client and server side */
             return new Promise((resolve, reject) => {
-                const form = new FormData();
-                form.append('status', payload.status);
-                form.append('folder_id', payload.folderID);
-                form.append('deal_id', payload.dealID);
-                axios.post('accounts/setting/cache', form)
+                axios.get('accounts/setting/cache?status='+payload.status+'&folder_id='
+                                            +payload.folderID+'&deal_id='+payload.dealID)
                     .then(res => {
                         resolve(res);
                     })

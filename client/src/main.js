@@ -31,7 +31,6 @@ router.beforeEach((to, from, next) => {
         axios.get('accounts/user/profile')
             .then(res => {
                 navigated = true; // resolve navigate infinite looop
-                store.state.isLoged = true; //cache login status
                 store.state.profile = res.data;
                 next('/deal');
             })
