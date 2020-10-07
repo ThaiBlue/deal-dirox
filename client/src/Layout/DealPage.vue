@@ -1,18 +1,28 @@
 <template>
-    <div class="container">
-        <div class="bar">
-            <div class="filtertableimageoption">
-                <div class="filterimagetable">
-                    <div class="filterimage">
-                        <FilterVue />
-                        <img src="../assets/img/logo-with-shadow.png" alt="logo-dirox" width="85" height="161">
+    <el-row gutter={24}>
+        <el-column md={3} lg={2} xl={0}>
+            <span>left</span>
+        </el-column>
+
+        <el-column md={18} lg={20} xl={24}>
+            <div class="bar">
+                <div class="filtertableimageoption">
+                    <div class="filterimagetable">
+                        <div class="filterimage">
+                            <FilterVue />
+                            <img src="../assets/img/logo-with-shadow.png" alt="logo-dirox" width="85" height="161">
+                        </div>
+                        <Table />
                     </div>
-                    <Table />
+                    <Option />
                 </div>
-                <Option />
             </div>
-        </div>
-    </div>
+        </el-column>
+
+        <el-column md={3} lg={2} xl={0}>
+            <span>right</span>
+        </el-column>
+    </el-row>
 </template>
 
 <script>
@@ -20,6 +30,8 @@ import MenuBar from "../components/MenuBar"
 import Table from "../components/Table"
 import FilterVue from "../components/Filter"
 import Option from "../components/Option"
+import moment from 'moment'
+
 export default {
     name: 'DealPage',
     components: {
@@ -27,10 +39,10 @@ export default {
         FilterVue,
         Option
     },
-    methods: {
-        // onclickCancel() {
-        //     // this.$store.dispatch("resetSelect");
-        // }
+
+    mounted() {
+        window.setTimeout(() => { localStorage.removeItem('access_token'); localStorage.removeItem('expiration_time');  this.$router.push('/')}, 
+        moment.utc(localStorage.expiration_time).diff(moment.utc()));
     },
 
 }
@@ -40,12 +52,37 @@ export default {
 <style>
     body {
         overflow-x: auto;
-        width: 120vh;
+        width: 100%;
         margin: 0 auto;
+        border: 1px solid black;
+    }
+
+    .el-row {
+        display: flex;
+        justify-content: space-between;
+        /* flex-direction: row; */
+
+    }
+
+    .bg-purple {
+        background: #d3dce6;
+    }
+
+    .bg-purple-light {
+        background: #e5e9f2;
     }
 </style>
 
 <style scoped>
+    .container {
+        border: 1px solid black;
+    }
+
+    @media screen and (max-width: 992px) {
+        .container {
+            background-color: red;
+        }
+    }
     img {
         float: right;
     }
@@ -84,5 +121,6 @@ export default {
         flex-direction: row-reverse;
         justify-content: space-between;
         align-items: center;
+        border: 1px solid red;
     }
 </style>

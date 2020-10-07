@@ -4,6 +4,7 @@
             <label class="setting-label">SETTING</label>
             <img class="close" v-on:click='onclickCancel()' src="../assets/img/close.svg">
         </div>
+
         <div class="middle">
             <div class="hubspot-account">
                 <div class="hubspot">
@@ -13,7 +14,7 @@
                         <div class="gmail">{{onchangStatusHubspotEmail}}</div>
                     </div>
                 </div>
-                <el-button :type="onchangeStatusHubspot" v-on:click="onclickConnectHubspot()">
+                <el-button :type="onchangeStatusHubspot" @click="onclickConnectHubspot()">
                     {{onchangeFunctionStatusHubspot}}</el-button>
             </div>
             <div class="drive-account">
@@ -29,10 +30,11 @@
             </div>
         </div>
         <div class="Feature">
+            <el-button class="logout" type="danger" @click="onclickLogout()">Log out</el-button>
         </div>
         <div class="button-setting">
-            <el-button class="cancel" type="info" v-on:click='onclickCancel()'>Cancel</el-button>
-            <el-button class="save" type="success" v-on:click='onclickSave()'>Save</el-button>
+            <el-button class="cancel" type="info" @click='onclickCancel()'>Cancel</el-button>
+            <el-button class="save" type="success" @click='onclickSave()'>Save</el-button>
         </div>
     </div>
 </template>
@@ -47,6 +49,7 @@
                     return 'Not connect'
                 }
             },
+
             onchangStatusHubspotEmail() {
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     this.$store.dispatch('fetchHubspotAccountInfo');
@@ -55,6 +58,7 @@
                     return 'Not connect'
                 }
             },
+
             onchangeStatusHubspot() {
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     return 'danger';
@@ -62,6 +66,7 @@
                     return 'success';
                 }
             },
+
             onchangeStatusGoogle() {
                 if (this.$store.state.profile.service.google.is_available) {
                     return 'danger';
@@ -69,6 +74,7 @@
                     return 'success';
                 }
             },
+
             onchangeFunctionStatusGoogle() {
                 if (this.$store.state.profile.service.google.is_available) {
                     return 'Disconnect';
@@ -76,6 +82,7 @@
                     return 'Connect';
                 }
             },
+
             onchangeFunctionStatusHubspot() {
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     return 'Disconnect';
@@ -89,7 +96,8 @@
                 if (this.$store.state.profile.service.hubspot.is_available) {
                     this.$store.dispatch('hubspotCredentialRevoke');
                 } else {
-                    window.location.replace("https://api.deal.dirox.dev/accounts/hubspot/auth");
+                    // window.location.replace("https://api.deal.dirox.dev/accounts/hubspot/auth");
+                    this.$store.dispatch('registerService', 'hubspot');
                     this.hubspotStatus = true;
                 }
             },
@@ -97,25 +105,35 @@
                 if (this.$store.state.profile.service.google.is_available) {
                     this.$store.dispatch('googleCredentialRevoke');
                 } else {
-                    window.location.replace("https://api.deal.dirox.dev/accounts/google/auth");
+                    // window.location.replace("https://api.deal.dirox.dev/accounts/google/auth");
+                    this.$store.dispatch('registerService', 'google');
                     this.googleStatus = true;
                 }
             },
             onclickSave() {
-                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                if (this.$store.state.profile.service.hubspot.is_available && 
+                    this.$store.state.profile.service.google
                     .is_available) {
                     this.$modal.hide('modal-setting');
                 }
             },
             onclickCancel() {
-                if (this.$store.state.profile.service.hubspot.is_available && this.$store.state.profile.service.google
+                if (this.$store.state.profile.service.hubspot.is_available && 
+                    this.$store.state.profile.service.google
                     .is_available) {
                     this.$modal.hide('modal-setting');
                 }
+            },
+            onclickLogout() {
+                this.$store.dispatch('logout');
+                alert("You've logged out from DEAL@DIROX.");
+                this.$router.push('/');
             }
-        }
+        },
     }
 </script>
+
+
 <style scoped>
     .settings {
         width: 741px;
@@ -154,6 +172,7 @@
         justify-content: space-around;
         border-left: none;
         border-right: none;
+        border-bottom: none;
     }
 
     .hubspot-account {
@@ -183,24 +202,26 @@
     }
 
     .hubspot {
-        width: 341px;
+        width: 415px;
         height: 85px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        /* margin-right: 10px; */
     }
 
     .drive {
         width: 415px;
         height: 85px;
         display: flex;
-        justify-content: space-between;
+        /* justify-content: space-between; */
         align-items: center;
     }
 
     .hubspot-label {
         display: flex;
         flex-direction: column;
+        width: 340px;
     }
 
     .drive-label {
@@ -230,7 +251,6 @@
     .success {
         height: 40px;
         width: 130px;
-        border: 1px solid #A3E470;
         box-sizing: border-box;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         border-radius: 17px;
@@ -239,6 +259,13 @@
     .Feature {
         width: 625px;
         height: 142px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #979797;
+        border-top: none;
+        border-left: none;
+        border-right: none;
     }
 
     .cancel {
@@ -251,11 +278,16 @@
     }
 
     .save {
-        border: 1px solid #A3E470;
         box-sizing: border-box;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
         border-radius: 17px;
         width: 160px;
         height: 49px;
+        border: 1px solid #A3E470;
+    }
+
+    .logout {
+        align-self: flex-end;
+        margin-bottom: 20px;
     }
 </style>

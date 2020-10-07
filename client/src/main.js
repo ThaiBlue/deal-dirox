@@ -9,33 +9,29 @@ import {
 import Vuelidate from 'vuelidate'
 import VModal from 'vue-js-modal'
 import axios from 'axios'
+import moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.use(Vuelidate)
 Vue.use(VueRouter)
 Vue.use(VModal)
 
-axios.defaults.baseURL = 'https://api.deal.dirox.dev'
-// axios.defaults.baseURL = 'http://127.0.0.1:8000'
-axios.defaults.withCredentials = true
-
 const router = new VueRouter({
     routes,
     mode: 'history'
 })
 
-var navigated = false;
+var navigated = false
 
 router.beforeEach((to, from, next) => {
-    if(!navigated) {
+    if (!navigated) {
+        navigated = true; //fix infinite loop cause
         axios.get('accounts/user/profile')
             .then(res => {
-                navigated = true; // resolve navigate infinite looop
                 store.state.profile = res.data;
                 next('/deal');
             })
             .catch(err => {
-                navigated = true;
                 next('/');
             })
     } else {

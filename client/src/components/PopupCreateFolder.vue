@@ -34,8 +34,8 @@
 <script>
 
 import SubFolder from "./SubFolder"
+
 export default {
-    // name: 'Popup',
     data() {
         return {
             data: [{id: null, label: 'Drive', children:this.$store.state.folder}],
@@ -84,7 +84,7 @@ export default {
 
     .header {
         height: 49px;
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid #979797;
         text-align: center;
         margin-top: 8px;
     }
@@ -116,20 +116,23 @@ export default {
 
     .right {
         height: 630px;
-        border: 1px solid red;
+        border: 1px solid #979797;
+        border-top: none;
+        border-right: none;
         width: 753px;
     }
 
 
     .name-folder{
         height: 56px;
-        border: 1px solid black;
     }
 
 
     .folder {
         height: 485px;
-        border: 1px solid blue;
+        border: 1px solid #979797;
+        border-left: none;
+        border-right: none;
     }
 
 

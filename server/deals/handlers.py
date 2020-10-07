@@ -10,9 +10,10 @@ from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timedelta
 from tzlocal import get_localzone
 from json import dumps, loads
+from urllib.parse import urlparse, parse_qs
 import logging
 
-from .models.database import GoogleToken, HubspotToken, Account, Cache
+from .models.database import GoogleToken, HubspotToken, Account, Cache, State
 from .models.requests import GoogleAPI, HubspotAPI, OAuth2API
 from .models.thread import requestThread
 from .models.constants import *
@@ -217,11 +218,18 @@ class OAuth2:
 		if request.method == 'GET':
 			# Instantiate google service  
 			service_ = oauth.create_client(service)
+			
 			# create redirect uri
 			redirect_uri = cls.build_redirect_url(request=request, service=service)
-
 			# Lead user to Authentication page
-			return service_.authorize_redirect(request, redirect_uri)
+			url = service_.authorize_redirect(request, redirect_uri)['Location']
+			
+			state = parse_qs(urlparse(url).query)['state'][0]
+			
+			State.register_state(user=user, state=state)
+			
+			return HttpResponse(content=dumps({'redirect_url': url}), content_type='application/json')
+			
 			
 		return HTTP_405
 		
@@ -265,7 +273,7 @@ class OAuth2:
 	@classmethod
 	def retrieve_access_token(cls, request, service):
 		'''Return google access token from database'''
-				# Validate request
+		# Validate request
 		if service not in ['google', 'hubspot']:
 			return HTTP_404
 
