@@ -79,43 +79,4 @@ module.exports = class DriveAPI {
 			return err.response;
 		}
 	}
-
-	// async importFile(filePath, name = null, parentID = null) {
-	// 	/*
-	// 	In Development
-	// 	*/
-
-	// 	var config = {
-	// 		method: 'post',
-	// 		url: 'https://www.googleapis.com/upload/drive/v3/files',
-	// 		params: {
-	// 			uploadType: 'resumable'
-	// 		},
-	// 		headers: {
-	// 			'Content-Length': '',
-	// 			'Authorization': 'Bearer ' + this.token
-	// 		},
-	// 		data: {
-	// 			mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-	// 			name: name,
-	// 			parents: [parentID],
-	// 		}
-	// 	};
-
-	// 	// connection handler
-	// 	try {
-	// 		// send request
-	// 		var response = await this.axios(config);
-	// 		//return fetched data
-	// 		return response.data;
-
-	// 	} catch (err) {
-	// 		if (err.response.status == 408) {
-	// 			//send request again if request time out
-	// 			this.createFolder();
-	// 		}
-	// 		//return error code
-	// 		return err.response.status;
-	// 	}
-	// }
 }

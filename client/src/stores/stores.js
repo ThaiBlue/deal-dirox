@@ -225,15 +225,16 @@ export const store = new Vuex.Store({
                     subFolder: array
                 }
             */
+
             await context.dispatch('fetchAccessToken', 'google');
             const drive = new DriveAPI(this.state.googleToken.access_token);
             var parentID = [];
-            if (folderInfo.parentID[0] !== null) {
+            if (folderInfo.parentID[0] !== undefined) {
                 parentID = folderInfo.parentID;
             }
             try {
                 var response = await drive.createFolder(folderInfo.name, parentID);
-
+                console.log(response)
                 context.dispatch('updateCache', {
                     dealID: this.state.currentDeal.id,
                     folderID: response.data.id,
@@ -292,7 +293,7 @@ export const store = new Vuex.Store({
 
             try {
                 var response = await axios.get('services/google/drive/file/create/initlead?deal_id=' +
-                    this.state.currentDeal.id + '&parentID=' + this.state.currentFolderId)
+                    this.state.currentDeal.id + '&parentID=' + String(this.state.currentFolderId))
 
                 // get index of current deal
                 var index = this.state.deals.indexOf(this.state.currentDeal);
@@ -352,7 +353,7 @@ export const store = new Vuex.Store({
             
             return new Promise((resolve, reject) => {
                 axios.get('accounts/setting/cache?status=' + payload.status + '&folder_id=' +
-                        payload.folderID + '&deal_id=' + payload.dealID)
+                        payload.folderID + '&deal_id=' + String(payload.dealID))
                     .then(res => {
                         resolve(res);
                     })

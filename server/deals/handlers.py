@@ -181,10 +181,10 @@ class User:
 			folder_id = request_data['folder_id'][0]
 			deal_id = request_data['deal_id'][0] 
 				
-			cache = Cache.get_deal_cache(user=user, deal_id=deal_id)
+			cache = Cache.get_deal_cache(user=request.user, deal_id=deal_id)
 				
 			if cache is None:
-				Cache.objects.create(user=user, deal_id=deal_id, status=deal_status, folder_id=folder_id)
+				Cache.objects.create(user=request.user, deal_id=deal_id, status=deal_status, folder_id=folder_id)
 				return HTTP_200
 				
 			cache.folder_id = folder_id
@@ -315,7 +315,7 @@ class GoogleService:
 				return HTTP_400_INVALID_QUERY
 
 			deal_id = request_data['deal_id'][0]
-			parent_id = request_data['deal_id'][0]
+			parent_id = request_data['parentID'][0]
 			
 			if 'name' not in list(request_data.keys()):
 				name = f'ENG_INIT_Lead_{datetime.now().strftime("%Y")}_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'	
@@ -431,7 +431,7 @@ class HubspotService:
 			for deal in deals['results']:
 				deal_ids.append(deal['id'])
 			
-			Cache.clean_cache(user=user, deal_id_list=deal_ids)
+			Cache.clean_cache(user=request.user, deal_id_list=deal_ids)
 			
 			deals['caches'] = Cache.caches_to_json(user=request.user)
 			
