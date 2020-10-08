@@ -21,51 +21,19 @@ const router = new VueRouter({
 
 var navigated = false
 
-// router.beforeEach((to, from, next) => {
-//     if(!navigated) {
-//         navigated = true
-//         if (localStorage.credential !== undefined) {
-//             if(moment.utc(localStorage.credential.expiration_time)<moment().utc()) {
-//                 next('/');
-//             } else {
-//                 next('/deal');
-//             }
-//         } else {
-//             next('/');
-//         }
-//     } else {
-//         next()
-//     }
-// })
 router.beforeEach((to, from, next) => {
-    if(!navigated) {
-        navigated = true
-        if (localStorage.access_token !== undefined) {
-            if(moment.utc(localStorage.expiration_time)<moment().utc()) {
+    if (!navigated) {
+        navigated = true; //fix infinite loop cause
+        axios.get('accounts/user/profile')
+            .then(res => {
+                store.state.profile = res.data;
+                next('/deal');
+            })
+            .catch(err => {
                 next('/');
-            } else {
-                var config = {
-                    url: 'https://api.deal.dirox.dev/accounts/user/profile',
-                    method: 'get',
-                    headers: {
-                        'Authorization': 'Bearer '+ localStorage.access_token
-                    }
-                }
-                axios(config)
-                .then(response => {
-                    store.state.profile = response.data;
-                    next('/deal');
-                })
-                .catch(err => {
-                    next('/');
-                })
-
-            }
-        } else {
-            next('/');
-        }
+            })
     } else {
-        next()
+        next();
     }
 })
 

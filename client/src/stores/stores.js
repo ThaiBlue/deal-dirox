@@ -48,7 +48,7 @@ export const store = new Vuex.Store({
                     .catch(err => {
                         reject(err);
                     })
-                })         
+                })
                 // localStorage.removeItem('access_token');
                 // localStorage.removeItem('expiration_time');
                 // localStorage.removeItem('credential');

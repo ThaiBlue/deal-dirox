@@ -1,10 +1,10 @@
 <template>
-    <el-row gutter={24}>
-        <el-column md={3} lg={2} xl={0}>
-            <span>left</span>
-        </el-column>
+    <el-row>
+        <el-col :md="3" :lg="2" :xl="0">
+            <!-- <span>left</span> -->
+        </el-col>
 
-        <el-column md={18} lg={20} xl={24}>
+        <el-col :md="18" :lg="20" :xl="24">
             <div class="bar">
                 <div class="filtertableimageoption">
                     <div class="filterimagetable">
@@ -17,11 +17,11 @@
                     <Option />
                 </div>
             </div>
-        </el-column>
+        </el-col>
 
-        <el-column md={3} lg={2} xl={0}>
-            <span>right</span>
-        </el-column>
+        <el-col :md="3" :lg="2" :xl="0">
+            <!-- <span>right</span> -->
+        </el-col>
     </el-row>
 </template>
 
@@ -40,10 +40,10 @@ export default {
         Option
     },
 
-    mounted() {
-        window.setTimeout(() => { localStorage.removeItem('access_token'); localStorage.removeItem('expiration_time');  this.$router.push('/')}, 
-        moment.utc(localStorage.expiration_time).diff(moment.utc()));
-    },
+    // mounted() {
+    //     window.setTimeout(() => { localStorage.removeItem('access_token'); localStorage.removeItem('expiration_time');  this.$router.push('/')}, 
+    //     moment.utc(localStorage.expiration_time).diff(moment.utc()));
+    // },
 
 }
 
@@ -52,37 +52,19 @@ export default {
 <style>
     body {
         overflow-x: auto;
+        /* width: 1440px; */
         width: 100%;
         margin: 0 auto;
-        border: 1px solid black;
     }
-
+    
     .el-row {
         display: flex;
         justify-content: space-between;
-        /* flex-direction: row; */
-
-    }
-
-    .bg-purple {
-        background: #d3dce6;
-    }
-
-    .bg-purple-light {
-        background: #e5e9f2;
+        flex-direction: row;
     }
 </style>
 
 <style scoped>
-    .container {
-        border: 1px solid black;
-    }
-
-    @media screen and (max-width: 992px) {
-        .container {
-            background-color: red;
-        }
-    }
     img {
         float: right;
     }
@@ -116,11 +98,15 @@ export default {
 
     .bar{
         width: 1168px;
-        /* margin: 0 auto; */
+        margin: 0 auto;
         display: flex;
         flex-direction: row-reverse;
         justify-content: space-between;
         align-items: center;
-        border: 1px solid red;
+        /* border: 1px solid red; */
+        margin-top: 10px;
+        /* display: block; */
+        /* margin-left: auto; */
+        /* margin-right: auto; */
     }
 </style>
