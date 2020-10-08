@@ -3,11 +3,16 @@ import App from './App.vue';
 import VueRouter from 'vue-router'
 import routes from "./routes"
 import uielement from "./uielement"
-import { store } from "./stores/stores"
+import {
+    store
+} from "./stores/stores"
 import Vuelidate from 'vuelidate'
 import VModal from 'vue-js-modal'
 import axios from 'axios'
 import moment from 'moment'
+
+axios.defaults.withCredentials = true
+axios.defaults.baseURL = 'https://api.deal.dirox.dev'
 
 Vue.config.productionTip = false
 Vue.use(Vuelidate)

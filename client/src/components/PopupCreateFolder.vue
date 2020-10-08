@@ -20,7 +20,7 @@
                         <div class="button-create">
                             <button class="create" type="submit" @click="onclickCreate">Create</button>
                             <modal name = 'sub-folder-create' :height="462" :width="496">
-                                <SubFolder />
+                                <SubFolder/>
                             </modal>
                         </div>
                         <button class="cancel" type="submit" @click="onclickHide">Cancel</button>

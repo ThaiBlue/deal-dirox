@@ -38,20 +38,14 @@ export default {
         Table,
         FilterVue,
         Option
-    },
-
-    // mounted() {
-    //     window.setTimeout(() => { localStorage.removeItem('access_token'); localStorage.removeItem('expiration_time');  this.$router.push('/')}, 
-    //     moment.utc(localStorage.expiration_time).diff(moment.utc()));
-    // },
-
+    }
 }
 
 </script>
 
 <style>
     body {
-        overflow-x: auto;
+        /* overflow-x: auto; */
         /* width: 1440px; */
         width: 100%;
         margin: 0 auto;

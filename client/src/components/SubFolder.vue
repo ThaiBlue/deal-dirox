@@ -51,25 +51,21 @@
                 this.checkedFolder = val ? folderOption : [];
                 this.isIndeterminate = false;
             },
-
             handlecheckedFolderChange(value) {
                 let checkedCount = value.length;
                 this.checkAll = checkedCount === this.folders.length;
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.folders.length;
             },
-
             onclickCreate() {
                 // this.$modal.hide('sub-folder-create');
                 this.$modal.show('success');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: this.checkedFolder});
             },
-
             onclickSkip() {
                 // this.$modal.hide('sub-folder-create');
                 this.$modal.show('success');
                 this.$store.dispatch('createFolder', {name: this.$store.state.newFolderName, parentID: [this.$store.state.currentFolderId], subFolder: []});
             },
-
             onclickClose() {
                 this.$modal.hide('sub-folder-create');
             }

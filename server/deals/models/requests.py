@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 import re
 
+from .thread import requestThread
 from .constants import MAKE_OFFER
 					
 class OAuth2API:
@@ -43,15 +44,7 @@ class OAuth2API:
 		# fetch data
 		return post(url='https://oauth2.googleapis.com/token', headers=headers, data=payload)
 
-class GoogleAPI:
-	@staticmethod
-	def read_in_chunks(file_object, chunk_size=0):
-	    while True:
-	        data = file_object.read(chunk_size)
-	        if not data:
-	            break
-	        yield data
-	
+class GoogleAPI:	
 	@classmethod
 	def upload_init_lead_template(cls, access_token, name, parentID=None):
 		'''
@@ -92,7 +85,7 @@ class GoogleAPI:
 				
 		# upload template
 		with open('template/ENG_INIT_Lead_YYYY_MM_DD.pptx', 'rb') as f:			
-			return put(response.headers.get('Location'), data=cls.read_in_chunks(f))
+			return put(response.headers.get('Location'), data=f)
 			
 	@classmethod
 	def retrieve_token_info(cls, access_token):

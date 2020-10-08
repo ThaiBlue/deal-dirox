@@ -19,7 +19,8 @@ from .deals.handlers import *
 
 urlpatterns = [
     path('accounts/admin', admin.site.urls),
-    path('accounts/user/authorize', User.authorize),
+    path('accounts/user/login', User._login),
+    path('accounts/user/logout', User._logout),
     path('accounts/user/profile', User.profile),
     path('accounts/<str:service>/auth', OAuth2.authorize),
     path('accounts/<str:service>/auth/callback', OAuth2.callback),
