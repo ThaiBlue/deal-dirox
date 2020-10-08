@@ -58,7 +58,7 @@ module.exports = class DriveAPI {
 			data: {
 				mimeType: 'application/vnd.google-apps.folder',
 				name: name,
-				parents: []
+				parents: parentID
 			},
 			withCredentials: false
 		};

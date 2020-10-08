@@ -340,7 +340,9 @@ class GoogleService:
 				if isinstance(response, dict):
 					data.append(response)
 					continue
-					
+				
+				print(response)
+				
 				if response.status_code != 200:
 					return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
 
@@ -485,7 +487,7 @@ class HubspotService:
 		return HTTP_405
 
 def test(request):		
-	token = Auth0.jwt_token_generator(request, uid='test')
+	deals = HubspotAPI.fetch_deal_info(access_token="CI7t08TQLhICAQUY1rSfAyC74cEFKOXsDTIZAEy1d4EO7ScNHbohi9ezKcU3JM-sB8N4WjoaAAoGQQAADIACAAgAAAABAAAAAAAAABjEABNCGQBMtXeBzk8YsmprLcihRnOQ1XgPUoSSNdU", deal_id="2983963865")
 	
-	return HttpResponse(content=token)
+	return HttpResponse(content=deals)
 	return HttpResponse('Hello World')
