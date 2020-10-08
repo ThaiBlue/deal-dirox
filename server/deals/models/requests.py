@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 import re
 
+from .thread import requestThread
 from .constants import MAKE_OFFER
 					
 class OAuth2API:

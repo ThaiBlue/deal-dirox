@@ -56,7 +56,6 @@ class User:
 			else:
 				conn.search('ou=users,dc=DIROX,dc=ldap', f'(uid={user_id})', attributes=[ALL_ATTRIBUTES])
 			
-			
 			if conn.entries == []: #if  user not found
 				user = Account.find_user(user_id)
 				
@@ -301,7 +300,7 @@ class GoogleService:
 			#retrieve token from database
 			google_token = User.fetch_access_token(request=request, service='google')
 			hubspot_token = User.fetch_access_token(request=request, service='hubspot')
-			
+
 			#handle error
 			if google_token is None or hubspot_token is None:
 				return HTTP_400_NO_SERVICE_AVAILABLE
@@ -316,7 +315,7 @@ class GoogleService:
 
 			deal_id = request_data['deal_id'][0]
 			parent_id = request_data['parentID'][0]
-			
+
 			if 'name' not in list(request_data.keys()):
 				name = f'ENG_INIT_Lead_{datetime.now().strftime("%Y")}_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'	
 			else:
@@ -338,7 +337,6 @@ class GoogleService:
 			
 			for thread in threads:
 				response = thread.join()
-													
 				if isinstance(response, dict):
 					data.append(response)
 					continue
@@ -398,10 +396,11 @@ class GoogleService:
 				
 			return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
 			
-		return HTTP_405		
+		return HTTP_405
 		
 class HubspotService:
 	'''Hubspot service API request handler'''
+	
 	@classmethod
 	def get_makeoffer_deals(cls, request):
 		'''Handle Hubspot API call to fetch all "Make Offer" deals'''

@@ -185,6 +185,7 @@ export const store = new Vuex.Store({
 
             try {
                 var response = await drive.getListOfFolder();
+                
                 response.data.files.forEach(item => {
                     if (item.ownedByMe) {
                         owned.push({
@@ -194,7 +195,7 @@ export const store = new Vuex.Store({
                             children: []
                         })
                     }
-                })
+                });
 
             } catch (err) {
                 console.log(err)
@@ -214,7 +215,7 @@ export const store = new Vuex.Store({
                 // Use our mapping to locate the parent element in our data array
                 const parentEl = owned[idMapping[item.parents]];
                 // Add our current el to its parent's `children` array
-                parentEl.children.push(item)
+                parentEl.children.push(item);
             })
         },
         async createFolder(context, folderInfo) {
@@ -225,16 +226,22 @@ export const store = new Vuex.Store({
                     subFolder: array
                 }
             */
-
-            await context.dispatch('fetchAccessToken', 'google');
+           
+            await context.dispatch('fetchAccessToken', 'google').catch(err => {console.log('create foler',{err});});
+            
             const drive = new DriveAPI(this.state.googleToken.access_token);
+            
             var parentID = [];
+            
             if (folderInfo.parentID[0] !== undefined) {
                 parentID = folderInfo.parentID;
             }
+            
             try {
-                var response = await drive.createFolder(folderInfo.name, parentID);
-                console.log(response)
+                var response = await drive.createFolder(folderInfo.name, parentID).catch(err => {
+                    console.log('Create folder error');
+                });
+
                 context.dispatch('updateCache', {
                     dealID: this.state.currentDeal.id,
                     folderID: response.data.id,
@@ -245,34 +252,32 @@ export const store = new Vuex.Store({
                 await context.dispatch('retrieveFolderMetaData', {
                     folder_id: response.data.id,
                     deal_id: this.state.currentDeal.id
-                });
+                }).catch(err => {console.log('error at create folder function',{err})});
 
                 var index = this.state.deals.indexOf(this.state.currentDeal);
 
                 this.state.deals[index].folder = this.state.folderCacheData;
                 this.state.deals[index].status = 'folder-created';
 
-                // this.state.folder.push(response.data);
-
                 if (folderInfo.subFolder.includes('00. Customer documents')) {
                     try {
                         drive.createFolder('00. Customer documents', [response.data.id]);
                     } catch (err) {
-                        console.log(response)
+                        console.log('Create subfolder customer documents fail');
                     }
                 }
                 if (folderInfo.subFolder.includes('01. Proposal')) {
                     try {
                         drive.createFolder('01. Proposal', [response.data.id]);
                     } catch (err) {
-                        console.log(err)
+                        console.log('Create subfolder proposal fail');
                     }
                 }
                 if (folderInfo.subFolder.includes('02. Contract')) {
                     try {
                         drive.createFolder('02. Contract', [response.data.id]);
                     } catch (err) {
-                        console.log(err)
+                        console.log('Create subfolder contract fail');
                     }
                 }
 
@@ -293,7 +298,7 @@ export const store = new Vuex.Store({
 
             try {
                 var response = await axios.get('services/google/drive/file/create/initlead?deal_id=' +
-                    this.state.currentDeal.id + '&parentID=' + String(this.state.currentFolderId))
+                    this.state.currentDeal.id + '&parentID=' + this.state.currentFolderId)
 
                 // get index of current deal
                 var index = this.state.deals.indexOf(this.state.currentDeal);
@@ -311,11 +316,11 @@ export const store = new Vuex.Store({
             }
 
         },
-        assignSlideID(ID) {
+        assignSlideID(context, ID) {
             /* asign current selected SideID actions */
             this.state.currentSlideID = ID;
         },
-        assignCurrentFolderID(ID) {
+        assignCurrentFolderID(context, ID) {
             /* assign current selected ID actions */
             this.state.currentFolderId = ID;
         },
@@ -348,7 +353,7 @@ export const store = new Vuex.Store({
                     })
             })
         },
-        updateCache(payload) {
+        updateCache(context, payload) {
             /* update cache from both client and server side */
             
             return new Promise((resolve, reject) => {
@@ -393,7 +398,7 @@ export const store = new Vuex.Store({
                     })
             })
         },
-        updateNewFolderName(name) {
+        updateNewFolderName(context, name) {
             // Cache new folder name that typed from Create folder popup
             this.state.newFolderName = name;
         },
