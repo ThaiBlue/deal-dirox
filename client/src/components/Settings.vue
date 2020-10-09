@@ -2,7 +2,7 @@
     <div class="settings">
         <div class="top">
             <label class="setting-label">SETTING</label>
-            <img class="close" v-on:click='onclickCancel()' src="../assets/img/close.svg">
+            <img class="close" @click='onclickCancel()' src="../assets/img/close.svg">
         </div>
 
         <div class="middle">
@@ -25,7 +25,7 @@
                         <div class="gmail">{{onchangStatusGoogleEmail}}</div>
                     </div>
                 </div>
-                <el-button :type="onchangeStatusGoogle" v-on:click="onclickConnectGoogle()">
+                <el-button :type="onchangeStatusGoogle" @click="onclickConnectGoogle()">
                     {{onchangeFunctionStatusGoogle}}</el-button>
             </div>
         </div>

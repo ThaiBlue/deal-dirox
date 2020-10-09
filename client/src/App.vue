@@ -7,7 +7,6 @@
 </template>
 
 <script>
-    // import axios from 'axios'
     export default {
         name: 'app',
         watch: {
@@ -22,6 +21,6 @@
     body {
         background-image: linear-gradient(180deg, #1686D3 0%, #0E3B5F 100%);
         height: 100vh;
-        /* overflow: scroll; */
+        overflow: hidden;
     }
 </style>

@@ -56,7 +56,7 @@
     }
 </script>
 <style scoped>
-    .create-folder {
+    .create-folder{
         width: 1028px;
         height: 690px;
         border-radius: 10px;
@@ -64,19 +64,22 @@
         background-color: #ffffff;
     }
 
+
     .header {
         height: 49px;
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid #979797;
         text-align: center;
         margin-top: 8px;
     }
 
+    
     .body-popup {
         height: 639px;
         display: flex;
     }
 
-    .left {
+    
+    .left{
         height: 630px;
         width: 273px;
     }
@@ -96,19 +99,25 @@
 
     .right {
         height: 630px;
-        border: 1px solid red;
+        border: 1px solid #979797;
+        border-top: none;
+        border-right: none;
         width: 753px;
     }
 
-    .name-folder {
+
+    .name-folder{
         height: 56px;
-        border: 1px solid black;
     }
+
 
     .folder {
         height: 485px;
-        border: 1px solid blue;
+        border: 1px solid #979797;
+        border-left: none;
+        border-right: none;
     }
+
 
     .folder-name {
         height: 80px;
@@ -116,12 +125,14 @@
         justify-content: space-around;
     }
 
+
     .search-folder {
         width: 424px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
     }
+
 
     .search {
         font-family: UTM-Avo;
@@ -134,6 +145,7 @@
         color: #0b0b0b;
     }
 
+
     .input-folder {
         width: 424px;
         height: 37px;
@@ -143,12 +155,14 @@
         outline: none;
     }
 
+
     .button-folder {
         width: 263px;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
+    
 
     .create {
         width: 124px;
@@ -161,12 +175,13 @@
         outline: none;
     }
 
+
     .cancel {
         width: 124px;
         height: 45px;
         border-radius: 10px;
         border: solid 1px #979797;
-        background-color: #979797;
+        background-color: #979797; 
         cursor: pointer;
         outline: none;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);

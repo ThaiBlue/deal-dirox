@@ -48,7 +48,12 @@ export const store = new Vuex.Store({
                         reject(err);
                     })
             })
-        },
+                // localStorage.removeItem('access_token');
+                // localStorage.removeItem('expiration_time');
+                // localStorage.removeItem('credential');
+            // this.$router.push('/');
+            },
+        
 
         authenticate(context, credentials) {
             /* 
