@@ -26,3 +26,5 @@ MAKE_OFFER = '2186805'
 LDAP_PWD = 'thay-the-root'
 LDAP_HOST = '10.84.254.37'
 ALLOWED_ACCESS_TITLE = ['Trainee']
+
+RETRY_TIMES = 5

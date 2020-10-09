@@ -1,6 +1,7 @@
 from django.http import HttpRequest
 
 from requests import post, put, get, delete
+from requests_toolbelt import MultipartEncoder, StreamingIterator
 from json import loads, dumps
 from datetime import datetime
 
@@ -37,12 +38,14 @@ class OAuth2API:
 		  'Content-Type': 'application/x-www-form-urlencoded'
 		}
 		
+		url = 'https://oauth2.googleapis.com/token'
+		
 		if service.name == 'hubspot':
 			url = 'https://api.hubapi.com/oauth/v1/token'
 			payload['redirect_uri'] = request.scheme + '://' + request.get_host() + '/accounts/hubspot/auth/callback'
-
+			
 		# fetch data
-		return post(url='https://oauth2.googleapis.com/token', headers=headers, data=payload)
+		return post(url=url, headers=headers, data=payload)
 
 class GoogleAPI:	
 	@classmethod
@@ -83,10 +86,10 @@ class GoogleAPI:
 		if response.status_code != 200:
 			return response
 				
-		# upload template
-		with open('template/ENG_INIT_Lead_YYYY_MM_DD.pptx', 'rb') as f:			
+		# # upload template
+		with open('template/ENG_INIT_Lead_YYYY_MM_DD.pptx', 'rb') as f:
 			return put(response.headers.get('Location'), data=f)
-			
+						
 	@classmethod
 	def retrieve_token_info(cls, access_token):
 		'''Retrieve access token infomation from google server'''
@@ -125,6 +128,12 @@ class GoogleAPI:
 			raise TypeError('access_token must be a string')
 		if not isinstance(slide_id, str):
 			raise TypeError('slide_id must be a string')
+		if not isinstance(deal, dict):
+			raise TypeError('deal must be a dict')
+		if not isinstance(company, (dict, type(None))):
+			raise TypeError('company must be a dict')
+		if not isinstance(notes, dict):
+			raise TypeError('notes must be a dict')
 
 		response = cls.get_presentation_revision_id(access_token, slide_id)
 		
@@ -168,7 +177,7 @@ class GoogleAPI:
 				},
 				{
 					'replaceAllText': {
-						'replaceText': deal['properties']['technology'].replace(';', ', '), # put infomation here
+						'replaceText': deal['properties']['technology'].replace(';', ', ') if deal['properties']['technology'] is not None else '', # put infomation here
 						'pageObjectIds': [],
 						'containsText': {
 							'text': '<Technology>', # put replacement text here
@@ -178,7 +187,7 @@ class GoogleAPI:
 				},
 				{
 					'replaceAllText': {
-						'replaceText': deal['properties']['technologies'].replace(';', ', '), # put infomation here
+						'replaceText': deal['properties']['technologies'].replace(';', ', ') if deal['properties']['technologies'] is not None else '', # put infomation here
 						'pageObjectIds': [],
 						'containsText': {
 							'text': '<Technologies>', # put replacement text here
@@ -188,7 +197,7 @@ class GoogleAPI:
 				},
 				{
 					'replaceAllText': {
-						'replaceText': deal['properties']['os'].replace(';', ', '), # put infomation here
+						'replaceText': deal['properties']['os'].replace(';', ', ') if deal['properties']['os'] is not None else '', # put infomation here
 						'pageObjectIds': [],
 						'containsText': {
 							'text': '<OS>', # put replacement text here
@@ -198,7 +207,7 @@ class GoogleAPI:
 				},
 				{
 					'replaceAllText': {
-						'replaceText': deal['properties']['database'].replace(';', ', '), # put infomation here
+						'replaceText': deal['properties']['database'].replace(';', ', ') if deal['properties']['database'] is not None else '', # put infomation here
 						'pageObjectIds': [],
 						'containsText': {
 							'text': '<Database>', # put replacement text here
@@ -208,7 +217,7 @@ class GoogleAPI:
 				},
 				{
 					'replaceAllText': {
-						'replaceText': deal['properties']['cms'].replace(';', ', '), # put infomation here
+						'replaceText': deal['properties']['cms'].replace(';', ', ') if deal['properties']['cms'] is not None else '', # put infomation here
 						'pageObjectIds': [],
 						'containsText': {
 							'text': '<CMS>', # put replacement text here
@@ -218,7 +227,7 @@ class GoogleAPI:
 				},
 				{
 					'replaceAllText': {
-						'replaceText': deal['properties']['browsers'].replace(';', ', '), # put infomation here
+						'replaceText': deal['properties']['browsers'].replace(';', ', ') if deal['properties']['browsers'] is not None else '', # put infomation here
 						'pageObjectIds': [],
 						'containsText': {
 							'text': '<Browsers>', # put replacement text here
@@ -308,16 +317,6 @@ class GoogleAPI:
 				},
 				{
 					'replaceAllText': {
-						'replaceText': company['properties']['name'],
-						'pageObjectIds': [],
-						'containsText': {
-							'text': '<Customer Name>',
-							'matchCase': True
-						}
-					}
-				},
-				{
-					'replaceAllText': {
 						'replaceText': datetime.now().strftime("%d/%m/%Y"), #retrieve current date
 						'pageObjectIds': [],
 						'containsText': {
@@ -331,6 +330,18 @@ class GoogleAPI:
 				'requiredRevisionId': revision_id
 			}
 		}
+		
+		if company is not None:
+			payload['requests'].append({
+				'replaceAllText': {
+					'replaceText': company['properties']['name'],
+					'pageObjectIds': [],
+					'containsText': {
+						'text': '<Customer Name>',
+						'matchCase': True
+					}
+				}
+			})
 				
 		return post(url='https://slides.googleapis.com/v1/presentations/' + slide_id + ':batchUpdate',
 					headers={'Authorization': 'Bearer ' + access_token}, data=dumps(payload))

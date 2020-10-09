@@ -10,8 +10,8 @@ from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timedelta
 from tzlocal import get_localzone
 from json import dumps, loads
-from urllib.parse import urlparse, parse_qs
 import logging
+import time
 
 from .models.database import GoogleToken, HubspotToken, Account, Cache
 from .models.requests import GoogleAPI, HubspotAPI, OAuth2API
@@ -263,6 +263,7 @@ class OAuth2:
 	@classmethod
 	def retrieve_access_token(cls, request, service):
 		'''Return google access token from database'''
+		
 		# Validate request
 		if service not in ['google', 'hubspot']:
 			return HTTP_404
@@ -288,7 +289,8 @@ class OAuth2:
 		return HTTP_405
 
 class GoogleService:
-	'''Google service API request handler'''		
+	'''Google service API request handler'''
+			
 	@classmethod
 	def create_init_lead(cls, request):
 		'''Create a new InitLead document on Drive'''
@@ -314,8 +316,8 @@ class GoogleService:
 				return HTTP_400_INVALID_QUERY
 
 			deal_id = request_data['deal_id'][0]
-			parent_id = request_data['parentID'][0]
-
+			parent_id = request_data['parentID'][0] if request_data['parentID'][0] != 'null' else None
+						
 			if 'name' not in list(request_data.keys()):
 				name = f'ENG_INIT_Lead_{datetime.now().strftime("%Y")}_{datetime.now().strftime("%d")}_{datetime.now().strftime("%m")}.pptx'	
 			else:
@@ -337,19 +339,30 @@ class GoogleService:
 			
 			for thread in threads:
 				response = thread.join()
-				if isinstance(response, dict):
+				
+				if isinstance(response, (dict, type(None))):
 					data.append(response)
 					continue
-				
-				print(response)
-				
+												
 				if response.status_code != 200:
 					return HttpResponse(content=dumps(response.json()), content_type='application/json', status=response.status_code)
 
 				data.append(response.json())
+			
+			retry_times = 0
+			
+			while True:
+				response = GoogleAPI.fill_out_the_template(access_token=google_token['access_token'], deal=data[2], company=data[1], notes=data[0], slide_id=data[3]['id'])
 				
-			response = GoogleAPI.fill_out_the_template(access_token=google_token['access_token'], deal=data[2], company=data[1], notes=data[0], slide_id=data[3]['id'])
-								
+				if response.status_code == 200:
+					break
+				
+				if retry_time > RETRY_TIMES:
+					break
+				
+				retry_times += 1
+				time.sleep(1)
+					
 			return HttpResponse(content=response.text, content_type='application/json', status=response.status_code)
 				
 		return HTTP_405
@@ -487,7 +500,6 @@ class HubspotService:
 		return HTTP_405
 
 def test(request):		
-	deals = HubspotAPI.fetch_deal_info(access_token="CI7t08TQLhICAQUY1rSfAyC74cEFKOXsDTIZAEy1d4EO7ScNHbohi9ezKcU3JM-sB8N4WjoaAAoGQQAADIACAAgAAAABAAAAAAAAABjEABNCGQBMtXeBzk8YsmprLcihRnOQ1XgPUoSSNdU", deal_id="2983963865")
 	
-	return HttpResponse(content=deals)
+	return HttpResponse(content=res)
 	return HttpResponse('Hello World')

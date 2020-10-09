@@ -234,9 +234,7 @@ export const store = new Vuex.Store({
             // if (folderInfo.parentID[0] !== undefined) {
             //     parentID = folderInfo.parentID;
             // }
-            
-            console.log(folderInfo)
-            
+                        
             try {
                 var response = await drive.createFolder(folderInfo.name, folderInfo.parentID)
                 console.log(response)
