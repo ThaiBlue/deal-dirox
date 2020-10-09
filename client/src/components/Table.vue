@@ -1,7 +1,8 @@
 <template>
-    <el-table class="table" :data="tableData" highlight-current-row border 
-        @current-change="handleCurrentChange" height="200">
-            <el-table-column   prop="no" label="No." type="index" width="60"></el-table-column>
+    <el-table class="table" :data="tableData" highlight-current-row border style="width: 100%"
+        @current-change="handleCurrentChange" > 
+        <!-- height="200" -->
+            <el-table-column prop="no" label="No." type="index" width="60"></el-table-column>
         
         
             <el-table-column prop="id" label="ID" width="132"></el-table-column>

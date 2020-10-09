@@ -12,7 +12,7 @@
     "core-js": "^3.6.5",
     "element-ui": "^2.13.2",
     "lodash": "^4.17.20",
-    "moment": "^2.29.0",
+    "moment": "^2.29.1",
     "vue": "^2.6.11",
     "vue-js-modal": "^2.0.0-rc.6",
     "vue-router": "^3.4.3",
