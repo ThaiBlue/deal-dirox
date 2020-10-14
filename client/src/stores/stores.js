@@ -235,13 +235,16 @@ export const store = new Vuex.Store({
             await context.dispatch('fetchAccessToken', 'google').catch(err => {console.log('create foler',{err});});
             
             const drive = new DriveAPI(this.state.googleToken.access_token);
-                        
-            // if (folderInfo.parentID[0] !== undefined) {
-            //     parentID = folderInfo.parentID;
-            // }
+            
+            var parentID = []
+            
+            // Handle create folder in root case
+            if (folderInfo.parentID[0] !== undefined && folderInfo.parentID[0] !== null) {
+                parentID = folderInfo.parentID;
+            }
                         
             try {
-                var response = await drive.createFolder(folderInfo.name, folderInfo.parentID)
+                var response = await drive.createFolder(folderInfo.name, parentID)
                 console.log(response)
                 context.dispatch('updateCache', {
                     dealID: this.state.currentDeal.id,

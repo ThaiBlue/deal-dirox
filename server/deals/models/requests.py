@@ -1,7 +1,6 @@
 from django.http import HttpRequest
 
 from requests import post, put, get, delete
-from requests_toolbelt import MultipartEncoder, StreamingIterator
 from json import loads, dumps
 from datetime import datetime
 
@@ -121,7 +120,7 @@ class GoogleAPI:
 					headers={'Authorization': 'Bearer ' + access_token})
 	
 	@classmethod
-	def fill_out_the_template(cls, access_token, deal, company, notes, slide_id):
+	def fill_out_the_template(cls, access_token, deal, company, notes, slide_id): # need to be refactored
 		'''Retrieve revision id from google server'''
 		
 		if not isinstance(access_token, str):
@@ -142,7 +141,7 @@ class GoogleAPI:
 		
 		revision_id = response.json()['revisionId']
 				
-		payload = {
+		payload = { # need to refactor
 			'requests': [
 				# can add more object to commit serveral text replacement in the whole slide
 				# {
@@ -464,7 +463,7 @@ class HubspotAPI:
 		properties = ['dealname','description','deal_summary','lead_overview_1','lead_overview_2','start_date','closedate'\
 					'ambassador', 'dev_', 'os', 'amount', 'pipeline', 'deal_currency_code', 'hubspot_owner_id', \
 					'amount_in_home_currency', 'technologies', 'technology', 'notes_last_contacted', 'notes_last_updated',\
-					'duration', 'new_renew', 'browsers', 'cms', 'database']
+					'duration', 'new_renew', 'browsers', 'cms', 'database'] # need to be refactored
 
 		urlencoded = '?' 
 

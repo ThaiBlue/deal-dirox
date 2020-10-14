@@ -201,9 +201,8 @@ class Credential(models.Model):
                 cls.objects.create(user=user, refresh_token=token['refresh_token'], 
                     access_token=token['access_token'], expires_in=int(token['expires_in']), 
                     expires_at=datetime.now(get_localzone())+timedelta(seconds=int(token['expires_in'])-FETCHING_TIME))
-                    
                 return 'registered'
-                
+
             else:
                 return 'fail'
                 

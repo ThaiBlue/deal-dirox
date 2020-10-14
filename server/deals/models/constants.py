@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from json import dumps
+from os import environ
 
 # HTTP response
 HTTP_200 = HttpResponse(content=dumps({'status': 'OK', 'description': 'Success'}), status=200, content_type='application/json')
@@ -15,16 +16,15 @@ HTTP_400_INVALID_SERVICE = HttpResponse(content=dumps({'error': 'invalid_service
 HTTP_400_CACHE_REQUEST_FAIL = HttpResponse(content=dumps({'error': 'missing_argument', 'description': 'Must contain deal_id, folder_id and status'}), status=400, content_type='application/json')
 HTTP_403_USER_FORBIDDEN = HttpResponse(content=dumps({'error': 'forbidden', 'description': 'User does not have the right to access this service'}), status=403, content_type='application/json')
 
+# Deals stage
+MAKE_OFFER = '2186805'
 
 # Database relate constants
 FETCHING_TIME = 10
-
-# Deals stage
-MAKE_OFFER = '2186805'
 
 # LDAP configuration
 LDAP_PWD = 'thay-the-root'
 LDAP_HOST = '10.84.254.37'
 ALLOWED_ACCESS_TITLE = ['Trainee']
 
-RETRY_TIMES = 5
+RETRY_TIMES = 5 # retry times after a request fails temporarily
